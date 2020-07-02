@@ -5,7 +5,7 @@
     </div>
     {{!-- free column --}}
     <div class="col-lg"> 
-    <h1 id="quiz_name" class="mt-4 text-center">QUIZ</h1>
+    <h1 id="heading" class="mt-4 text-center"></h1>
     {{!-- quiz box --}}
     <div class="jumbotron mt-4 text-center">
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
@@ -39,7 +39,7 @@
     nav_selected.className += ' active'
 
     // get the name of the quiz
-    var quiz_name = document.getElementById('quiz_name').innerHTML = "{{quiz_name}}" || "QUIZ"
+    var heading = document.getElementById('heading').innerHTML = "{{heading}}" || "QUIZ"
 
     // this returns an array of each li
     var listItems = document.querySelectorAll("ul li");
