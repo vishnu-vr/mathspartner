@@ -9,15 +9,14 @@
     {{!-- quiz box --}}
     <div class="jumbotron mt-4 text-center">
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
-    <p class="lead">question comes here ?</p>
+    <p class="lead display-4">question comes here ?</p>
     <hr class="my-4">
     {{!-- list of answers --}}
-    <ul class="list-group">
-        <li class="list-group-item active">Cras justo odio</li>
+    <ul class="list-group" id="answers_list">
+        <li class="list-group-item">Cras justo odio</li>
         <li class="list-group-item">Dapibus ac facilisis in</li>
         <li class="list-group-item">Morbi leo risus</li>
         <li class="list-group-item">Porta ac consectetur ac</li>
-        <li class="list-group-item">Vestibulum at eros</li>
     </ul>
     {{!-- list of answers --}}
     <a class="btn btn-primary btn-lg mt-4" href="#" role="button">Learn more</a>
@@ -39,4 +38,35 @@
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
 
+    // this returns an array of each li
+    var listItems = document.querySelectorAll("ul li");
+    // old selected_option
+    var old_selected_option = null;
+    listItems.forEach(function(item) {
+    item.onclick = function(e) {
+
+        // non-highlighting the old selected option
+        if (old_selected_option != null) {
+            old_selected_option.className = 'list-group-item'
+            old_selected_option.removeAttribute("style");
+        }
+
+        // this returns clicked li's value
+        var selected_option = this.innerText
+        console.log("selected option : "+selected_option);
+
+        // saving the old selected option
+        old_selected_option = this
+        // highlighting the current selected option
+        this.className = this.className + ' active'
+        this.style.color = "black"
+    }
+    });
+
 </script>
+
+<style>
+.list-group .list-group-item:hover {
+    background-color:antiquewhite;
+}
+</style>
