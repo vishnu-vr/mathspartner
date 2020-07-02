@@ -1,4 +1,5 @@
 const express = require('express')
+const exphbs = require('express-handlebars')
 
 const app = express()
 
@@ -9,6 +10,10 @@ const logger = (req,res,next) => {
 	next()
 }
 
+// initializing handlebar template engine
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
+
 // initializing the logger middleware
 app.use(logger)
 
@@ -16,6 +21,10 @@ app.use(logger)
 app.use(express.json())
 // for handling url encoded data. ie html forms
 app.use(express.urlencoded({ extended:false }))
+
+// ########################### TEST ###########################################
+// test render html
+app.get('/', (req,res) => res.render('index', {title:"hey hey !!!"}))
 
 // test
 app.post('/testbody' ,(req,res) => {
@@ -42,6 +51,8 @@ app.post('/api/:id', (req,res) => {
 app.post('/apierror', (req,res) => {
 	res.status(400).json({error:`boom an error. Hope you like it`})
 })
+
+// ######################################################################
 
 const PORT = process.env.PORT || 5000
 
