@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended:false }))
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
 // quiz
-app.get('/quiz', (req,res) => res.render('quiz', {title:"quiz", nav_selected:"quiz"}))
+app.get('/quiz', (req,res) => res.render('quiz', {title:"quiz", nav_selected:"quiz", quiz_name:"quiz_name"}))
 
 // classes
 app.get('/classes', (req,res) => res.render('classes', {title:"classes", nav_selected:"classes"}))
