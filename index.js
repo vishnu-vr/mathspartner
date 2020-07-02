@@ -27,8 +27,14 @@ app.use(express.urlencoded({ extended:false }))
 // home
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
-// question_box
-app.get('/question_box', (req,res) => res.render('question_box', {title:"question_box"}))
+// quiz
+app.get('/quiz', (req,res) => res.render('quiz', {title:"quiz", nav_selected:"quiz"}))
+
+// classes
+app.get('/classes', (req,res) => res.render('classes', {title:"classes", nav_selected:"classes"}))
+
+// about
+app.get('/about', (req,res) => res.render('about', {title:"about", nav_selected:"about"}))
 
 // ########################### HTML RENDERING ###########################################
 

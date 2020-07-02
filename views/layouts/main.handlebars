@@ -10,6 +10,17 @@
     </head>
     <body>
         <div class="container mt-4">
+            <div style="text-align:center;">
+                <a href="/">
+                    <p class="text-monospace" style="box-shadow: 0 0 5px 0px black;">Maths Partner</p>
+                </a>
+            </div>
+            <nav class="nav nav-pills flex-column flex-sm-row mt-5">
+                <a id="quiz" class="flex-sm-fill text-sm-center nav-link" href="/quiz">Quiz</a>
+                <a id="classes" class="flex-sm-fill text-sm-center nav-link" href="classes">Classes</a>
+                <a id="about" class="flex-sm-fill text-sm-center nav-link" href="about">About</a>
+                {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
+            </nav>
             {{{ body }}}
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
