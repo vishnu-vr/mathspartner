@@ -22,10 +22,17 @@ app.use(express.json())
 // for handling url encoded data. ie html forms
 app.use(express.urlencoded({ extended:false }))
 
-// ########################### TEST ###########################################
-// test render html
-app.get('/', (req,res) => res.render('index', {title:"hey hey !!!"}))
+// ########################### HTML RENDERING ###########################################
 
+// home
+app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
+
+// question_box
+app.get('/question_box', (req,res) => res.render('question_box', {title:"question_box"}))
+
+// ########################### HTML RENDERING ###########################################
+
+// ########################### TEST ###########################################
 // test
 app.post('/testbody' ,(req,res) => {
 	res.send(req.body)
