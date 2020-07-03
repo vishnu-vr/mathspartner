@@ -1,5 +1,6 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
+const path = require('path')
 
 const app = express()
 
@@ -14,13 +15,16 @@ const logger = (req,res,next) => {
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
+// ############## MIDDLEWARES ###################
+// public
+app.use(express.static(path.join(__dirname, '/public')));
 // initializing the logger middleware
 app.use(logger)
-
 // initializing body parser
 app.use(express.json())
 // for handling url encoded data. ie html forms
 app.use(express.urlencoded({ extended:false }))
+// ############## MIDDLEWARES ###################
 
 // ########################### HTML RENDERING ###########################################
 
@@ -44,7 +48,8 @@ app.get('/about', (req,res) => res.render('about', {title:"about", nav_selected:
 // ########################### TEST ###########################################
 // test
 app.post('/testbody' ,(req,res) => {
-	res.send(req.body)
+	// res.send(req.body)
+	res.json("hey hey")
 })
 
 app.get('/', (req,res) => {

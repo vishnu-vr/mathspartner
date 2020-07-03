@@ -19,7 +19,8 @@
         <li class="list-group-item">Porta ac consectetur ac</li>
     </ul>
     {{!-- list of answers --}}
-    <a class="btn btn-primary btn-lg mt-4" href="#" role="button">Learn more</a>
+    <button class="btn btn-primary btn-lg mt-4" href="#" role="button">Previous</button>
+    <button class="btn btn-primary btn-lg mt-4" href="#" role="button">Next</button>
     </div>
     {{!-- quiz box --}}
     </div>
@@ -40,6 +41,12 @@
 
     // get the name of the quiz
     var heading = document.getElementById('heading').innerHTML = "{{heading}}" || "QUIZ"
+
+    // fetch the list of questions and answers
+    postData('/testbody', { answer: 42 })
+    .then(data => {
+        console.log(data); // JSON data parsed by `data.json()` call
+    });
 
     // this returns an array of each li
     var listItems = document.querySelectorAll("ul li");
