@@ -12,7 +12,9 @@ const logger = (req,res,next) => {
 }
 
 // initializing handlebar template engine
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({defaultLayout: 'main',
+						helpers: { json: (context) => JSON.stringify(context) }}
+						));
 app.set('view engine', 'handlebars');
 
 // ############## MIDDLEWARES ###################
@@ -32,7 +34,19 @@ app.use(express.urlencoded({ extended:false }))
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
 // quiz box
-app.get('/quiz_box', (req,res) => res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:"quiz_name"}))
+app.get('/quiz_box', (req,res) => {
+
+	var dummy_questions = [
+		{question:"question_1", options:[1,2,3,4],correct:4},
+		{question:"question_2", options:[1,2,3,4],correct:4},
+		{question:"question_3", options:[1,2,3,4],correct:4},
+		{question:"question_4", options:[1,2,3,4],correct:4},
+		{question:"question_5", options:[1,2,3,4],correct:4},
+	]
+	// console.log(dummy_questions)
+	// dummy_questions = JSON.stringify(dummy_questions)
+	res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:"quiz_name", questions:dummy_questions})
+})
 
 // topics page
 app.get('/quiz', (req,res) => res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPIC"}))

@@ -42,11 +42,10 @@
     // get the name of the quiz
     var heading = document.getElementById('heading').innerHTML = "{{heading}}" || "QUIZ"
 
-    // fetch the list of questions and answers
-    postData('/testbody', { answer: 42 })
-    .then(data => {
-        console.log(data); // JSON data parsed by `data.json()` call
-    });
+    // get the questions and answers
+    var questions = [{{{json questions }}}]
+    // questions = JSON.parse(questions)
+    console.log(questions)
 
     // this returns an array of each li
     var listItems = document.querySelectorAll("ul li");
