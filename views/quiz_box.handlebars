@@ -9,18 +9,18 @@
     {{!-- quiz box --}}
     <div class="jumbotron mt-4 text-center">
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
-    <p class="lead display-4">question comes here ?</p>
+    {{!-- question --}}
+    <p class="lead display-4" id="question">question comes here ?</p>
     <hr class="my-4">
     {{!-- list of answers --}}
     <ul class="list-group" id="answers_list">
-        <li class="list-group-item">Cras justo odio</li>
-        <li class="list-group-item">Dapibus ac facilisis in</li>
-        <li class="list-group-item">Morbi leo risus</li>
-        <li class="list-group-item">Porta ac consectetur ac</li>
+        {{!-- <li class="list-group-item">Cras justo odio</li> --}}
     </ul>
     {{!-- list of answers --}}
-    <button class="btn btn-primary btn-lg mt-4" href="#" role="button">Previous</button>
-    <button class="btn btn-primary btn-lg mt-4" href="#" role="button">Next</button>
+    <button id="previous" class="btn btn-primary btn-lg mt-4" onclick="previous()" role="button">Previous</button>
+    <button id="next" class="btn btn-primary btn-lg mt-4" onclick="next()" role="button">Next</button>
+    <br>
+    <button id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
     </div>
     {{!-- quiz box --}}
     </div>
@@ -44,33 +44,115 @@
 
     // get the questions and answers
     var questions = {{{json questions }}}
-    // questions = JSON.parse(questions)
-    console.log(questions)
 
-    // this returns an array of each li
-    var listItems = document.querySelectorAll("ul li");
+    // next and previous buttons
+    const next_button = document.getElementById('next')
+    const previous_button = document.getElementById('previous')
+
+    // saving user selected options
+    var user_selected_options = []
+
+    // saving current question number for next and previous
+    // which is 0 initially
+    var current_question_num = null
+    function insert_question_and_options(question_num) {
+        // if the question is first one then
+        // disable the previous button and
+        // vise-versa
+        if (question_num+1 == questions.length) next_button.disabled = true
+        else next_button.disabled = false
+        if (question_num == 0) previous_button.disabled = true
+        else previous_button.disabled = false
+
+        // saving current question number
+        current_question_num = question_num
+
+        // the answers list
+        const answers_list = document.getElementById('answers_list')
+        // cleaing the options
+        answers_list.innerHTML = ""
+
+        // the question box
+        const question = document.getElementById('question')
+        // clearing the question
+        question.innerHTML = ""
+
+        question.innerText = questions[question_num].question
+
+        for (var i=0; i<questions[question_num].options.length; i++){
+            const option = document.createElement("li")
+            option.className = "list-group-item"
+            option_id = i
+            option.id = option_id
+            // option.onclick = "option_selected()"
+            option.setAttribute('onclick','option_selected('+option_id+')')
+            option.innerText = questions[question_num].options[i]
+            answers_list.appendChild(option)  
+        }
+
+        // after creating the options
+        // highlight the one previously set by the user
+        if (user_selected_options[current_question_num] != null){
+            const to_be_highlighted = document.getElementById(user_selected_options[current_question_num].option_id)
+            to_be_highlighted.className = to_be_highlighted.className + ' active'
+        }
+    }
+
+    // inserting the first question
+    insert_question_and_options(0)
+    // console.log(answers_list)
+
+    // onclick for option selection
     // old selected_option
     var old_selected_option = null;
-    listItems.forEach(function(item) {
-    item.onclick = function(e) {
-
-        // non-highlighting the old selected option
+    function option_selected(option_id) {
         if (old_selected_option != null) {
             old_selected_option.className = 'list-group-item'
             old_selected_option.removeAttribute("style");
         }
 
-        // this returns clicked li's value
-        var selected_option = this.innerText
-        console.log("selected option : "+selected_option);
-
-        // saving the old selected option
-        old_selected_option = this
-        // highlighting the current selected option
-        this.className = this.className + ' active'
-        this.style.color = "black"
+        const selected_option = document.getElementById(option_id)
+        old_selected_option = selected_option
+        selected_option.className = selected_option.className + ' active'
+        selected_option.style.color = "black"
+        
+        // saving user selection
+        const selected_option_innerText = selected_option.innerText
+        user_selected_options[current_question_num] = {selected_option_innerText,option_id}
+        console.log("current question : "+current_question_num)
+        console.log("selected option : "+selected_option.innerText)
     }
-    });
+
+    // next button
+    function next() {
+        console.log('next pressed')
+        // if the last question is reached then alert it
+        if (current_question_num+1 == questions.length) {
+            alert("this is the last one")
+            return
+        }
+        else{
+            current_question_num++
+            insert_question_and_options(current_question_num) 
+        }
+    }
+    // previous button
+    function previous() { 
+        console.log('previous pressed')
+        // if the first question is reached then alert it
+        if (current_question_num == 0) {
+            alert("this is the first one")
+            return
+        }
+        else{
+            current_question_num--
+            insert_question_and_options(current_question_num) 
+        }
+    }
+
+    function submit() {
+        alert("you sure?")
+    }
 
 </script>
 

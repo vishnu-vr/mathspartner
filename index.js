@@ -37,11 +37,11 @@ app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 app.get('/quiz_box', (req,res) => {
 
 	var dummy_questions = [
-		{question:"question_1", options:[1,2,3,4],correct:4},
-		{question:"question_2", options:[1,2,3,4],correct:4},
-		{question:"question_3", options:[1,2,3,4],correct:4},
-		{question:"question_4", options:[1,2,3,4],correct:4},
-		{question:"question_5", options:[1,2,3,4],correct:4},
+		{question:"question_1", options:['A','B','C','D'],correct:4},
+		{question:"question_2", options:['A','B','C','D'],correct:4},
+		{question:"question_3", options:['A','B','C','D'],correct:4},
+		{question:"question_4", options:['A','B','C','D'],correct:4},
+		{question:"question_5", options:['A','B','C','D'],correct:4},
 	]
 	// console.log(dummy_questions)
 	// dummy_questions = JSON.stringify(dummy_questions)
