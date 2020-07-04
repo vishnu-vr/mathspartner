@@ -21,7 +21,7 @@
     <button id="previous" class="btn btn-primary btn-lg mt-4" onclick="previous()" role="button">Previous</button>
     <button id="next" class="btn btn-primary btn-lg mt-4" onclick="next()" role="button">Next</button>
     <br>
-    <button id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
+    <button data-toggle="modal" data-target="#exampleModal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
     </div>
     {{!-- quiz box --}}
     </div>
@@ -30,6 +30,30 @@
          
     </div>
     {{!-- free column --}}
+</div>
+
+<!-- Button trigger modal -->
+{{!-- <button id="modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+</button> --}}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Correct Answers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="modal-body" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload()">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -182,15 +206,28 @@
         }
     }
 
+    var score = 0
     function submit() {
         alert("you sure?")
-        var score = 0
         for (var i=0; i<questions.length; i++){
             if (user_selected_options[i] != null && 
             questions[i].correct == user_selected_options[i].selected_option_innerText) score++
         }
-        alert("score is : "+score)
-        location.reload();
+        // alert(score)
+        const modal_body = document.getElementById('modal-body')
+        var score_p = document.createElement('p')
+        score_p.innerText = "SCORE : " + score
+        modal_body.appendChild(score_p)
+
+        // display all the correct answers
+        for (var i=0; i<questions.length; i++){
+            var q = document.createElement('p')
+            q.innerText = questions[i].question
+            modal_body.appendChild(q)
+            var ca = document.createElement('p')
+            ca.innerText = questions[i].correct
+            modal_body.appendChild(ca)
+        }
     }
 
 </script>
