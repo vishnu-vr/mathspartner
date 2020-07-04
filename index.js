@@ -53,7 +53,11 @@ app.get('/quiz_box', (req,res) => {
 })
 
 // topics page
-app.get('/quiz', (req,res) => res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPIC"}))
+app.get('/quiz', (req,res) => {
+	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
+						,'work & time','simple interest']
+	res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPIC", topics:dummy_topics})
+})
 
 // classes
 app.get('/classes', (req,res) => res.render('classes', {title:"classes", nav_selected:"classes"}))

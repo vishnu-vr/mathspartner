@@ -1,7 +1,68 @@
-<div class="row">
-  <div class="col-sm">
-    <h1 class="mt-4 text-center">{{heading}}</h1>
+<h1 class="mt-4 text-center">{{heading}}</h1>
+<div id="topic_body" class="row">
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
   </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+      {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
+  {{!-- card --}}
+  <div class="card ml-4 mt-4" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Card title</h5>
+      <a href="#" class="card-link">Card link</a>
+    </div>
+  </div>
+  {{!-- card  --}}
 </div>
 
 <script>
@@ -11,5 +72,36 @@
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
+
+    // get available topics
+    var topics = {{{json topics }}}
+
+    console.log(topics)
+
+    const topic_body = document.getElementById('topic_body')
+    topic_body .innerHTML = ''
+    for (var i=0; i<topics.length; i++){
+      var card_title = document.createElement('h5')
+      card_title.innerText = topics[i]
+
+      var card_link = document.createElement('a')
+      card_link.href = '#'
+      card_link.className = 'card-link'
+      card_link.innerText = 'topic link'
+
+      var card_body = document.createElement('div')
+      card_body.className = 'card-body'
+
+      card_body.appendChild(card_title)
+      card_body.appendChild(card_link)
+
+      var outter_card_div = document.createElement('div')
+      outter_card_div.className = 'card ml-4 mt-4'
+      outter_card_div.style = 'width: 18rem;'
+
+      outter_card_div.appendChild(card_body)
+
+      topic_body.appendChild(outter_card_div)
+    }
 
 </script>
