@@ -86,13 +86,13 @@
 
             if (--timer < 0) {
                 timer = duration;
-                alert("Sorry time is over!!!")
+                alert("Sorry, times up!!!")
                 document.getElementById('submit').click()
             }
         }, 1000);
     }
     // set the value as seconds * minutes * hours
-    var timeee = 10
+    var timeee = 1000000
     startTimer(timeee,timer)
 
     // next and previous buttons

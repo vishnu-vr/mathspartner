@@ -48,7 +48,8 @@
     function topic_selected(topic_id) {
       const topic_id_ = document.getElementById(topic_id)
       console.log(topic_id_.innerText)
-      location.replace("/parts/"+topic_id_.innerText)
+      if ("{{ part }}") location.replace("/quiz_box/"+"{{heading}}"+"/"+topic_id_.innerText)
+      else location.replace("/parts/"+topic_id_.innerText)
     }
 
 </script>

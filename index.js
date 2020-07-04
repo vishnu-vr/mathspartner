@@ -35,7 +35,9 @@ app.use(express.urlencoded({ extended:false }))
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
 // quiz box
-app.get('/quiz_box', (req,res) => {
+app.get('/quiz_box/:topic_name/:part_no', (req,res) => {
+
+	const heading = req.params.topic_name + " " + req.params.part_no
 
 	var dummy_questions = [
 		{question:"question_1", options:['A','B','C','D'],correct:'D'},
@@ -49,7 +51,7 @@ app.get('/quiz_box', (req,res) => {
 	// console.log(dummy_questions)
 	// console.log(dummy_questions)
 	// dummy_questions = JSON.stringify(dummy_questions)
-	res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:"quiz_name", questions:dummy_questions})
+	res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:dummy_questions})
 })
 
 // topics page
@@ -62,7 +64,7 @@ app.get('/quiz', (req,res) => {
 // parts page
 app.get('/parts/:topic_name', (req,res) => {
 	var dummy_parts = ['part-1','part-2','part-3']
-	res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:dummy_parts})
+	res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:dummy_parts, part:true})
 })
 
 // classes
