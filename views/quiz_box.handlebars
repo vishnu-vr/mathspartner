@@ -75,6 +75,7 @@
 
     // saving user selected options
     var user_selected_options = []
+    // for (var i=0; i<questions.length; i++) user_selected_options[i] = 'empty'
 
     // saving current question number for next and previous
     // which is 0 initially
@@ -183,6 +184,13 @@
 
     function submit() {
         alert("you sure?")
+        var score = 0
+        for (var i=0; i<questions.length; i++){
+            if (user_selected_options[i] != null && 
+            questions[i].correct == user_selected_options[i].selected_option_innerText) score++
+        }
+        alert("score is : "+score)
+        location.reload();
     }
 
 </script>
