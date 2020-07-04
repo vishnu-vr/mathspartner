@@ -1,68 +1,5 @@
 <h1 class="mt-4 text-center">{{heading}}</h1>
 <div id="topic_body" class="row">
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-      {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
-  {{!-- card --}}
-  <div class="card ml-4 mt-4" style="width: 18rem;">
-    <div class="card-body">
-      <h5 class="card-title">Card title</h5>
-      <a href="#" class="card-link">Card link</a>
-    </div>
-  </div>
-  {{!-- card  --}}
 </div>
 
 <script>
@@ -76,25 +13,29 @@
     // get available topics
     var topics = {{{json topics }}}
 
-    console.log(topics)
+    // console.log(topics)
 
+    // creating topic cards
     const topic_body = document.getElementById('topic_body')
     topic_body .innerHTML = ''
     for (var i=0; i<topics.length; i++){
+      // card title - h5
       var card_title = document.createElement('h5')
+      card_title.id = i
       card_title.innerText = topics[i]
-
-      var card_link = document.createElement('a')
-      card_link.href = '#'
-      card_link.className = 'card-link'
+      // link button
+      var card_link = document.createElement('button')
+      card_link.setAttribute('onclick','topic_selected('+ i +')')
+      card_link.type = 'button'
+      card_link.className = 'btn btn-secondary'
       card_link.innerText = 'topic link'
-
+      // card-body - div
       var card_body = document.createElement('div')
       card_body.className = 'card-body'
-
+      // appending above items
       card_body.appendChild(card_title)
       card_body.appendChild(card_link)
-
+      // outter most div
       var outter_card_div = document.createElement('div')
       outter_card_div.className = 'card ml-4 mt-4'
       outter_card_div.style = 'width: 18rem;'
@@ -102,6 +43,12 @@
       outter_card_div.appendChild(card_body)
 
       topic_body.appendChild(outter_card_div)
+    }
+
+    function topic_selected(topic_id) {
+      const topic_id_ = document.getElementById(topic_id)
+      console.log(topic_id_.innerText)
+      location.replace("/parts/"+topic_id_.innerText)
     }
 
 </script>
