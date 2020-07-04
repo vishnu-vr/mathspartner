@@ -2,6 +2,18 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const shuffle = require('./helper_functions')
+// var mysql = require('mysql');
+
+// var con = mysql.createConnection({
+// 	host: "192.168.64.2",
+// 	user: "vishnu",
+// 	password: "2020"
+//   });
+  
+//   con.connect(function(err) {
+// 	if (err) throw err;
+// 	console.log("Database Connected!");
+//   });
 
 const app = express()
 
@@ -35,9 +47,9 @@ app.use(express.urlencoded({ extended:false }))
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
 // quiz box
-app.get('/quiz_box/:topic_name/:part_no', (req,res) => {
+app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 
-	const heading = req.params.topic_name + " " + req.params.part_no
+	const heading = req.params.topic_name + " " + req.params.part_no + " " + req.params.diff_level
 
 	var dummy_questions = [
 		{question:"question_1", options:['A','B','C','D'],correct:'D'},
@@ -65,6 +77,14 @@ app.get('/quiz', (req,res) => {
 app.get('/parts/:topic_name', (req,res) => {
 	var dummy_parts = ['part-1','part-2','part-3']
 	res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:dummy_parts, part:true})
+})
+
+// diff_level page
+app.get('/diff_level/:topic_name/:part_no', (req,res) => {
+	const heading = req.params.topic_name + " " + req.params.part_no
+
+	var dummy_diff_levels = ['easy','medium','hard']
+	res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:dummy_diff_levels, diff_level:true})
 })
 
 // classes

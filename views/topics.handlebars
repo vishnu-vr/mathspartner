@@ -1,4 +1,4 @@
-<h1 class="mt-4 text-center">{{heading}}</h1>
+<h1 id="heading" class="mt-4 text-center"></h1>
 <div id="topic_body" class="row">
 </div>
 
@@ -6,6 +6,11 @@
     // set the title
     document.getElementById('title').innerText = "{{title}}"
     
+    // set the heading
+    // setting this way because of &amp;
+    const heading_ = document.getElementById('heading')
+    heading_.innerHTML = "{{ heading }}"
+
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
@@ -48,8 +53,19 @@
     function topic_selected(topic_id) {
       const topic_id_ = document.getElementById(topic_id)
       console.log(topic_id_.innerText)
-      if ("{{ part }}") location.replace("/quiz_box/"+"{{heading}}"+"/"+topic_id_.innerText)
-      else location.replace("/parts/"+topic_id_.innerText)
+      // redirecting to find available difficult levels
+      if ("{{ part }}") {
+        window.location = "/diff_level/"+"{{heading}}"+"/"+topic_id_.innerText
+      }
+      // redirecting to the quiz box
+      else if ("{{ diff_level }}") {
+        var splitted = "{{heading}}".split(' ')
+        window.location = "/quiz_box/"+splitted[0]+"/"+splitted[1]+"/"+topic_id_.innerText
+      }
+      // redirecting to find available parts
+      else {
+        window.location = "/parts/"+topic_id_.innerText
+      }
     }
-
+// /quiz_box/:topic_name/:part_no/:diff_level
 </script>
