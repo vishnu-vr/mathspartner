@@ -10,6 +10,7 @@
     <div class="jumbotron mt-4 text-center">
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
     {{!-- question --}}
+    <p class="text-right" id="timer">timer here</p>
     <p class="lead display-4" id="question">question comes here ?</p>
     <hr class="my-4">
     {{!-- list of answers --}}
@@ -44,6 +45,29 @@
 
     // get the questions and answers
     var questions = {{{json questions }}}
+
+    // timer
+    const timer = document.getElementById('timer')
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10)
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = duration;
+                alert("times up!")
+            }
+        }, 1000);
+    }
+    // set the value as seconds * minutes * hours
+    var timeee = 60 * 10 * 10
+    startTimer(timeee,timer)
 
     // next and previous buttons
     const next_button = document.getElementById('next')
