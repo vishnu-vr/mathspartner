@@ -130,9 +130,16 @@
     // old selected_option
     var old_selected_option = null;
     function option_selected(option_id) {
+        // unhighlighting the previously clicked option
         if (old_selected_option != null) {
             old_selected_option.className = 'list-group-item'
             old_selected_option.removeAttribute("style");
+        }
+
+        // unhighlighting the previously saved option
+        if (user_selected_options[current_question_num] != null){
+            const to_be_highlighted = document.getElementById(user_selected_options[current_question_num].option_id)
+            to_be_highlighted.className = 'list-group-item'
         }
 
         const selected_option = document.getElementById(option_id)
