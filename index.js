@@ -1,6 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
+const shuffle = require('./helper_functions')
 
 const app = express()
 
@@ -43,6 +44,9 @@ app.get('/quiz_box', (req,res) => {
 		{question:"question_4", options:['A','B','C','D'],correct:'D'},
 		{question:"question_5", options:['A','B','C','D'],correct:'D'},
 	]
+	shuffle(dummy_questions)
+	for (var i=0; i<dummy_questions.length; i++) shuffle(dummy_questions[i].options)
+	// console.log(dummy_questions)
 	// console.log(dummy_questions)
 	// dummy_questions = JSON.stringify(dummy_questions)
 	res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:"quiz_name", questions:dummy_questions})
