@@ -19,13 +19,13 @@ console.log("Database Connected!");
 // if (err) throw err;
 // console.log("1 record inserted");
 // });
-let table_name_for_duration = 'RATIOpart_1'
-let diff_level = 'easy'
-let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+diff_level+"' "
-con.query(sql, function (err, result, fields) {
-	if (err) throw err;
-	console.log(result[0].duration);
-});
+// let table_name_for_duration = 'RATIOpart_1'
+// let diff_level = 'easy'
+// let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+diff_level+"' "
+// con.query(sql, function (err, result, fields) {
+// 	if (err) throw err;
+// 	console.log(result[0].duration);
+// });
 
 
 

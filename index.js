@@ -49,6 +49,12 @@ app.use(express.urlencoded({ extended:false }))
 // home
 app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 
+// login
+app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
+
+// dashboard
+app.post('/dashboard', (req,res) => res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board"}))
+
 // quiz box
 app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 
