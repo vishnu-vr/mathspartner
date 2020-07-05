@@ -4,12 +4,13 @@ const path = require('path')
 const shuffle = require('./helper_functions')
 var creds = require('./creds')
 const mysql = require('mysql');
+const { table } = require('console')
 
 const con = mysql.createConnection({
 	host: creds.host,
 	user: creds.user,
 	password: creds.password,
-	database: "mathspartner"
+	database: creds.database
 });
 
 con.connect(function(err) {
@@ -52,7 +53,6 @@ app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 
 	const heading = req.params.topic_name + " " + req.params.part_no + " " + req.params.diff_level
-
 	var dummy_questions = [
 		{question:"question_1", options:['A','B','C','D'],correct:'D'},
 		{question:"question_2", options:['A','B','C','D'],correct:'D'},
@@ -60,12 +60,37 @@ app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 		{question:"question_4", options:['A','B','C','D'],correct:'D'},
 		{question:"question_5", options:['A','B','C','D'],correct:'D'},
 	]
-	shuffle(dummy_questions)
-	for (var i=0; i<dummy_questions.length; i++) shuffle(dummy_questions[i].options)
-	// console.log(dummy_questions)
-	// console.log(dummy_questions)
-	// dummy_questions = JSON.stringify(dummy_questions)
-	res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:dummy_questions})
+
+	const table_name_for_duration = req.params.topic_name + req.params.part_no
+	// console.log(table_name_for_duration)
+	const table_name_for_questions = req.params.topic_name + req.params.part_no + req.params.diff_level
+	// console.log(table_name_for_questions)
+	let sql = "SELECT * FROM " + table_name_for_questions
+	con.query(sql, function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result);
+		var questions = []
+		for (var i=0; i<result.length; i++){
+			var options = []
+			options.push(result[i].option_1)
+			options.push(result[i].option_2)
+			options.push(result[i].option_3)
+			options.push(result[i].option_4)
+			questions.push({question:result[i].question, options:options,correct:result[i].correct})
+		}
+		// console.log(questions)
+		shuffle(questions)
+		for (var i=0; i<questions.length; i++) shuffle(questions[i].options)
+
+		// fetching the time limit for the quiz
+		let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+req.params.diff_level+"' "
+		con.query(sql, function (err, result, fields) {
+			if (err) throw err;
+			// console.log(result[0].duration);
+			const time = result[0].duration
+			res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time})
+		});
+	});
 })
 
 // topics page
@@ -101,9 +126,20 @@ app.get('/parts/:topic_name', (req,res) => {
 // diff_level page
 app.get('/diff_level/:topic_name/:part_no', (req,res) => {
 	const heading = req.params.topic_name + " " + req.params.part_no
-
 	var dummy_diff_levels = ['easy','medium','hard']
-	res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:dummy_diff_levels, diff_level:true})
+
+	const table_name = req.params.topic_name+req.params.part_no
+	let sql = "SELECT diff_level FROM " + table_name
+	con.query(sql, function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result);
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].diff_level)
+		}
+
+		res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:topics, diff_level:true})
+	});
 })
 
 // classes

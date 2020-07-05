@@ -19,21 +19,19 @@ console.log("Database Connected!");
 // if (err) throw err;
 // console.log("1 record inserted");
 // });
-let name = 'RATIO'
-let sql = "SELECT parts FROM index_table WHERE topic_name = '"+name+"' "
+let table_name_for_duration = 'RATIOpart_1'
+let diff_level = 'easy'
+let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+diff_level+"' "
 con.query(sql, function (err, result, fields) {
 	if (err) throw err;
-	console.log(result[0].parts);
-	var topics = result[0].parts.split('#')
-	// topics.push(result[0])
-	console.log(topics)
+	console.log(result[0].duration);
 });
 
 
 
 // // creating info-part table for different quiz
 
-// var sql = "CREATE TABLE RATIOpart_3 (id INT AUTO_INCREMENT PRIMARY KEY, diff_level VARCHAR(1), duration VARCHAR(20))";
+// var sql = "CREATE TABLE RATIOpart_3 (id INT AUTO_INCREMENT PRIMARY KEY, diff_level VARCHAR(20), duration VARCHAR(20))";
 // con.query(sql, function (err, result) {
 // if (err) throw err;
 // console.log("Table created");
