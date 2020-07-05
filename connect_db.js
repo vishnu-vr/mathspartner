@@ -2,7 +2,7 @@
 var creds = require('./creds')
 const mysql = require('mysql2/promise');
 
-
+var conn = null
 async function connect() {
 	try{
 		var con = await mysql.createConnection({
@@ -11,20 +11,29 @@ async function connect() {
 			password: creds.password,
 			database: "mathspartner"
 		});
+		conn = con
 		// test = con
 		// return con
-		const result = await con.query(`select * from ??`,['index_table'])
+		// const result = await con.query(`select * from ??`,['index_table'])
 		// console.table(result[0])
-		return result[0]
+		return con
 	}
-	catch(ex){
-		console.error(ex)
+	catch(err){
+		return err
 	}
 }
 
-connect().then(data => {
-	console.table(data)
-	// console.log("here")
-})
+
+async function get_saved_connection() {
+	await connect().then(con => {
+		console.log(conn)
+	})
+}
+
+get_saved_connection()
 
 module.exports = connect()
+
+
+
+

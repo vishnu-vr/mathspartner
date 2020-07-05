@@ -2,19 +2,22 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const shuffle = require('./helper_functions')
-const connect_db = require('./connect_db')
+var creds = require('./creds')
+const mysql = require('mysql');
 
+const con = mysql.createConnection({
+	host: creds.host,
+	user: creds.user,
+	password: creds.password,
+	database: "mathspartner"
+});
 
-console.log(connect_db.connect)
+con.connect(function(err) {
+	if (err) throw err;
+	console.log("Database Connected!");
+});
 
 const app = express()
-
-// middleware - logger
-const logger = (req,res,next) => {
-	console.log(`log : ${req.protocol}://${req.get('host')}${req.originalUrl}`)
-	// console.log(JSON.stringify(req.body))
-	next()
-}
 
 // initializing handlebar template engine
 app.engine('handlebars', exphbs({defaultLayout: 'main',
@@ -23,6 +26,13 @@ app.engine('handlebars', exphbs({defaultLayout: 'main',
 app.set('view engine', 'handlebars');
 
 // ############## MIDDLEWARES ###################
+// middleware - logger
+const logger = (req,res,next) => {
+	console.log(`log : ${req.protocol}://${req.get('host')}${req.originalUrl}`)
+	// console.log(JSON.stringify(req.body))
+	next()
+}
+
 // public
 app.use(express.static(path.join(__dirname, '/public')));
 // initializing the logger middleware
@@ -62,13 +72,30 @@ app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 app.get('/quiz', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
 						,'work & time','simple interest']
-	res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPICS", topics:dummy_topics})
+
+	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result[0].topic_name);
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].topic_name)
+		}
+		// console.log(topics)
+		res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPICS", topics:topics})
+	});
 })
 
 // parts page
 app.get('/parts/:topic_name', (req,res) => {
 	var dummy_parts = ['part-1','part-2','part-3']
-	res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:dummy_parts, part:true})
+	let name = req.params.topic_name
+	let sql = "SELECT parts FROM index_table WHERE topic_name = '"+name+"' "
+	con.query(sql, function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result[0].parts);
+		var topics = result[0].parts.split('#')
+		res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:topics, part:true})
+	});
 })
 
 // diff_level page

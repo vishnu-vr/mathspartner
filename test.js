@@ -19,11 +19,17 @@ console.log("Database Connected!");
 // if (err) throw err;
 // console.log("1 record inserted");
 // });
+let name = 'RATIO'
+let sql = "SELECT parts FROM index_table WHERE topic_name = '"+name+"' "
+con.query(sql, function (err, result, fields) {
+	if (err) throw err;
+	console.log(result[0].parts);
+	var topics = result[0].parts.split('#')
+	// topics.push(result[0])
+	console.log(topics)
+});
 
-// con.query("SELECT * FROM index_table", function (err, result, fields) {
-// if (err) throw err;
-// console.log(result);
-// });
+
 
 // // creating info-part table for different quiz
 
