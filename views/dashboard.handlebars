@@ -2,9 +2,24 @@
   <div class="col-sm">
     <h1 class="mt-4 text-center">{{ heading }}</h1>
     <hr>
+    <nav id="nav" class="nav nav-pills flex-column flex-sm-row mt-5">
+        <button id="add_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="add_quiz()">Add Quiz</button>
+        <button id="edit_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="edit_quiz()">Edit Quiz</button>
+        {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
+        {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
+    </nav>
+    
   </div>
 </div>
 
 <script>
+    function edit_quiz(){
+        console.log('edit')
+    }
+
+    function add_quiz(){
+        console.log('add')
+    }
+
     document.getElementById('title').innerText = "{{title}}"
 </script>
