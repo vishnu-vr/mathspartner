@@ -8,16 +8,210 @@
         {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
         {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
     </nav>
-    
+    <h3 id="selected_option" class="mt-4 text-center"></h3>
+
+<div id="add_quiz_controls" style="display: ;" class="container ml-2 mt-4">
+  <div class="row mt-4">
+    <div class="col-sm">
+      
+    </div>
+    <div class="col-md-">
+    {{!-- topic name --}}
+    <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
+        <div class="dropdown-menu">
+        <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
+        <div role="separator" class="dropdown-divider"></div>
+            <div id="already_existing_topics">
+            <p class="dropdown-item" onclick="topic_name_selected('ratio')">Ratio</p>
+            <p class="dropdown-item" onclick="topic_name_selected('another action')">Another action</p>
+            <p class="dropdown-item" onclick="topic_name_selected('something else')">Something else here</p>
+            </div>
+        </div>
+    </div>
+    <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button">
+    </div>
+    {{!-- part number --}}
+    <div class="input-group input-group-sm mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-sm">Part Number</span>
+    </div>
+    <input type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+    </div>
+    {{!-- difficulty level --}}
+    <div class="dropdown show">
+    <a id="diff_level_dropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        difficulty level
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" onclick="diff_level('easy')">easy</a>
+        <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
+        <a class="dropdown-item" onclick="diff_level('hard')">hard</a>
+    </div>
+    </div>
+    {{!-- questions and options --}}
+    <div id="questions_and_options">
+        <div class="question_1">
+            {{!-- question --}}
+            <div class="form-group mt-4">
+                <label for="exampleFormControlTextarea1">Question</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+            {{!-- options-1 --}}
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                <input name="radio_1" type="radio" aria-label="Radio button for following text input" checked>
+                </div>
+            </div>
+            <input type="text" class="form-control" aria-label="Text input with radio button">
+            </div>
+            {{!-- options-2 --}}
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                <input name="radio_1" type="radio" aria-label="Radio button for following text input">
+                </div>
+            </div>
+            <input type="text" class="form-control" aria-label="Text input with radio button">
+            </div>
+            {{!-- options-3 --}}
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                <input name="radio_1" type="radio" aria-label="Radio button for following text input">
+                </div>
+            </div>
+            <input type="text" class="form-control" aria-label="Text input with radio button">
+            </div>
+            {{!-- options-4 --}}
+            <div class="input-group">
+            <div class="input-group-prepend">
+                <div class="input-group-text">
+                <input name="radio_1" type="radio" aria-label="Radio button for following text input">
+                </div>
+            </div>
+            <input type="text" class="form-control" aria-label="Text input with radio button">
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-dark mt-4" onclick="add_more_questions()">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+            <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        </svg>
+    </button>
+    {{!-- <div class="input-group input-group-lg">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-lg">Large</span>
+    </div>
+    <input type="text" class="form-control" aria-label="Large" aria-describedby="inputGroup-sizing-sm">
+    </div> --}}
+
+    </div>
+    <div class="col-sm">
+      
+    </div>
+  </div>
+</div>
+
   </div>
 </div>
 
 <script>
+
+    const a = document.getElementsByClassName('question_1')
+    console.log(a.item(0).children[0].children[1].value = "question-1")
+    console.log(a.item(0).children[1].children[1].value = 'option-1')
+    console.log(a.item(0).children[2].children[1].value = 'option-2')
+    console.log(a.item(0).children[3].children[1].value = 'option-3')
+    console.log(a.item(0).children[4].children[1].value = 'option-4')
+
+    const radio_selected = document.getElementsByName('radio_1')
+    for (var i=0; i<4; i++){
+        if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
+    }
+
+    const questions_and_options = document.getElementById('questions_and_options')
+    var question_count = 1
+    function add_more_questions(){
+        console.log("clicked me")
+        question_count++
+        // question and options body
+        const question = document.createElement('div')
+        question.className = 'question_' + question_count
+        // question wrapper div
+        const question_wrapper = document.createElement('div')
+        question_wrapper.className = 'form-group mt-4'
+        // label for question
+        const question_label = document.createElement('label')
+        question_label.setAttribute('for','exampleFormControlTextarea1')
+        question_label.innerHTML = 'Question'
+        // question text area
+        const question_textarea = document.createElement('textarea')
+        question_textarea.className = 'form-control'
+        question_textarea.id = 'exampleFormControlTextarea1'
+        question_textarea.setAttribute('rows','3')
+        // appending label and text area
+        question_wrapper.appendChild(question_label)
+        question_wrapper.appendChild(question_textarea)
+        // appending question_wrapper to main question div
+        question.appendChild(question_wrapper)
+
+        for (var i=0; i<4; i++){
+            // options
+            // main option div
+            const input_group = document.createElement('div') //input-group
+            input_group.className = 'input-group'
+            const input_group_prepend = document.createElement('div')
+            input_group_prepend.className = 'input-group-prepend'
+            const input_group_text = document.createElement('input-group-text')
+            input_group_text.className = 'input-group-text'
+            const question_radio = document.createElement('input')
+            question_radio.type = 'radio'
+            question_radio.name = 'radio_' + question_count
+            question_radio.setAttribute('aria-label','aria-label="Radio button for following text input"')
+            input_group_text.appendChild(question_radio)
+            input_group_prepend.appendChild(input_group_text)
+            input_group.appendChild(input_group_prepend)
+            const text_input_with_radio = document.createElement('input')
+            text_input_with_radio.type = 'text'
+            text_input_with_radio.className = 'form-control'
+            text_input_with_radio.setAttribute('aria-label','Text input with radio button')
+            input_group.appendChild(text_input_with_radio)
+
+            // appending options to main questio div
+            question.appendChild(input_group)
+        }
+        // appending everything to the screen
+        questions_and_options.appendChild(question)
+    }
+
+    function diff_level(level) {
+        var diff_level_dropdown = document.getElementById('diff_level_dropdown')
+        diff_level_dropdown.innerHTML = level
+    }
+
+    function topic_name_selected(selected_topic_name){
+        console.log(selected_topic_name)
+        const topic_name_input = document.getElementById('topic_name')
+        if (selected_topic_name != 'new') topic_name_input.value = selected_topic_name
+    }
+
     function edit_quiz(){
+        document.getElementById('selected_option').innerHTML = 'Edit Quiz'
+        document.getElementById('add_quiz_controls').style.display = 'none'
+        // document.getElementById('edit_quiz_controls').style.display = ''
         console.log('edit')
     }
 
     function add_quiz(){
+        document.getElementById('selected_option').innerHTML = 'Add Quiz'
+        document.getElementById('add_quiz_controls').style.display = ''
+        // document.getElementById('edit_quiz_controls').style.display = 'none'
         console.log('add')
     }
 
