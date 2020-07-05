@@ -2,18 +2,10 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const shuffle = require('./helper_functions')
-// var mysql = require('mysql');
+const connect_db = require('./connect_db')
 
-// var con = mysql.createConnection({
-// 	host: "192.168.64.2",
-// 	user: "vishnu",
-// 	password: "2020"
-//   });
-  
-//   con.connect(function(err) {
-// 	if (err) throw err;
-// 	console.log("Database Connected!");
-//   });
+
+console.log(connect_db.connect)
 
 const app = express()
 
