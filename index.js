@@ -5,6 +5,7 @@ const shuffle = require('./helper_functions')
 var creds = require('./creds')
 const mysql = require('mysql');
 const { table } = require('console')
+const { json } = require('express')
 
 const con = mysql.createConnection({
 	host: creds.host,
@@ -53,7 +54,26 @@ app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
 
 // dashboard
-app.post('/dashboard', (req,res) => res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board"}))
+app.post('/dashboard', (req,res) => {
+	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result[0].topic_name);
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].topic_name)
+		}
+		// console.log(topics)
+		res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board",topics_in_db:topics})
+	});
+	
+})
+
+// add quiz to db
+app.post('/add_quiz', (req,res) => {
+	const data = req.body
+	console.log(data)
+	res.json("asd")
+})
 
 // quiz box
 app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
@@ -175,8 +195,9 @@ app.get('/api', (req,res) => {
 	res.json(dic)
 })
 // post with param in url
-app.post('/api/:id', (req,res) => {
-	res.json(req.params.id)
+app.post('/api/', (req,res) => {
+	console.log(req.body)
+	res.json("asd")
 })
 
 // get an error with status 400

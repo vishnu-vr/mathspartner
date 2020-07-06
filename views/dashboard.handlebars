@@ -8,9 +8,10 @@
         {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
         {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
     </nav>
+    <h3 id='greeting' class="mt-4 text-center">Welcome Madhu</h3>
     <h3 id="selected_option" class="mt-4 text-center"></h3>
         {{!-- add or edit quiz begins here --}}
-        <div id="add_quiz_controls" style="display:;" class="container ml-2 mt-4">
+        <div id="add_quiz_controls" style="display:none;" class="container ml-2 mt-4">
         <div class="row mt-4">
             <div class="col-sm">
             
@@ -104,6 +105,7 @@
 </div>
 
 <script>
+    const greeting = document.getElementById('greeting')
 
     //const a = document.getElementsByClassName('question_1')
     //console.log(a.item(0).children[0].children[1].value = "question-1")
@@ -116,6 +118,19 @@
     //for (var i=0; i<4; i++){
     //    if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
     //}
+
+    // adding the topics_in_db to dropdown list
+    //<p class="dropdown-item" onclick="topic_name_selected('ratio')">Ratio</p>
+    const already_existing_topics = document.getElementById('already_existing_topics')
+    already_existing_topics.innerHTML = ''
+    const topics_in_db = {{{json topics_in_db}}}
+    for (var i=0; i<topics_in_db.length; i++){
+        var t = document.createElement('p')
+        t.className = 'dropdown-item'
+        t.setAttribute('onclick',"topic_name_selected('"+topics_in_db[i]+"')") 
+        t.innerHTML = topics_in_db[i]
+        already_existing_topics.appendChild(t)
+    }
 
     // final submission for both editing or adding quiz
     function final_submit() {
@@ -189,6 +204,12 @@
                 'options':options_list,
                 'correct':correct_choice})
                 console.log(questions_and_options_dic)
+
+                // sending data to back-end
+                postData('/add_quiz', questions_and_options_dic)
+                .then(data => {
+                    console.log(data); // JSON data parsed by `data.json()` call
+                });
             }
         }
     }
@@ -275,6 +296,8 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // disable greeting
+        greeting.hidden = true
         // disabling new option in topic name
         const new_option = document.getElementById('new_option')
         new_option.hidden = true
@@ -305,6 +328,8 @@
     }
 
     function add_quiz(){
+        // disable greeting
+        greeting.hidden = true
         // enabling new option in topic name
         const new_option = document.getElementById('new_option')
         new_option.hidden = false
