@@ -48,9 +48,7 @@
                             <div role="separator" class="dropdown-divider"></div>
                         </div>
                         <div id="already_existing_parts">
-                        <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
-                        <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
-                        <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
+
                         </div>
                     </div>
                 </div>
@@ -209,16 +207,21 @@
                 }
                 if (!user_checked_radio){
                     alert("choose a correct option for question "+i)
+                    return
                 }
                 // if questions, answers and correct option are all validated
                 // cross checking whether the new entered name or part number is present in
                 // the db or not (can't fully trust the user)
                 if (!topic_name_exists){
-                    if (topics_in_db.includes(topic_name.value)) topic_name_exists = true
-                }
-                if (!part_number_exists){
-                    if (already_existing_parts_from_db.includes(part_number_input.value.toString())){
-                        part_number_exists = true
+                    if (topics_in_db.includes(topic_name.value)) {
+                        topic_name_exists = true
+                        alert("You choose new topic name, but this quiz alreay exists")
+                        return
+                    }
+                    if (!part_number_exists){
+                        if (already_existing_parts_from_db.includes(part_number_input.value.toString())){
+                            part_number_exists = true
+                        }
                     }
                 }
                 questions_and_options_dic.push({'topic_name':topic_name.value,
@@ -261,13 +264,27 @@
                 part_number_exists = true
             }
             // if new is selected then clear the space if anything present
-            if (part == 'new') part_number_input.value = ''
+            if (part == 'new') {
+                part_number_input.value = ''
+                const permissible_diff_levels = document.getElementById('permissible_diff_levels')
+                permissible_diff_levels.innerHTML = ''
+                // <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
+                var levels = ['easy','medium','hard']
+                for (var i=0; i<3; i++){
+                    var a= document.createElement('a')
+                    a.className = 'dropdown-item'
+                    a.setAttribute('onclick','diff_level("'+levels[i]+'")')
+                    a.innerHTML = levels[i]
+                    permissible_diff_levels.appendChild(a)
+                }
+            }
         }
 
         // if part number is not new then fetch its diff leves
         if ( part != 'new'){
             // fetch diff_level of that part
             var topic_name = document.getElementById('topic_name')
+            if (!topics_in_db.includes(topic_name.value)) return
             postData('/get_diff_level', {"part_number":'part_'+part,"topic_name":topic_name.value})
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
@@ -353,7 +370,7 @@
     }
 
     // to highlight the topic name selected
-    var already_existing_parts_from_db = null
+    var already_existing_parts_from_db = []
     var topic_name_exists = false
     function topic_name_selected(selected_topic_name){
         // inserting the selected topic name as the button label
@@ -386,6 +403,9 @@
                 }
             });
         }
+        // resetting the input field if new selected
+        if (selected_topic_name == 'new') document.getElementById('topic_name').value = ''
+            
     }
 
     var editing_mode = false

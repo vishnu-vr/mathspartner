@@ -56,7 +56,10 @@ app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", 
 // dashboard
 app.post('/dashboard', (req,res) => {
 	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
 		// console.log(result[0].topic_name);
 		var topics = []
 		for (var i=0; i<result.length; i++){
@@ -72,7 +75,10 @@ app.post('/dashboard', (req,res) => {
 app.post('/parts_from_db', (req,res) => {
 	const data = req.body.selected_topic_name
 	con.query("SELECT parts FROM index_table WHERE topic_name = '"+data+"'", function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.json(null)
+		}
 		console.log(result[0]);
 		// spliting parts
 		var parts = []
@@ -94,7 +100,10 @@ app.post('/get_diff_level', (req,res) => {
 	var table = diff_level.topic_name+diff_level.part_number
 	var available_diff_levels = ['easy','medium','hard']
 	con.query("SELECT diff_level FROM " + table, function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.json(null)
+		}
 		// console.log(result);
 	
 		var diff_levels_in_db = []
@@ -160,7 +169,10 @@ app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 		// fetching the time limit for the quiz
 		let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+req.params.diff_level+"' "
 		con.query(sql, function (err, result, fields) {
-			if (err) throw err;
+			if (err) {
+				console.log(err)//throw err;
+				res.render("<h1>something went wrong</h1>")
+			}
 			// console.log(result[0].duration);
 			const time = result[0].duration
 			res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time})
@@ -174,7 +186,10 @@ app.get('/quiz', (req,res) => {
 						,'work & time','simple interest']
 
 	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
 		// console.log(result[0].topic_name);
 		var topics = []
 		for (var i=0; i<result.length; i++){
@@ -191,7 +206,10 @@ app.get('/parts/:topic_name', (req,res) => {
 	let name = req.params.topic_name
 	let sql = "SELECT parts FROM index_table WHERE topic_name = '"+name+"' "
 	con.query(sql, function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
 		// console.log(result[0].parts);
 		var topics = result[0].parts.split('#')
 		res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:topics, part:true})
@@ -206,7 +224,10 @@ app.get('/diff_level/:topic_name/:part_no', (req,res) => {
 	const table_name = req.params.topic_name+req.params.part_no
 	let sql = "SELECT diff_level FROM " + table_name
 	con.query(sql, function (err, result, fields) {
-		if (err) throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
 		// console.log(result);
 		var topics = []
 		for (var i=0; i<result.length; i++){
