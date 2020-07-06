@@ -10,7 +10,7 @@
     </nav>
     <h3 id="selected_option" class="mt-4 text-center"></h3>
         {{!-- add or edit quiz begins here --}}
-        <div id="add_quiz_controls" style="display:none;" class="container ml-2 mt-4">
+        <div id="add_quiz_controls" style="display:;" class="container ml-2 mt-4">
         <div class="row mt-4">
             <div class="col-sm">
             
@@ -75,6 +75,7 @@
             <div id="questions_and_options">
 
             </div>
+            {{!-- add more question button 'plus btn' --}}
             <button id="add_more_questions_btn" type="button" class="btn btn-dark mt-4" onclick="add_more_questions()">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
@@ -82,6 +83,9 @@
                     <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                 </svg>
             </button>
+            {{!-- submit button --}}
+            <br>
+            <button id="final_submit" type="button" class="btn btn-primary mt-4" onclick="final_submit()">Submit</button>
             {{!-- <div class="input-group input-group-lg">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-lg">Large</span>
@@ -112,6 +116,82 @@
     //for (var i=0; i<4; i++){
     //    if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
     //}
+
+    // final submission for both editing or adding quiz
+    function final_submit() {
+        // console.log("hey")
+        // topic name
+        var topic_name = document.getElementById('topic_name')
+        if (topic_name.value == '') alert("topic name is missing")
+        else console.log(topic_name.value)
+        // part number
+        var part_number_input = document.getElementById('part_number_input')
+        if (part_number_input.value == '') {
+            alert("part number is missing")
+            return
+        }
+        else console.log(part_number_input.value)
+        // difficulty level
+        var diff_level_dropdown = document.getElementById('diff_level_dropdown')
+        if (diff_level_dropdown.innerText == 'difficulty level ') {
+            alert('choose a difficulty level')
+            return
+        }
+        else console.log(diff_level_dropdown.innerHTML)
+        // checking whether user has entered some questions
+        if (question_count == 0) {
+            alert('add some questions first')
+            return
+        }
+        else{
+            // the list of objects which will be sent to the back-end
+            var questions_and_options_dic = []
+            for (var i=1; i<=question_count; i++){
+                var question_ = 'question_' + i
+                var question = document.getElementsByClassName(question_)
+                // question boxes validation
+                if (question.item(0).children[0].children[1].value == '') {
+                    alert('question '+i+' is missing')
+                    return
+                }
+
+                // options validation
+                // var correct_option_check = 0
+                var options_list = []
+                for (var j=1; j<=4; j++){
+                    if (question.item(0).children[j].children[1].value == ''){
+                        alert('option '+j+' for question '+i+' is missing')
+                        return
+                    }
+                    // if option present
+                    options_list.push(question.item(0).children[j].children[1].value)
+                }
+                // check for the correct choice radio check
+                var radio_for_correct_answer = 'radio_' + i
+                var radio_selected = document.getElementsByName(radio_for_correct_answer)
+                var user_checked_radio = false
+                var correct_choice = null
+                for (var k=0; k<4; k++){
+                    if (radio_selected[k].checked) {
+                        user_checked_radio = true
+                        correct_choice = question.item(0).children[k+1].children[1].value
+                        console.log(correct_choice)
+                    }
+                }
+                if (!user_checked_radio){
+                    alert("choose a correct option for question "+i)
+                }
+                // if questions, answers and correct option are all validated
+                questions_and_options_dic.push({'topic_name':topic_name.value,
+                'part_number':part_number_input.value,
+                'diff_level':diff_level_dropdown.innerHTML,
+                'question':question.item(0).children[0].children[1].value,
+                'options':options_list,
+                'correct':correct_choice})
+                console.log(questions_and_options_dic)
+            }
+        }
+    }
 
     // for showing the selected part number on the button
     function part_number_selected(part) {
@@ -188,7 +268,7 @@
             const topic_name_btn = document.getElementById('topic_name_btn')
             topic_name_btn.innerHTML = selected_topic_name
         }
-        console.log(selected_topic_name)
+        // console.log(selected_topic_name)
         const topic_name_input = document.getElementById('topic_name')
         if (selected_topic_name != 'new') topic_name_input.value = selected_topic_name
     }
@@ -221,7 +301,7 @@
         document.getElementById('selected_option').innerHTML = 'Edit Quiz'
         document.getElementById('add_quiz_controls').style.display = ''
         // document.getElementById('edit_quiz_controls').style.display = ''
-        console.log('edit')
+        // console.log('edit')
     }
 
     function add_quiz(){
@@ -250,7 +330,7 @@
         document.getElementById('selected_option').innerHTML = 'Add Quiz'
         document.getElementById('add_quiz_controls').style.display = ''
         // document.getElementById('edit_quiz_controls').style.display = 'none'
-        console.log('add')
+        // console.log('add')
     }
 
     document.getElementById('title').innerText = "{{title}}"
