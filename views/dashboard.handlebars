@@ -71,51 +71,9 @@
             </div>
             {{!-- questions and options --}}
             <div id="questions_and_options">
-                <div class="question_1">
-                    {{!-- question --}}
-                    <div class="form-group mt-4">
-                        <label for="exampleFormControlTextarea1">Question</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                    {{!-- options-1 --}}
-                    <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                        <input name="radio_1" type="radio" aria-label="Radio button for following text input" checked>
-                        </div>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Text input with radio button">
-                    </div>
-                    {{!-- options-2 --}}
-                    <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                        <input name="radio_1" type="radio" aria-label="Radio button for following text input">
-                        </div>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Text input with radio button">
-                    </div>
-                    {{!-- options-3 --}}
-                    <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                        <input name="radio_1" type="radio" aria-label="Radio button for following text input">
-                        </div>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Text input with radio button">
-                    </div>
-                    {{!-- options-4 --}}
-                    <div class="input-group">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">
-                        <input name="radio_1" type="radio" aria-label="Radio button for following text input">
-                        </div>
-                    </div>
-                    <input type="text" class="form-control" aria-label="Text input with radio button">
-                    </div>
-                </div>
+
             </div>
-            <button type="button" class="btn btn-dark mt-4" onclick="add_more_questions()">
+            <button id="add_more_questions_btn" type="button" class="btn btn-dark mt-4" onclick="add_more_questions()">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
                     <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
@@ -141,17 +99,17 @@
 
 <script>
 
-    const a = document.getElementsByClassName('question_1')
-    console.log(a.item(0).children[0].children[1].value = "question-1")
-    console.log(a.item(0).children[1].children[1].value = 'option-1')
-    console.log(a.item(0).children[2].children[1].value = 'option-2')
-    console.log(a.item(0).children[3].children[1].value = 'option-3')
-    console.log(a.item(0).children[4].children[1].value = 'option-4')
+    //const a = document.getElementsByClassName('question_1')
+    //console.log(a.item(0).children[0].children[1].value = "question-1")
+    //console.log(a.item(0).children[1].children[1].value = 'option-1')
+    //console.log(a.item(0).children[2].children[1].value = 'option-2')
+    //console.log(a.item(0).children[3].children[1].value = 'option-3')
+    //console.log(a.item(0).children[4].children[1].value = 'option-4')
 
-    const radio_selected = document.getElementsByName('radio_1')
-    for (var i=0; i<4; i++){
-        if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
-    }
+    //const radio_selected = document.getElementsByName('radio_1')
+    //for (var i=0; i<4; i++){
+    //    if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
+    //}
 
     // for showing the selected part number on the button
     function part_number_selected(part) {
@@ -161,7 +119,7 @@
 
     // to add more question
     const questions_and_options = document.getElementById('questions_and_options')
-    var question_count = 1
+    var question_count = 0
     function add_more_questions(){
         console.log("clicked me")
         question_count++
@@ -174,7 +132,7 @@
         // label for question
         const question_label = document.createElement('label')
         question_label.setAttribute('for','exampleFormControlTextarea1')
-        question_label.innerHTML = 'Question'
+        question_label.innerHTML = 'Question ' + question_count
         // question text area
         const question_textarea = document.createElement('textarea')
         question_textarea.className = 'form-control'
@@ -227,6 +185,11 @@
     }
 
     function edit_quiz(){
+        // removing all the question boxes added when add quiz was clicked
+        questions_and_options.innerHTML = ''
+        // disabling add more question btn
+        const add_more_questions_btn = document.getElementById('add_more_questions_btn')
+        add_more_questions_btn.hidden = true
         // disabling the input box for topic name
         const topic_name_input = document.getElementById('topic_name')
         topic_name_input.hidden = true
@@ -244,6 +207,9 @@
     }
 
     function add_quiz(){
+        // enabling add more question btn
+        const add_more_questions_btn = document.getElementById('add_more_questions_btn')
+        add_more_questions_btn.hidden = false
         // enabling the input box for topic name
         const topic_name_input = document.getElementById('topic_name')
         topic_name_input.hidden = false
