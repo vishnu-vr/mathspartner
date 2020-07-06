@@ -22,10 +22,10 @@
             <div class="input-group-prepend">
                 <button id="topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                 <div class="dropdown-menu">
-                <div id="new_option">
-                    <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
-                    <div role="separator" class="dropdown-divider"></div>
-                </div>
+                    <div class="new_option">
+                        <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
+                        <div role="separator" class="dropdown-divider"></div>
+                    </div>
                     <div id="already_existing_topics">
                     <p class="dropdown-item" onclick="topic_name_selected('ratio')">Ratio</p>
                     <p class="dropdown-item" onclick="topic_name_selected('another action')">Another action</p>
@@ -36,20 +36,17 @@
             <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button">
             </div>
             {{!-- part number input box --}}
-            <div id='part_number'>
-                <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Part Number</span>
-                </div>
-                <input id="part_number_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                </div>
-            </div>
+
             {{!-- part number dropdown select --}}
             <div id='part_number_dropdown'>
                 <div class="input-group input-group-sm mb-3">
                 <div class="input-group-prepend">
                     <button id="part_number_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Part Number</button>
                     <div class="dropdown-menu">
+                        <div class="new_option">
+                            <p class="dropdown-item" onclick="part_number_selected('new')">New ?</p>
+                            <div role="separator" class="dropdown-divider"></div>
+                        </div>
                         <div id="already_existing_parts">
                         <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
                         <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
@@ -57,16 +54,18 @@
                         </div>
                     </div>
                 </div>
-                {{!-- <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button"> --}}
+                <input id="part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button">
                 </div>
             </div>
+            {{!-- new difficulty level --}}
+
             {{!-- difficulty level --}}
             <div class="dropdown show">
             <a id="diff_level_dropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 difficulty level
             </a>
 
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <div id="permissible_diff_levels" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" onclick="diff_level('easy')">easy</a>
                 <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
                 <a class="dropdown-item" onclick="diff_level('hard')">hard</a>
@@ -212,28 +211,84 @@
                     alert("choose a correct option for question "+i)
                 }
                 // if questions, answers and correct option are all validated
+                // cross checking whether the new entered name or part number is present in
+                // the db or not (can't fully trust the user)
+                if (!topic_name_exists){
+                    if (topics_in_db.includes(topic_name.value)) topic_name_exists = true
+                }
+                if (!part_number_exists){
+                    if (already_existing_parts_from_db.includes(part_number_input.value.toString())){
+                        part_number_exists = true
+                    }
+                }
                 questions_and_options_dic.push({'topic_name':topic_name.value,
-                'part_number':part_number_input.value,
+                'part_number':part_number_input.value.toString(),
                 'diff_level':diff_level_dropdown.innerHTML,
                 'question':question.item(0).children[0].children[1].value,
                 'options':options_list,
                 'correct':correct_choice,
-                'duration':duration_input.value})
+                'duration':duration_input.value,
+                'topic_name_exists':topic_name_exists,
+                'part_number_exists':part_number_exists})
                 console.log(questions_and_options_dic)
 
                 // sending data to back-end
                 postData('/add_quiz', questions_and_options_dic)
                 .then(data => {
                     console.log(data); // JSON data parsed by `data.json()` call
+                    // if everything went fine refresh the page
+                    location.reload();
                 });
             }
         }
     }
 
     // for showing the selected part number on the button
+    var part_number_exists = false
     function part_number_selected(part) {
-        const btn = document.getElementById('part_number_btn')
-        btn.innerHTML = part
+        // resetting the diff level to default
+        diff_level('difficulty level ')
+        // if in editing mode show the part number as button label
+        if (editing_mode){
+            const btn = document.getElementById('part_number_btn')
+            btn.innerHTML = part
+        }
+        // else show it in the input box
+        else{
+            const part_number_input = document.getElementById('part_number_input')
+            if (part != 'new') {
+                part_number_input.value = parseInt(part)
+                part_number_exists = true
+            }
+            // if new is selected then clear the space if anything present
+            if (part == 'new') part_number_input.value = ''
+        }
+
+        // if part number is not new then fetch its diff leves
+        if ( part != 'new'){
+            // fetch diff_level of that part
+            var topic_name = document.getElementById('topic_name')
+            postData('/get_diff_level', {"part_number":'part_'+part,"topic_name":topic_name.value})
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+                const permissible_diff_levels = document.getElementById('permissible_diff_levels')
+                if (data == null) {
+                    permissible_diff_levels.innerHTML = ''
+                    alert("You have already added easy, medium and hard quiz for this configuration")
+                }
+                else{
+                    // <a class="dropdown-item" onclick="diff_level('easy')">easy</a>
+                    permissible_diff_levels.innerHTML = ''
+                    for (var i=0; i<data.length; i++){
+                        var a = document.createElement('a')
+                        a.className = 'dropdown-item'
+                        a.setAttribute('onclick','diff_level("'+data[i]+'")')
+                        a.innerHTML = data[i]
+                        permissible_diff_levels.appendChild(a)
+                    }
+                }
+            });
+        }
     }
 
     // to add more question
@@ -298,6 +353,8 @@
     }
 
     // to highlight the topic name selected
+    var already_existing_parts_from_db = null
+    var topic_name_exists = false
     function topic_name_selected(selected_topic_name){
         // inserting the selected topic name as the button label
         // this feature is availble on when its edit mode
@@ -307,7 +364,28 @@
         }
         // console.log(selected_topic_name)
         const topic_name_input = document.getElementById('topic_name')
-        if (selected_topic_name != 'new') topic_name_input.value = selected_topic_name
+        // if topic is not new then fetch its parts
+        if (selected_topic_name != 'new') {
+            topic_name_input.value = selected_topic_name
+            topic_name_exists = true
+
+            // fetching parts available to the quiz
+            postData('/parts_from_db', {selected_topic_name:selected_topic_name})
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+                already_existing_parts_from_db = data
+                // <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
+                const already_existing_parts = document.getElementById('already_existing_parts')
+                already_existing_parts.innerHTML = ''
+                for (var i=0; i<data.length; i++){
+                    var p = document.createElement('p')
+                    p.className = 'dropdown-item'
+                    p.setAttribute('onclick','part_number_selected("'+data[i]+'")')
+                    p.innerHTML = data[i]
+                    already_existing_parts.appendChild(p)
+                }
+            });
+        }
     }
 
     var editing_mode = false
@@ -318,8 +396,10 @@
         // disable greeting
         greeting.hidden = true
         // disabling new option in topic name
-        const new_option = document.getElementById('new_option')
-        new_option.hidden = true
+        const new_option = document.getElementsByClassName('new_option')
+        console.log(new_option)
+        new_option[0].hidden = true
+        new_option[1].hidden = true
         // toggling the switch
         editing_mode = true
         // resetting the label on the button for topic name
@@ -333,9 +413,11 @@
         // disabling the input box for topic name
         const topic_name_input = document.getElementById('topic_name')
         topic_name_input.hidden = true
+        
         // disabling the part_number_input box
-        const part_number = document.getElementById('part_number')
-        part_number.hidden = true
+        const part_number_input = document.getElementById('part_number_input')
+        part_number_input.hidden = true
+        
         // enabling part number dropdown
         const part_number_dropdown = document.getElementById('part_number_dropdown')
         part_number_dropdown.hidden = false
@@ -353,8 +435,9 @@
         // disable greeting
         greeting.hidden = true
         // enabling new option in topic name
-        const new_option = document.getElementById('new_option')
-        new_option.hidden = false
+        const new_option = document.getElementsByClassName('new_option')
+        new_option[0].hidden = false
+        new_option[1].hidden = false
         // toggling the switch
         editing_mode = false
         // resetting the label on the button for topic name
@@ -367,12 +450,14 @@
         const topic_name_input = document.getElementById('topic_name')
         topic_name_input.value = ''
         topic_name_input.hidden = false
+
         // enabling the part_number_input box
-        const part_number = document.getElementById('part_number')
-        part_number.hidden = false
+        const part_number_input = document.getElementById('part_number_input')
+        part_number_input.hidden = false
+        
         // disabling part number dropdown
-        const part_number_dropdown = document.getElementById('part_number_dropdown')
-        part_number_dropdown.hidden = true
+        // const part_number_dropdown = document.getElementById('part_number_dropdown')
+        // part_number_dropdown.hidden = true
 
         document.getElementById('selected_option').innerHTML = 'Add Quiz'
         document.getElementById('add_quiz_controls').style.display = ''

@@ -68,6 +68,55 @@ app.post('/dashboard', (req,res) => {
 	
 })
 
+// fetch parts_from_db/
+app.post('/parts_from_db', (req,res) => {
+	const data = req.body.selected_topic_name
+	con.query("SELECT parts FROM index_table WHERE topic_name = '"+data+"'", function (err, result, fields) {
+		if (err) throw err;
+		console.log(result[0]);
+		// spliting parts
+		var parts = []
+		result = result[0].parts.split('#')
+		for (var i=0; i<result.length; i++){
+			// console.log(part)
+			parts.push(result[i].slice(-1))
+		}
+		res.json(parts)
+	});
+})
+
+// get_diff_level
+app.post('/get_diff_level', (req,res) => {
+	const data = req.body
+	console.log(data)
+
+	var diff_level = data
+	var table = diff_level.topic_name+diff_level.part_number
+	var available_diff_levels = ['easy','medium','hard']
+	con.query("SELECT diff_level FROM " + table, function (err, result, fields) {
+		if (err) throw err;
+		// console.log(result);
+	
+		var diff_levels_in_db = []
+		for (var i=0; i<result.length; i++){
+			diff_levels_in_db.push(result[i].diff_level)
+		}
+		// console.log(diff_levels_in_db)
+	
+		var permissible_diff_levels = []
+		for (var i=0; i<available_diff_levels.length; i++){
+			// console.log(diff_levels_in_db.includes(available_diff_levels[0]))
+			// console.log(available_diff_levels[0])
+			if (diff_levels_in_db.includes(available_diff_levels[i])) continue
+			else permissible_diff_levels.push(available_diff_levels[i])
+		}
+		if (permissible_diff_levels.length == 0) permissible_diff_levels = null
+		// console.log('permissible_diff_levels : '+permissible_diff_levels)
+
+		res.json(permissible_diff_levels)
+	});
+})
+
 // add quiz to db
 app.post('/add_quiz', (req,res) => {
 	const data = req.body
