@@ -72,6 +72,15 @@
                 <a class="dropdown-item" onclick="diff_level('hard')">hard</a>
             </div>
             </div>
+            {{!-- duration input box --}}
+            <div id='duration' class="mt-4">
+                <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Duration</span>
+                </div>
+                <input id="duration_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                </div>
+            </div>
             {{!-- questions and options --}}
             <div id="questions_and_options">
 
@@ -153,6 +162,12 @@
             return
         }
         else console.log(diff_level_dropdown.innerHTML)
+        // duration check
+        var duration_input = document.getElementById('duration_input')
+        if (duration_input.value == '') {
+            alert('Duration of the quiz is missing')
+            return
+        }
         // checking whether user has entered some questions
         if (question_count == 0) {
             alert('add some questions first')
@@ -202,7 +217,8 @@
                 'diff_level':diff_level_dropdown.innerHTML,
                 'question':question.item(0).children[0].children[1].value,
                 'options':options_list,
-                'correct':correct_choice})
+                'correct':correct_choice,
+                'duration':duration_input.value})
                 console.log(questions_and_options_dic)
 
                 // sending data to back-end
@@ -296,6 +312,9 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // disable duration
+        var duration = document.getElementById('duration')
+        duration.hidden = true
         // disable greeting
         greeting.hidden = true
         // disabling new option in topic name
@@ -328,6 +347,9 @@
     }
 
     function add_quiz(){
+        // enable duration
+        var duration = document.getElementById('duration')
+        duration.hidden = false
         // disable greeting
         greeting.hidden = true
         // enabling new option in topic name
