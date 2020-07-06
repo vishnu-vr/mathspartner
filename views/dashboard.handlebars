@@ -214,14 +214,17 @@
                 // the db or not (can't fully trust the user)
                 if (!topic_name_exists){
                     if (topics_in_db.includes(topic_name.value)) {
-                        topic_name_exists = true
+                        // topic_name_exists = true
                         alert("You choose new topic name, but this quiz alreay exists")
                         return
                     }
-                    if (!part_number_exists){
-                        if (already_existing_parts_from_db.includes(part_number_input.value.toString())){
-                            part_number_exists = true
-                        }
+                }
+                if (!part_number_exists){
+                    // alert(part_number_input.value.toString())
+                    if (already_existing_parts_from_db.includes(part_number_input.value.toString())){
+                        // part_number_exists = true
+                        alert("You choose new part number, but this quiz alreay exists")
+                        return
                     }
                 }
                 questions_and_options_dic.push({'topic_name':topic_name.value,
