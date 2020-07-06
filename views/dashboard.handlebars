@@ -10,7 +10,7 @@
     </nav>
     <h3 id="selected_option" class="mt-4 text-center"></h3>
         {{!-- add or edit quiz begins here --}}
-        <div id="add_quiz_controls" style="display:;" class="container ml-2 mt-4">
+        <div id="add_quiz_controls" style="display:none;" class="container ml-2 mt-4">
         <div class="row mt-4">
             <div class="col-sm">
             
@@ -19,10 +19,12 @@
             {{!-- topic name --}}
             <div class="input-group input-group-sm mb-3">
             <div class="input-group-prepend">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
+                <button id="topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                 <div class="dropdown-menu">
-                <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
-                <div role="separator" class="dropdown-divider"></div>
+                <div id="new_option">
+                    <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
+                    <div role="separator" class="dropdown-divider"></div>
+                </div>
                     <div id="already_existing_topics">
                     <p class="dropdown-item" onclick="topic_name_selected('ratio')">Ratio</p>
                     <p class="dropdown-item" onclick="topic_name_selected('another action')">Another action</p>
@@ -178,13 +180,29 @@
         diff_level_dropdown.innerHTML = level
     }
 
+    // to highlight the topic name selected
     function topic_name_selected(selected_topic_name){
+        // inserting the selected topic name as the button label
+        // this feature is availble on when its edit mode
+        if (editing_mode) {
+            const topic_name_btn = document.getElementById('topic_name_btn')
+            topic_name_btn.innerHTML = selected_topic_name
+        }
         console.log(selected_topic_name)
         const topic_name_input = document.getElementById('topic_name')
         if (selected_topic_name != 'new') topic_name_input.value = selected_topic_name
     }
 
+    var editing_mode = false
     function edit_quiz(){
+        // disabling new option in topic name
+        const new_option = document.getElementById('new_option')
+        new_option.hidden = true
+        // toggling the switch
+        editing_mode = true
+        // resetting the label on the button for topic name
+        const topic_name_btn = document.getElementById('topic_name_btn')
+        topic_name_btn.innerHTML = 'Topic Name'
         // removing all the question boxes added when add quiz was clicked
         questions_and_options.innerHTML = ''
         // disabling add more question btn
@@ -207,11 +225,20 @@
     }
 
     function add_quiz(){
+        // enabling new option in topic name
+        const new_option = document.getElementById('new_option')
+        new_option.hidden = false
+        // toggling the switch
+        editing_mode = false
+        // resetting the label on the button for topic name
+        const topic_name_btn = document.getElementById('topic_name_btn')
+        topic_name_btn.innerHTML = 'Topic Name'
         // enabling add more question btn
         const add_more_questions_btn = document.getElementById('add_more_questions_btn')
         add_more_questions_btn.hidden = false
         // enabling the input box for topic name
         const topic_name_input = document.getElementById('topic_name')
+        topic_name_input.value = ''
         topic_name_input.hidden = false
         // enabling the part_number_input box
         const part_number = document.getElementById('part_number')
