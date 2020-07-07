@@ -12,30 +12,59 @@ if (err) throw err;
 console.log("Database Connected!");
 });
 
-var diff_level = { part_number: 'part_3', topic_name: 'RATIO' }
-var table = diff_level.topic_name+diff_level.part_number
-var available_diff_levels = ['easy','medium','hard']
-con.query("SELECT diff_level FROM " + table, function (err, result, fields) {
-	if (err) throw err;
-	console.log(result);
+// case - 1 : topic name and part number exists (ie we are adding a new question_paper)
+var data = [
+  {
+    topic_name: 'RATIO',
+    part_number: '2',
+    question_paper: 'question_paper_1',
+    question: 'asd',
+    options: [ 'asd', 'asd', 'asd', 'asd' ],
+    correct: 'asd',
+    duration: '22',
+    topic_name_exists: true,
+    part_number_exists: true
+  },
+  {
+    topic_name: 'RATIO',
+    part_number: '2',
+    question_paper: 'question_paper_1',
+    question: 'asd',
+    options: [ 'ads', 'asd', 'asd', 'asd' ],
+    correct: 'asd',
+    duration: '22',
+    topic_name_exists: true,
+    part_number_exists: true
+  }
+]
+// console.log("asd")
+if (data[0].topic_name_exists && data[0].part_number_exists){
+	// first thing to is : update the quiz details table
+	// with the new question_paper number and duration
+	var table_name = data[0].topic_name+"part_"+data[0].part_number
+	// console.log(table_name)
+	con.query("INSERT INTO "+table_name+" (`id`, `question_paper`, `duration`) VALUES (NULL, '"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"')", function (err, result, fields) {
+		if (err) throw err;
+		console.log(result);
 
-	var diff_levels_in_db = []
-	for (var i=0; i<result.length; i++){
-		diff_levels_in_db.push(result[i].diff_level)
-	}
-	console.log(diff_levels_in_db)
+	});
+	// // second is to create a table with questions
+	// table_name += data[0].question_paper
+	// var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
+	// con.query(sql, function (err, result) {
+	// if (err) throw err;
+	// console.log("Table created");
+	// });
+	// // then add the questions
+	// for (var i=0; i<data.length; i++){
+	// 	var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
+	// 	con.query(sql, function (err, result) {
+	// 	if (err) throw err;
+	// 	console.log("row " +(i+1)+" inserted");
+	// 	});
+	// }
+}
 
-	var permissible_diff_levels = []
-	for (var i=0; i<available_diff_levels.length; i++){
-		// console.log(diff_levels_in_db.includes(available_diff_levels[0]))
-		// console.log(available_diff_levels[0])
-		if (diff_levels_in_db.includes(available_diff_levels[i])) continue
-		else permissible_diff_levels.push(available_diff_levels[i])
-	}
-	if (permissible_diff_levels.length == 0) permissible_diff_levels = null
-	console.log('permissible_diff_levels : '+permissible_diff_levels)
-	// res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board",topics_in_db:topics})
-});
 
 // // retreiving index table
 // con.query("SELECT topic_name FROM index_table", function (err, result, fields) {

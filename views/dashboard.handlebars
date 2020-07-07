@@ -140,6 +140,10 @@
 
     // final submission for both editing or adding quiz
     function final_submit() {
+
+        // the list of objects which will be sent to the back-end
+        var questions_and_options_dic = []
+
         // console.log("hey")
         // topic name
         var topic_name = document.getElementById('topic_name')
@@ -174,9 +178,9 @@
             return
         }
         else{
-            // the list of objects which will be sent to the back-end
-            var questions_and_options_dic = []
+
             for (var i=1; i<=question_count; i++){
+                // alert("here")
                 var question_ = 'question_' + i
                 var question = document.getElementsByClassName(question_)
                 // question boxes validation
@@ -208,10 +212,13 @@
                         console.log(correct_choice)
                     }
                 }
+                console.log(user_checked_radio)
                 if (!user_checked_radio){
                     alert("choose a correct option for question "+i)
+                    // alert("just before function return")
                     return
                 }
+                // alert("outside the if")
                 // if questions, answers and correct option are all validated
                 // cross checking whether the new entered name or part number is present in
                 // the db or not (can't fully trust the user)
@@ -230,6 +237,7 @@
                         return
                     }
                 }
+                
                 questions_and_options_dic.push({'topic_name':topic_name.value,
                 'part_number':part_number_input.value.toString(),
                 'question_paper':question_paper_dropdown.innerHTML,
@@ -241,15 +249,17 @@
                 'part_number_exists':part_number_exists})
                 console.log(questions_and_options_dic)
 
-                // sending data to back-end
-                postData('/add_quiz', questions_and_options_dic)
-                .then(data => {
-                    console.log(data); // JSON data parsed by `data.json()` call
-                    // if everything went fine refresh the page
-                    location.reload();
-                });
             }
         }
+
+        // if everything went well
+        // sending data to back-end
+        postData('/add_quiz', questions_and_options_dic)
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            // if everything went fine refresh the page
+            location.reload();
+        });
     }
 
     // for showing the selected part number on the button
