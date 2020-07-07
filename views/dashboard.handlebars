@@ -125,6 +125,13 @@
     //    if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
     //}
 
+    function delete_question(question_num) {
+        console.log(question_num)
+        document.getElementsByClassName(question_num).innerHTML = ''
+        question_count--
+        // console.log(document.getElementsByClassName(question_num))
+    }
+
     // adding the topics_in_db to dropdown list
     //<p class="dropdown-item" onclick="topic_name_selected('ratio')">Ratio</p>
     const already_existing_topics = document.getElementById('already_existing_topics')
@@ -183,6 +190,11 @@
                 // alert("here")
                 var question_ = 'question_' + i
                 var question = document.getElementsByClassName(question_)
+
+                // if any question has been deleted after then
+                // skip it
+                if (question.innerHTML == '') continue
+
                 // question boxes validation
                 if (question.item(0).children[0].children[1].value == '') {
                     alert('question '+i+' is missing')
@@ -349,11 +361,19 @@
         question_label.innerHTML = 'Question ' + question_count
         // question text area
         const question_textarea = document.createElement('textarea')
-        question_textarea.className = 'form-control'
+        question_textarea.className = 'form-control mt-2'
         question_textarea.id = 'exampleFormControlTextarea1'
         question_textarea.setAttribute('rows','3')
         // appending label and text area
         question_wrapper.appendChild(question_label)
+        // appending delete button
+        // <button type="button" class="btn btn-danger">Danger</button>
+        var delete_btn = document.createElement('button')
+        delete_btn.className = 'btn btn-danger ml-2'
+        delete_btn.type = 'button'
+        delete_btn.innerHTML = 'Delete'
+        delete_btn.setAttribute('onclick','delete_question("'+'question_' + question_count+'")')
+        question_wrapper.appendChild(delete_btn)
         question_wrapper.appendChild(question_textarea)
         // appending question_wrapper to main question div
         question.appendChild(question_wrapper)
