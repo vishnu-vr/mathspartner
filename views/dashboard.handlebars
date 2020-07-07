@@ -127,8 +127,7 @@
 
     function delete_question(question_num) {
         console.log(question_num)
-        document.getElementsByClassName(question_num).innerHTML = ''
-        question_count--
+        document.getElementById(question_num).innerHTML = ''
         // console.log(document.getElementsByClassName(question_num))
     }
 
@@ -189,14 +188,23 @@
             for (var i=1; i<=question_count; i++){
                 // alert("here")
                 var question_ = 'question_' + i
-                var question = document.getElementsByClassName(question_)
+                var question = document.getElementById(question_)
 
-                // if any question has been deleted after then
+                // if any question has been deleted then
                 // skip it
                 if (question.innerHTML == '') continue
+                
+                // remove
+                //alert(question.children[0].children[2].value)
+                // alert(question.children[1].children[1].value)
+                // alert(question.children[2].children[1].value)
+                // alert(question.children[3].children[1].value)
+                // alert(question.children[4].children[1].value)
+                // radio .children[1].children[0]
+                // return
 
                 // question boxes validation
-                if (question.item(0).children[0].children[1].value == '') {
+                if (question.children[0].children[2].value == '') {
                     alert('question '+i+' is missing')
                     return
                 }
@@ -205,12 +213,12 @@
                 // var correct_option_check = 0
                 var options_list = []
                 for (var j=1; j<=4; j++){
-                    if (question.item(0).children[j].children[1].value == ''){
+                    if (question.children[j].children[1].value == ''){
                         alert('option '+j+' for question '+i+' is missing')
                         return
                     }
                     // if option present
-                    options_list.push(question.item(0).children[j].children[1].value)
+                    options_list.push(question.children[j].children[1].value)
                 }
                 // check for the correct choice radio check
                 var radio_for_correct_answer = 'radio_' + i
@@ -220,7 +228,7 @@
                 for (var k=0; k<4; k++){
                     if (radio_selected[k].checked) {
                         user_checked_radio = true
-                        correct_choice = question.item(0).children[k+1].children[1].value
+                        correct_choice = question.children[k+1].children[1].value
                         console.log(correct_choice)
                     }
                 }
@@ -253,7 +261,7 @@
                 questions_and_options_dic.push({'topic_name':topic_name.value,
                 'part_number':part_number_input.value.toString(),
                 'question_paper':question_paper_dropdown.innerHTML,
-                'question':question.item(0).children[0].children[1].value,
+                'question':question.children[0].children[2].value,
                 'options':options_list,
                 'correct':correct_choice,
                 'duration':duration_input.value,
@@ -351,7 +359,7 @@
         question_count++
         // question and options body
         const question = document.createElement('div')
-        question.className = 'question_' + question_count
+        question.id = 'question_' + question_count
         // question wrapper div
         const question_wrapper = document.createElement('div')
         question_wrapper.className = 'form-group mt-4'

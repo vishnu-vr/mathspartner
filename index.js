@@ -130,7 +130,7 @@ app.post('/get_question_paper/:mode', (req,res) => {
 		if (req.params.mode == 'edit') res.json(question_papers_in_db)
 		// else if add mode
 		else{
-			console.log("after sending")
+			// console.log("after sending")
 			var permissible_question_papers = []
 			for (var i=0; i<available_question_papers.length; i++){
 				// console.log(question_papers_in_db.includes(available_question_papers[0]))
@@ -140,7 +140,7 @@ app.post('/get_question_paper/:mode', (req,res) => {
 			}
 			if (permissible_question_papers.length == 0) permissible_question_papers = null
 			// console.log('permissible_question_papers : '+permissible_question_papers)
-			console.log("should not reach here")
+			// console.log("should not reach here")
 			res.json(permissible_question_papers)
 		}
 	});
