@@ -55,10 +55,10 @@
       console.log(topic_id_.innerText)
       // redirecting to find available difficult levels
       if ("{{ part }}") {
-        window.location = "/diff_level/"+"{{heading}}"+"/"+topic_id_.innerText
+        window.location = "/question_paper/"+"{{heading}}"+"/"+topic_id_.innerText
       }
       // redirecting to the quiz box
-      else if ("{{ diff_level }}") {
+      else if ("{{ question_paper }}") {
         var splitted = "{{heading}}".split(' ')
         window.location = "/quiz_box/"+splitted[0]+"/"+splitted[1]+"/"+topic_id_.innerText
       }
@@ -67,5 +67,5 @@
         window.location = "/parts/"+topic_id_.innerText
       }
     }
-// /quiz_box/:topic_name/:part_no/:diff_level
+// /quiz_box/:topic_name/:part_no/:question_paper
 </script>

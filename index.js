@@ -134,9 +134,9 @@ app.post('/add_quiz', (req,res) => {
 })
 
 // quiz box
-app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
+app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 
-	const heading = req.params.topic_name + " " + req.params.part_no + " " + req.params.diff_level
+	const heading = req.params.topic_name + " " + req.params.part_no + " " + req.params.question_paper
 	var dummy_questions = [
 		{question:"question_1", options:['A','B','C','D'],correct:'D'},
 		{question:"question_2", options:['A','B','C','D'],correct:'D'},
@@ -147,7 +147,7 @@ app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 
 	const table_name_for_duration = req.params.topic_name + req.params.part_no
 	// console.log(table_name_for_duration)
-	const table_name_for_questions = req.params.topic_name + req.params.part_no + req.params.diff_level
+	const table_name_for_questions = req.params.topic_name + req.params.part_no + req.params.question_paper
 	// console.log(table_name_for_questions)
 	let sql = "SELECT * FROM " + table_name_for_questions
 	con.query(sql, function (err, result, fields) {
@@ -167,7 +167,7 @@ app.get('/quiz_box/:topic_name/:part_no/:diff_level', (req,res) => {
 		for (var i=0; i<questions.length; i++) shuffle(questions[i].options)
 
 		// fetching the time limit for the quiz
-		let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE diff_level = '"+req.params.diff_level+"' "
+		let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE question_paper = '"+req.params.question_paper+"' "
 		con.query(sql, function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
@@ -217,12 +217,12 @@ app.get('/parts/:topic_name', (req,res) => {
 })
 
 // diff_level page
-app.get('/diff_level/:topic_name/:part_no', (req,res) => {
+app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	const heading = req.params.topic_name + " " + req.params.part_no
-	var dummy_diff_levels = ['easy','medium','hard']
+	var dummy_question_papers = ['question_paper_1','question_paper_1','question_paper_1']
 
 	const table_name = req.params.topic_name+req.params.part_no
-	let sql = "SELECT diff_level FROM " + table_name
+	let sql = "SELECT question_paper FROM " + table_name
 	con.query(sql, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
@@ -231,10 +231,10 @@ app.get('/diff_level/:topic_name/:part_no', (req,res) => {
 		// console.log(result);
 		var topics = []
 		for (var i=0; i<result.length; i++){
-			topics.push(result[i].diff_level)
+			topics.push(result[i].question_paper)
 		}
 
-		res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:topics, diff_level:true})
+		res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:topics, question_paper:true})
 	});
 })
 
