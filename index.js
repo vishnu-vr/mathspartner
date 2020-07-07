@@ -91,38 +91,38 @@ app.post('/parts_from_db', (req,res) => {
 	});
 })
 
-// get_diff_level
-app.post('/get_diff_level', (req,res) => {
+// get_question_paper
+app.post('/get_question_paper', (req,res) => {
 	const data = req.body
 	console.log(data)
 
-	var diff_level = data
-	var table = diff_level.topic_name+diff_level.part_number
-	var available_diff_levels = ['easy','medium','hard']
-	con.query("SELECT diff_level FROM " + table, function (err, result, fields) {
+	var question_paper = data
+	var table = question_paper.topic_name+question_paper.part_number
+	var available_question_papers = ['question_paper_1','question_paper_2','question_paper_3']
+	con.query("SELECT question_paper FROM " + table, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.json(null)
 		}
 		// console.log(result);
 	
-		var diff_levels_in_db = []
+		var question_papers_in_db = []
 		for (var i=0; i<result.length; i++){
-			diff_levels_in_db.push(result[i].diff_level)
+			question_papers_in_db.push(result[i].question_paper)
 		}
-		// console.log(diff_levels_in_db)
+		// console.log(question_papers_in_db)
 	
-		var permissible_diff_levels = []
-		for (var i=0; i<available_diff_levels.length; i++){
-			// console.log(diff_levels_in_db.includes(available_diff_levels[0]))
-			// console.log(available_diff_levels[0])
-			if (diff_levels_in_db.includes(available_diff_levels[i])) continue
-			else permissible_diff_levels.push(available_diff_levels[i])
+		var permissible_question_papers = []
+		for (var i=0; i<available_question_papers.length; i++){
+			// console.log(question_papers_in_db.includes(available_question_papers[0]))
+			// console.log(available_question_papers[0])
+			if (question_papers_in_db.includes(available_question_papers[i])) continue
+			else permissible_question_papers.push(available_question_papers[i])
 		}
-		if (permissible_diff_levels.length == 0) permissible_diff_levels = null
-		// console.log('permissible_diff_levels : '+permissible_diff_levels)
+		if (permissible_question_papers.length == 0) permissible_question_papers = null
+		// console.log('permissible_question_papers : '+permissible_question_papers)
 
-		res.json(permissible_diff_levels)
+		res.json(permissible_question_papers)
 	});
 })
 
@@ -216,7 +216,7 @@ app.get('/parts/:topic_name', (req,res) => {
 	});
 })
 
-// diff_level page
+// question_paper page
 app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	const heading = req.params.topic_name + " " + req.params.part_no
 	var dummy_question_papers = ['question_paper_1','question_paper_1','question_paper_1']

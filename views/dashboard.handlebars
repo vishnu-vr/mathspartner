@@ -55,18 +55,18 @@
                 <input id="part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button">
                 </div>
             </div>
-            {{!-- new difficulty level --}}
+            
 
             {{!-- difficulty level --}}
             <div class="dropdown show">
-            <a id="diff_level_dropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a id="question_paper_dropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 difficulty level
             </a>
 
-            <div id="permissible_diff_levels" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <a class="dropdown-item" onclick="diff_level('easy')">easy</a>
-                <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
-                <a class="dropdown-item" onclick="diff_level('hard')">hard</a>
+            <div id="permissible_question_papers" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
+                <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
+                <a class="dropdown-item" onclick="question_paper('question_paper_3')">question_paper_3</a>
             </div>
             </div>
             {{!-- duration input box --}}
@@ -156,12 +156,12 @@
         }
         else console.log(part_number_input.value)
         // difficulty level
-        var diff_level_dropdown = document.getElementById('diff_level_dropdown')
-        if (diff_level_dropdown.innerText == 'difficulty level ') {
+        var question_paper_dropdown = document.getElementById('question_paper_dropdown')
+        if (question_paper_dropdown.innerText == 'difficulty level ') {
             alert('choose a difficulty level')
             return
         }
-        else console.log(diff_level_dropdown.innerHTML)
+        else console.log(question_paper_dropdown.innerHTML)
         // duration check
         var duration_input = document.getElementById('duration_input')
         if (duration_input.value == '') {
@@ -232,7 +232,7 @@
                 }
                 questions_and_options_dic.push({'topic_name':topic_name.value,
                 'part_number':part_number_input.value.toString(),
-                'diff_level':diff_level_dropdown.innerHTML,
+                'question_paper':question_paper_dropdown.innerHTML,
                 'question':question.item(0).children[0].children[1].value,
                 'options':options_list,
                 'correct':correct_choice,
@@ -256,7 +256,7 @@
     var part_number_exists = false
     function part_number_selected(part) {
         // resetting the diff level label to default
-        diff_level('difficulty level ')
+        question_paper('difficulty level ')
         // if in editing mode show the part number as button label
         if (editing_mode){
             const btn = document.getElementById('part_number_btn')
@@ -273,44 +273,44 @@
             if (part == 'new') {
                 part_number_exists = false
                 part_number_input.value = ''
-                const permissible_diff_levels = document.getElementById('permissible_diff_levels')
-                permissible_diff_levels.innerHTML = ''
+                const permissible_question_papers = document.getElementById('permissible_question_papers')
+                permissible_question_papers.innerHTML = ''
                 // resetting the diff levels options to default when new part
                 // is selected
-                // <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
-                var levels = ['easy','medium','hard']
+                // <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
+                var levels = ['question_paper_1','question_paper_2','question_paper_3']
                 for (var i=0; i<3; i++){
                     var a= document.createElement('a')
                     a.className = 'dropdown-item'
-                    a.setAttribute('onclick','diff_level("'+levels[i]+'")')
+                    a.setAttribute('onclick','question_paper("'+levels[i]+'")')
                     a.innerHTML = levels[i]
-                    permissible_diff_levels.appendChild(a)
+                    permissible_question_papers.appendChild(a)
                 }
             }
         }
 
         // if part number is not new then fetch its diff leves
         if ( part != 'new'){
-            // fetch diff_level of that part
+            // fetch question_paper of that part
             var topic_name = document.getElementById('topic_name')
             if (!topics_in_db.includes(topic_name.value)) return
-            postData('/get_diff_level', {"part_number":'part_'+part,"topic_name":topic_name.value})
+            postData('/get_question_paper', {"part_number":'part_'+part,"topic_name":topic_name.value})
             .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
-                const permissible_diff_levels = document.getElementById('permissible_diff_levels')
+                console.log("here"+data); // JSON data parsed by `data.json()` call
+                const permissible_question_papers = document.getElementById('permissible_question_papers')
                 if (data == null) {
-                    permissible_diff_levels.innerHTML = ''
-                    alert("You have already added easy, medium and hard quiz for this configuration")
+                    permissible_question_papers.innerHTML = ''
+                    alert("You have already added question_paper_1, question_paper_2 and question_paper_3 quiz for this configuration")
                 }
                 else{
-                    // <a class="dropdown-item" onclick="diff_level('easy')">easy</a>
-                    permissible_diff_levels.innerHTML = ''
+                    // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
+                    permissible_question_papers.innerHTML = ''
                     for (var i=0; i<data.length; i++){
                         var a = document.createElement('a')
                         a.className = 'dropdown-item'
-                        a.setAttribute('onclick','diff_level("'+data[i]+'")')
+                        a.setAttribute('onclick','question_paper("'+data[i]+'")')
                         a.innerHTML = data[i]
-                        permissible_diff_levels.appendChild(a)
+                        permissible_question_papers.appendChild(a)
                     }
                 }
             });
@@ -373,9 +373,9 @@
         questions_and_options.appendChild(question)
     }
 
-    function diff_level(level) {
-        var diff_level_dropdown = document.getElementById('diff_level_dropdown')
-        diff_level_dropdown.innerHTML = level
+    function question_paper(level) {
+        var question_paper_dropdown = document.getElementById('question_paper_dropdown')
+        question_paper_dropdown.innerHTML = level
     }
 
     // to highlight the topic name selected
@@ -425,18 +425,18 @@
             // resetting the difficulty level to default
             // resetting the diff levels options to default when new part
             // is selected
-            // <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
+            // <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
             // resetting the diff level label to default
-            diff_level('difficulty level ')
-            const permissible_diff_levels = document.getElementById('permissible_diff_levels')
-            permissible_diff_levels.innerHTML = ''
-            var levels = ['easy','medium','hard']
+            question_paper('difficulty level ')
+            const permissible_question_papers = document.getElementById('permissible_question_papers')
+            permissible_question_papers.innerHTML = ''
+            var levels = ['question_paper_1','question_paper_2','question_paper_3']
             for (var i=0; i<3; i++){
                 var a= document.createElement('a')
                 a.className = 'dropdown-item'
-                a.setAttribute('onclick','diff_level("'+levels[i]+'")')
+                a.setAttribute('onclick','question_paper("'+levels[i]+'")')
                 a.innerHTML = levels[i]
-                permissible_diff_levels.appendChild(a)
+                permissible_question_papers.appendChild(a)
             }
         }    
     }
