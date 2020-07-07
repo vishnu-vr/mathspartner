@@ -304,7 +304,11 @@
             // fetch question_paper of that part
             var topic_name = document.getElementById('topic_name')
             if (!topics_in_db.includes(topic_name.value)) return
-            postData('/get_question_paper', {"part_number":'part_'+part,"topic_name":topic_name.value})
+
+            // if edit mode or add mode
+            if (editing_mode) var url = '/get_question_paper/edit'
+            else var url = '/get_question_paper/add'
+            postData(url, {"part_number":'part_'+part,"topic_name":topic_name.value})
             .then(data => {
                 console.log("here"+data); // JSON data parsed by `data.json()` call
                 const permissible_question_papers = document.getElementById('permissible_question_papers')

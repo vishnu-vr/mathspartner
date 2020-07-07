@@ -92,7 +92,7 @@ app.post('/parts_from_db', (req,res) => {
 })
 
 // get_question_paper
-app.post('/get_question_paper', (req,res) => {
+app.post('/get_question_paper/:mode', (req,res) => {
 	const data = req.body
 	console.log(data)
 
@@ -111,7 +111,11 @@ app.post('/get_question_paper', (req,res) => {
 			question_papers_in_db.push(result[i].question_paper)
 		}
 		// console.log(question_papers_in_db)
-	
+		
+		// if edit mode
+		if (req.params.mode == 'edit') res.json(question_papers_in_db)
+		// else if add mode
+
 		var permissible_question_papers = []
 		for (var i=0; i<available_question_papers.length; i++){
 			// console.log(question_papers_in_db.includes(available_question_papers[0]))
