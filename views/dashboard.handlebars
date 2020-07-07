@@ -266,7 +266,7 @@
     var part_number_exists = false
     function part_number_selected(part) {
         // resetting the diff level label to default
-        question_paper('question paper ')
+        if (!editing_mode) document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
         // if in editing mode show the part number as button label
         if (editing_mode){
             const btn = document.getElementById('part_number_btn')
@@ -390,12 +390,33 @@
     function question_paper(level) {
         var question_paper_dropdown = document.getElementById('question_paper_dropdown')
         question_paper_dropdown.innerHTML = level
+
+        // if editing mode then retrieve all the questions
+        // and options from the database
+        if (editing_mode) {
+            const topic_name = document.getElementById('topic_name_btn').innerHTML
+            const part_number = document.getElementById('part_number_btn').innerHTML
+            const question_paper = document.getElementById('question_paper_dropdown').innerHTML
+            const quiz_name = topic_name+"part_"+part_number+question_paper
+            alert("here"+quiz_name)
+
+            postData('/get_quiz', { quiz_name })
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+            });
+        }
     }
 
     // to highlight the topic name selected
     var already_existing_parts_from_db = []
     var topic_name_exists = false
     function topic_name_selected(selected_topic_name){
+        // if topic name selected reset everything below it
+        document.getElementById('part_number_input').value = ''
+        document.getElementById('permissible_question_papers').innerHTML = ''
+        document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
+        if (editing_mode) document.getElementById('part_number_btn').innerHTML = 'Part Number'
+
         // inserting the selected topic name as the button label
         // this feature is availble on when its edit mode
         if (editing_mode) {
@@ -441,7 +462,7 @@
             // is selected
             // <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
             // resetting the diff level label to default
-            question_paper('question paper ')
+            document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
             const permissible_question_papers = document.getElementById('permissible_question_papers')
             permissible_question_papers.innerHTML = ''
             var levels = ['question_paper_1','question_paper_2','question_paper_3']
@@ -457,6 +478,12 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // resetting everything
+        document.getElementById('part_number_btn').innerHTML = 'Part Number'
+        document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
+        document.getElementById('permissible_question_papers').innerHTML = ''
+        document.getElementById('already_existing_parts').innerHTML = ''
+
         // disable duration
         var duration = document.getElementById('duration')
         duration.hidden = true
@@ -496,6 +523,12 @@
     }
 
     function add_quiz(){
+        // resetting everything
+        document.getElementById('part_number_btn').innerHTML = 'Part Number'
+        document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
+        document.getElementById('permissible_question_papers').innerHTML = ''
+        document.getElementById('already_existing_parts').innerHTML = ''
+
         // enable duration
         var duration = document.getElementById('duration')
         duration.hidden = false

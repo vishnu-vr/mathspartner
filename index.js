@@ -91,6 +91,20 @@ app.post('/parts_from_db', (req,res) => {
 	});
 })
 
+// get the complete quiz
+app.post('/get_quiz', (req,res) => {
+	const data = req.body.quiz_name
+	console.log(data)
+	res.json("asd")
+	// con.query("SELECT * FROM " + data, function (err, result, fields) {
+	// 	if (err) {
+	// 		console.log(err)//throw err;
+	// 		res.json(null)
+	// 	}
+	// 	console.log(result);
+	// });
+})
+
 // get_question_paper
 app.post('/get_question_paper/:mode', (req,res) => {
 	const data = req.body
@@ -110,23 +124,25 @@ app.post('/get_question_paper/:mode', (req,res) => {
 		for (var i=0; i<result.length; i++){
 			question_papers_in_db.push(result[i].question_paper)
 		}
-		// console.log(question_papers_in_db)
+		console.log(req.params.mode)
 		
 		// if edit mode
 		if (req.params.mode == 'edit') res.json(question_papers_in_db)
 		// else if add mode
-
-		var permissible_question_papers = []
-		for (var i=0; i<available_question_papers.length; i++){
-			// console.log(question_papers_in_db.includes(available_question_papers[0]))
-			// console.log(available_question_papers[0])
-			if (question_papers_in_db.includes(available_question_papers[i])) continue
-			else permissible_question_papers.push(available_question_papers[i])
+		else{
+			console.log("after sending")
+			var permissible_question_papers = []
+			for (var i=0; i<available_question_papers.length; i++){
+				// console.log(question_papers_in_db.includes(available_question_papers[0]))
+				// console.log(available_question_papers[0])
+				if (question_papers_in_db.includes(available_question_papers[i])) continue
+				else permissible_question_papers.push(available_question_papers[i])
+			}
+			if (permissible_question_papers.length == 0) permissible_question_papers = null
+			// console.log('permissible_question_papers : '+permissible_question_papers)
+			console.log("should not reach here")
+			res.json(permissible_question_papers)
 		}
-		if (permissible_question_papers.length == 0) permissible_question_papers = null
-		// console.log('permissible_question_papers : '+permissible_question_papers)
-
-		res.json(permissible_question_papers)
 	});
 })
 
