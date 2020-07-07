@@ -143,7 +143,10 @@
         // console.log("hey")
         // topic name
         var topic_name = document.getElementById('topic_name')
-        if (topic_name.value == '') alert("topic name is missing")
+        if (topic_name.value == '') {
+            alert("topic name is missing")
+            return
+        }
         else console.log(topic_name.value)
         // part number
         var part_number_input = document.getElementById('part_number_input')
@@ -411,7 +414,10 @@
         }
         // if new selected
         if (selected_topic_name == 'new') {
+            // emptying the parts fetched from db
+            already_existing_parts_from_db = []
             topic_name_exists = false
+            part_number_exists = false
             // resetting the input field 
             document.getElementById('topic_name').value = ''
             // resetting the part field 
