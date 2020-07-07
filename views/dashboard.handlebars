@@ -57,10 +57,10 @@
             </div>
             
 
-            {{!-- difficulty level --}}
+            {{!-- question paper --}}
             <div class="dropdown show">
             <a id="question_paper_dropdown" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                difficulty level
+                question paper
             </a>
 
             <div id="permissible_question_papers" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -155,10 +155,10 @@
             return
         }
         else console.log(part_number_input.value)
-        // difficulty level
+        // question paper
         var question_paper_dropdown = document.getElementById('question_paper_dropdown')
-        if (question_paper_dropdown.innerText == 'difficulty level ') {
-            alert('choose a difficulty level')
+        if (question_paper_dropdown.innerText == 'question paper ') {
+            alert('choose a question paper')
             return
         }
         else console.log(question_paper_dropdown.innerHTML)
@@ -256,7 +256,7 @@
     var part_number_exists = false
     function part_number_selected(part) {
         // resetting the diff level label to default
-        question_paper('difficulty level ')
+        question_paper('question paper ')
         // if in editing mode show the part number as button label
         if (editing_mode){
             const btn = document.getElementById('part_number_btn')
@@ -422,12 +422,12 @@
             document.getElementById('topic_name').value = ''
             // resetting the part field 
             document.getElementById('already_existing_parts').innerHTML = ''
-            // resetting the difficulty level to default
+            // resetting the question paper to default
             // resetting the diff levels options to default when new part
             // is selected
             // <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
             // resetting the diff level label to default
-            question_paper('difficulty level ')
+            question_paper('question paper ')
             const permissible_question_papers = document.getElementById('permissible_question_papers')
             permissible_question_papers.innerHTML = ''
             var levels = ['question_paper_1','question_paper_2','question_paper_3']
