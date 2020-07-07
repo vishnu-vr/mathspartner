@@ -95,14 +95,13 @@ app.post('/parts_from_db', (req,res) => {
 app.post('/get_quiz', (req,res) => {
 	const data = req.body.quiz_name
 	console.log(data)
-	res.json("asd")
-	// con.query("SELECT * FROM " + data, function (err, result, fields) {
-	// 	if (err) {
-	// 		console.log(err)//throw err;
-	// 		res.json(null)
-	// 	}
-	// 	console.log(result);
-	// });
+	// res.json("asd")
+	// var table = 'RATIOpart_2question_paper_2'
+	con.query("SELECT * FROM "+data, function (err, result, fields) {
+		if (err) throw err;
+		console.log(result);
+		res.json(result)
+	});
 })
 
 // get_question_paper

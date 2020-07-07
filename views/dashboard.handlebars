@@ -267,7 +267,9 @@
                 'duration':duration_input.value,
                 'topic_name_exists':topic_name_exists,
                 'part_number_exists':part_number_exists})
+
                 console.log(questions_and_options_dic)
+                return
 
             }
         }
@@ -285,6 +287,10 @@
     // for showing the selected part number on the button
     var part_number_exists = false
     function part_number_selected(part) {
+        // if the user selects another topic name then
+        // delete all the fetched questions
+        if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
+
         // resetting the diff level label to default
         if (!editing_mode) document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
         // if in editing mode show the part number as button label
@@ -296,11 +302,17 @@
         else{
             const part_number_input = document.getElementById('part_number_input')
             if (part != 'new') {
+                // if its not new then lock the input
+                part_number_input.readOnly = true
+
                 part_number_input.value = parseInt(part)
                 part_number_exists = true
             }
             // if new is selected then clear the space if anything present
             if (part == 'new') {
+                // if its new then unlock the input
+                part_number_input.readOnly = false
+
                 part_number_exists = false
                 part_number_input.value = ''
                 const permissible_question_papers = document.getElementById('permissible_question_papers')
@@ -415,7 +427,54 @@
         questions_and_options.appendChild(question)
     }
 
+    function display_fetched_questions(data) {
+        for (var i=0; i<data.length; i++){
+            // insert a holder for the quiz
+            add_more_questions()
+            // insert content into the holders
+
+
+
+            var question_ = 'question_' + (i+1)
+            console.log(question)
+            var question = document.getElementById(question_)
+            
+            // remove
+            //alert(question.children[0].children[2].value)
+            // alert(question.children[1].children[1].value)
+            // alert(question.children[2].children[1].value)
+            // alert(question.children[3].children[1].value)
+            // alert(question.children[4].children[1].value)
+            // radio .children[1].children[0]
+            // return
+
+            // add question
+            question.children[0].children[2].value = data[i].question
+
+            // adding options
+            question.children[1].children[1].value = data[i].option_1
+            question.children[2].children[1].value = data[i].option_2
+            question.children[3].children[1].value = data[i].option_3
+            question.children[4].children[1].value = data[i].option_4
+
+            // check the correct radio
+            var radio_for_correct_answer = 'radio_' + (i+1)
+            var radio_selected = document.getElementsByName(radio_for_correct_answer)
+            // var user_checked_radio = false
+            var correct_choice = null
+            for (var k=0; k<4; k++){
+                if (radio_selected[k] == data[i].correct) {
+                    radio_selected[k].checked = true
+                }
+            }
+        }
+    }
+
     function question_paper(level) {
+        // if the user selects another topic name then
+        // delete all the fetched questions
+        if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
+
         var question_paper_dropdown = document.getElementById('question_paper_dropdown')
         question_paper_dropdown.innerHTML = level
 
@@ -431,6 +490,7 @@
             postData('/get_quiz', { quiz_name })
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
+                display_fetched_questions(data)                
             });
         }
     }
@@ -439,6 +499,10 @@
     var already_existing_parts_from_db = []
     var topic_name_exists = false
     function topic_name_selected(selected_topic_name){
+        // if the user selects another topic name then
+        // delete all the fetched questions
+        if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
+
         // if topic name selected reset everything below it
         document.getElementById('part_number_input').value = ''
         document.getElementById('permissible_question_papers').innerHTML = ''
@@ -457,6 +521,9 @@
         if (selected_topic_name != 'new') {
             topic_name_input.value = selected_topic_name
             topic_name_exists = true
+            
+            // lock the input box
+            topic_name_input.readOnly = true
 
             // fetching parts available to the quiz
             postData('/parts_from_db', {selected_topic_name:selected_topic_name})
@@ -477,6 +544,9 @@
         }
         // if new selected
         if (selected_topic_name == 'new') {
+            // unlock the input box
+            topic_name_input.readOnly = false
+
             // emptying the parts fetched from db
             already_existing_parts_from_db = []
             topic_name_exists = false
@@ -506,6 +576,12 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // if the user selects another topic name then
+        // delete all the fetched questions
+        // suppose we came from add quiz
+        document.getElementById('questions_and_options').innerHTML = ''
+        question_count = 0
+
         // resetting everything
         document.getElementById('part_number_btn').innerHTML = 'Part Number'
         document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
@@ -551,6 +627,12 @@
     }
 
     function add_quiz(){
+        // if the user selects another topic name then
+        // delete all the fetched questions
+        // suppose we came from edit quiz
+        document.getElementById('questions_and_options').innerHTML = ''
+        question_count = 0
+
         // resetting everything
         document.getElementById('part_number_btn').innerHTML = 'Part Number'
         document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
