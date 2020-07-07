@@ -252,7 +252,7 @@
     // for showing the selected part number on the button
     var part_number_exists = false
     function part_number_selected(part) {
-        // resetting the diff level to default
+        // resetting the diff level label to default
         diff_level('difficulty level ')
         // if in editing mode show the part number as button label
         if (editing_mode){
@@ -271,6 +271,8 @@
                 part_number_input.value = ''
                 const permissible_diff_levels = document.getElementById('permissible_diff_levels')
                 permissible_diff_levels.innerHTML = ''
+                // resetting the diff levels options to default when new part
+                // is selected
                 // <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
                 var levels = ['easy','medium','hard']
                 for (var i=0; i<3; i++){
@@ -406,9 +408,30 @@
                 }
             });
         }
-        // resetting the input field if new selected
-        if (selected_topic_name == 'new') document.getElementById('topic_name').value = ''
-            
+        // if new selected
+        if (selected_topic_name == 'new') {
+            topic_name_exists = false
+            // resetting the input field 
+            document.getElementById('topic_name').value = ''
+            // resetting the part field 
+            document.getElementById('already_existing_parts').innerHTML = ''
+            // resetting the difficulty level to default
+            // resetting the diff levels options to default when new part
+            // is selected
+            // <a class="dropdown-item" onclick="diff_level('medium')">medium</a>
+            // resetting the diff level label to default
+            diff_level('difficulty level ')
+            const permissible_diff_levels = document.getElementById('permissible_diff_levels')
+            permissible_diff_levels.innerHTML = ''
+            var levels = ['easy','medium','hard']
+            for (var i=0; i<3; i++){
+                var a= document.createElement('a')
+                a.className = 'dropdown-item'
+                a.setAttribute('onclick','diff_level("'+levels[i]+'")')
+                a.innerHTML = levels[i]
+                permissible_diff_levels.appendChild(a)
+            }
+        }    
     }
 
     var editing_mode = false
