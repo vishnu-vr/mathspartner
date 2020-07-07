@@ -268,6 +268,7 @@
             }
             // if new is selected then clear the space if anything present
             if (part == 'new') {
+                part_number_exists = false
                 part_number_input.value = ''
                 const permissible_diff_levels = document.getElementById('permissible_diff_levels')
                 permissible_diff_levels.innerHTML = ''
