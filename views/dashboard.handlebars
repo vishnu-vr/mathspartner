@@ -353,19 +353,23 @@
         const part_number_input = document.getElementById('part_number_input')
         part_number_input.value = parseInt(part)
 
-        // if the user selects another topic name then
-        // delete all the fetched questions
-        if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
-
-        // resetting the diff level label to default
-        if (!editing_mode) document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
         // if in editing mode show the part number as button label
         if (editing_mode){
+            // if the user selects another topic name then
+            // delete all the fetched questions
+            document.getElementById('questions_and_options').innerHTML = ''
+
+            // if in editing then the part number always exists
+            part_number_exists = true
+
             const btn = document.getElementById('part_number_btn')
             btn.innerHTML = part
         }
         // else show it in the input box
         else{
+            // resetting the diff level label to default
+            document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
+
             // const part_number_input = document.getElementById('part_number_input')
             if (part != 'new') {
                 // if its not new then lock the input
@@ -494,6 +498,9 @@
     }
 
     function display_fetched_questions(data) {
+        // reset the question count
+        question_count = 0
+
         for (var i=0; i<data.length; i++){
             // enable duration
             var duration = document.getElementById('duration')
@@ -576,17 +583,19 @@
     function topic_name_selected(selected_topic_name){
         // if the user selects another topic name then
         // delete all the fetched questions
-        if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
+        // if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
 
         // if topic name selected reset everything below it
         document.getElementById('part_number_input').value = ''
         document.getElementById('permissible_question_papers').innerHTML = ''
         document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
-        if (editing_mode) document.getElementById('part_number_btn').innerHTML = 'Part Number'
+        // if (editing_mode) document.getElementById('part_number_btn').innerHTML = 'Part Number'
 
         // inserting the selected topic name as the button label
         // this feature is availble on when its edit mode
         if (editing_mode) {
+            document.getElementById('part_number_btn').innerHTML = 'Part Number'
+            document.getElementById('questions_and_options').innerHTML = ''
             const topic_name_btn = document.getElementById('topic_name_btn')
             topic_name_btn.innerHTML = selected_topic_name
         }
