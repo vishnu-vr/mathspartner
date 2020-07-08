@@ -6,6 +6,7 @@ var creds = require('./creds')
 const mysql = require('mysql');
 const { table } = require('console')
 const { json } = require('express')
+const session = require('express-session')
 
 const con = mysql.createConnection({
 	host: creds.host,
@@ -43,6 +44,8 @@ app.use(logger)
 app.use(express.json())
 // for handling url encoded data. ie html forms
 app.use(express.urlencoded({ extended:false }))
+// for session
+app.use(session({secret:"sadsad123qdw12das",resave:false,saveUninitialized:true}))
 // ############## MIDDLEWARES ###################
 
 // ########################### HTML RENDERING ###########################################
@@ -53,8 +56,28 @@ app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 // login
 app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
 
+// login verification
+app.post('/user_authentication', (req,res) => {
+	console.log(req.body)
+	if (req.body.username == 'admin' && req.body.password == 'admin'){
+		req.session.logged_in = true
+		res.json("success")
+	}
+	else{
+		res.json("failed")
+	}
+})
+
 // dashboard
-app.post('/dashboard', (req,res) => {
+app.get('/dashboard', (req,res) => {
+	// first check whether the user has already logged in or not
+	// console.log(req)
+	if (req.session.logged_in == null){
+		res.render('login', {title:"login", none:"none", heading:"LOGIN"})
+		return
+		// console.log("USER NOT LOGGED IN")
+	}
+
 	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
@@ -108,7 +131,7 @@ app.post('/delete_part_of_quiz', (req,res) => {
 // delete_the_whole_quiz
 app.post('/delete_the_whole_quiz', (req,res) => {
 	const data = req.body
-	
+
 	var quiz_table = data.topic_name+'part_'+data.part_number+data.question_paper
 	// first delete the whole quiz table
 	con.query("DROP TABLE "+quiz_table, function (err, result, fields) {
