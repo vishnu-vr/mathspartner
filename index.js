@@ -175,6 +175,45 @@ app.post('/get_question_paper/:mode', (req,res) => {
 	});
 })
 
+app.post('/edit_quiz', (req,res) => {
+	console.log(req.body)
+	// if we are editing a quiz then remove the whole table
+	// and rest will work fine (which is ofcourse adding it again)
+	// not a very good method but it works...don't judge :)
+	var data = req.body
+	// first update duration
+	var info_table = data[0].topic_name+"part_"+data[0].part_number
+	con.query("UPDATE "+info_table+" SET duration = '"+parseInt(data[0].duration)*60+"' WHERE question_paper = '"+data[0].question_paper+"'", function (err, result, fields) {
+		if (err) throw err;
+		console.log(result);
+	});
+	
+	// then delete the table
+	var table_name = data[0].topic_name+"part_"+data[0].part_number+data[0].question_paper
+	// console.log(table_name)
+	con.query("DROP TABLE "+table_name, function (err, result, fields) {
+		if (err) throw err;
+		console.log(result);
+	
+		// after deleting recreate it with new values
+		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
+		con.query(sql, function (err, result) {
+			if (err) throw err;
+			console.log("Table created");
+			// insert everything
+			for (var i=0; i<data.length; i++){
+				var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
+				con.query(sql, function (err, result) {
+				if (err) throw err;
+				console.log("row " +(i+1)+" inserted");
+				});
+			}
+		});
+	});
+
+	res.json("asd")
+})
+
 // add quiz to db
 app.post('/add_quiz', (req,res) => {
 	const data = req.body

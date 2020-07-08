@@ -321,7 +321,7 @@
                     }
                 }
                 
-                questions_and_options_dic.push({'topic_name':topic_name.value,
+                var dic_to_send = {'topic_name':topic_name.value,
                 'part_number':part_number_input.value.toString(),
                 'question_paper':question_paper_dropdown.innerHTML,
                 'question':question.children[0].children[2].value,
@@ -329,17 +329,22 @@
                 'correct':correct_choice,
                 'duration':duration_input.value,
                 'topic_name_exists':topic_name_exists,
-                'part_number_exists':part_number_exists})
+                'part_number_exists':part_number_exists}
+
+                questions_and_options_dic.push(dic_to_send)
 
                 console.log(questions_and_options_dic)
-                return
+                // return
 
             }
         }
 
         // if everything went well
         // sending data to back-end
-        postData('/add_quiz', questions_and_options_dic)
+        if (editing_mode) var url = '/edit_quiz'
+        else var url = '/add_quiz'
+
+        postData(url, questions_and_options_dic)
         .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
             // if everything went fine refresh the page
@@ -350,9 +355,6 @@
     // for showing the selected part number on the button
     var part_number_exists = false
     function part_number_selected(part) {
-        const part_number_input = document.getElementById('part_number_input')
-        part_number_input.value = parseInt(part)
-
         // if in editing mode show the part number as button label
         if (editing_mode){
             // if the user selects another topic name then
@@ -403,6 +405,9 @@
 
         // if part number is not new then fetch its diff leves
         if ( part != 'new'){
+            const part_number_input = document.getElementById('part_number_input')
+            part_number_input.value = parseInt(part)
+
             // fetch question_paper of that part
             var topic_name = document.getElementById('topic_name')
             if (!topics_in_db.includes(topic_name.value)) return
