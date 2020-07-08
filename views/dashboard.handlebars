@@ -651,6 +651,9 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // resetting duration
+        document.getElementById('duration_input').value = ''
+
         // show buttons
         document.getElementById('delete_part_of_quiz').hidden = false
         document.getElementById('delete_topic').hidden = false
@@ -665,6 +668,8 @@
         question_count = 0
 
         // resetting everything
+        document.getElementById('topic_name').value = ''
+        document.getElementById('part_number_input').value = ''
         document.getElementById('part_number_btn').innerHTML = 'Part Number'
         document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
         document.getElementById('permissible_question_papers').innerHTML = ''
@@ -711,6 +716,8 @@
     function add_quiz(){
         // removing part number of comming from edit mode
         document.getElementById('part_number_input').value = ''
+        // resetting duration
+        document.getElementById('duration_input').value = ''
 
         // hide buttons
         document.getElementById('delete_part_of_quiz').hidden = true
