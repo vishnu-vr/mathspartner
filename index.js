@@ -56,6 +56,12 @@ app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
 // login
 app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
 
+// logout
+app.get('/logout', (req,res) => {
+	req.session.logged_in = false
+	res.redirect('/login')
+})
+
 // login verification
 app.post('/user_authentication', (req,res) => {
 	console.log(req.body)
@@ -72,7 +78,7 @@ app.post('/user_authentication', (req,res) => {
 app.get('/dashboard', (req,res) => {
 	// first check whether the user has already logged in or not
 	// console.log(req)
-	if (req.session.logged_in == null){
+	if (req.session.logged_in == null || req.session.logged_in == false){
 		res.render('login', {title:"login", none:"none", heading:"LOGIN"})
 		return
 		// console.log("USER NOT LOGGED IN")
