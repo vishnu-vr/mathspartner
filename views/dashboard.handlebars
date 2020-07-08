@@ -95,9 +95,9 @@
             <button id="final_submit" type="button" class="btn btn-primary mt-4" onclick="final_submit()">Submit</button>
             <button id='delete_the_whole_quiz' type="button" class="btn btn-secondary mt-4" onclick="delete_the_whole_quiz()">Delete Quiz</button>
             <br>
-            <button id='delete_part_of_quiz' type="button" class="btn btn-warning mt-4" onclick="delete_part_of_quiz()">Delete Part</button>
+            <button id='delete_part_of_quiz' type="button" class="btn btn-warning mt-4" onclick="delete_part_of_quiz()" hidden>Delete Part</button>
             <br>
-            <button id='delete_topic' type="button" class="btn btn-danger mt-4" onclick="delete_topic()">Delete Topic</button>
+            <button id='delete_topic' type="button" class="btn btn-danger mt-4" onclick="delete_topic()" hidden>Delete Topic</button>
             {{!-- <div class="input-group input-group-lg">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-lg">Large</span>
@@ -672,8 +672,8 @@
         document.getElementById('duration_input').value = ''
 
         // show buttons
-        document.getElementById('delete_part_of_quiz').hidden = false
-        document.getElementById('delete_topic').hidden = false
+        // document.getElementById('delete_part_of_quiz').hidden = false
+        // document.getElementById('delete_topic').hidden = false
 
         // show the delete_the_whole_quiz button
         document.getElementById('delete_the_whole_quiz').hidden = false
