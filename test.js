@@ -12,60 +12,74 @@ if (err) throw err;
 console.log("Database Connected!");
 });
 
-data = [
-  {
-    topic_name: 'NEW_TOPIC',
-    part_number: '4',
-    question_paper: 'question_paper_1',
-    question: 'asd',
-    options: [ 'asd', 'asd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '44',
-    topic_name_exists: true,
-    part_number_exists: true
-  },
-  {
-    topic_name: 'NEW_TOPIC',
-    part_number: '4',
-    question_paper: 'question_paper_1',
-    question: 'asd',
-    options: [ 'asd', 'asd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '44',
-    topic_name_exists: true,
-    part_number_exists: true
-  }
-]
 
-// first update duration
-// var info_table = data[0].topic_name+"part_"+data[0].part_number
-// con.query("UPDATE "+info_table+" SET duration = '"+data[0].duration+"' WHERE question_paper = '"+data[0].question_paper+"'", function (err, result, fields) {
-// 	if (err) throw err;
-// 	console.log(result);
-// });
 
-// then delete the table
-var table_name = 'vishnu'//data[0].topic_name+"part_"+data[0].part_number+data[0].question_paper
-// console.log(table_name)
-con.query("DROP TABLE "+table_name, function (err, result, fields) {
+data = {
+  topic_name: 'sad',
+  question_paper: 'question_paper_2',
+  part_number: '2'
+}
+
+var quiz_table = data.topic_name+'part_'+data.part_number+data.question_paper
+
+// first delete the whole quiz table
+con.query("DROP TABLE "+quiz_table, function (err, result, fields) {
 	if (err) throw err;
 	console.log(result);
-
-	// after deleting recreate it with new values
-	var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
-	con.query(sql, function (err, result) {
+	// then delete the question_paper entry from info-table
+	var info_table = data.topic_name+'part_'+data.part_number
+	con.query("DELETE FROM "+info_table+" WHERE question_paper = '"+data.question_paper+"' ", function (err, result, fields) {
 		if (err) throw err;
-		console.log("Table created");
-		// insert everything
-		for (var i=0; i<data.length; i++){
-			var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
-			con.query(sql, function (err, result) {
+		console.log(result);
+		// then check whether the info table is empty or not
+		// if its not empty then stop there
+		// else delete the table the info table and 
+		// remove the part entry from index_table
+		con.query("SELECT COUNT(*) FROM "+info_table, function (err, result, fields) {
 			if (err) throw err;
-			console.log("row " +(i+1)+" inserted");
-			});
-		}
+			console.log(result);
+
+			if (result[0]['COUNT(*)'] == 0){
+				con.query("DROP TABLE "+info_table, function (err, result, fields) {
+					if (err) throw err;
+					console.log(result);
+					// after that remove the part number from index_table
+					con.query("SELECT parts FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result, fields) {
+						if (err) throw err;
+						console.log(result);
+
+						var parts = result[0].parts.split('#')
+
+						var part_to_be_removed = 'part_'+data.part_number
+						var updated_parts = []
+						for (var i=0; i<parts.length; i++){
+							if (parts[i] != part_to_be_removed) updated_parts.push(parts[i])
+						}
+						// if no part is remaining then remove that row (ie topic name)
+						if (updated_parts.length == 0){
+							con.query("DELETE FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
+							if (err) throw err;
+							console.log("1 record inserted");
+							});
+						}
+						// else update the part
+						else{
+							updated_parts=updated_parts.join('#')
+							con.query("UPDATE index_table SET parts = '"+updated_parts+"' WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
+							if (err) throw err;
+							console.log("1 record inserted");
+							});
+						}
+					});
+					
+				});
+			}
+		});
 	});
 });
+
+
+
 
 
 // // retreiving index table

@@ -184,7 +184,10 @@
         'part_number':part_number})
         .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
-            if (data == 'success') alert('deleted')
+            if (data == 'success') {
+                alert('deleted')
+                edit_quiz()
+            }
         });
     }
 
