@@ -93,6 +93,11 @@
             {{!-- submit button --}}
             <br>
             <button id="final_submit" type="button" class="btn btn-primary mt-4" onclick="final_submit()">Submit</button>
+            <button id='delete_the_whole_quiz' type="button" class="btn btn-secondary mt-4" onclick="delete_the_whole_quiz()">Delete Quiz</button>
+            <br>
+            <button id='delete_part_of_quiz' type="button" class="btn btn-warning mt-4" onclick="delete_part_of_quiz()">Delete Part</button>
+            <br>
+            <button id='delete_topic' type="button" class="btn btn-danger mt-4" onclick="delete_topic()">Delete Topic</button>
             {{!-- <div class="input-group input-group-lg">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="inputGroup-sizing-lg">Large</span>
@@ -124,6 +129,64 @@
     //for (var i=0; i<4; i++){
     //    if (radio_selected[i].checked) console.log(a.item(0).children[i+1].children[1].value)
     //}
+
+    function delete_topic() {
+        var topic_name = document.getElementById('topic_name_btn').innerHTML
+        if (topic_name == 'Topic Name') {
+            alert('select a quiz first')
+            return
+        }
+        postData('/delete_topic', { 'topic_name':topic_name})
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            if (data == 'success') alert('deleted')
+        });
+    }
+
+    function delete_part_of_quiz() {
+        var topic_name = document.getElementById('topic_name_btn').innerHTML
+        var part_number = document.getElementById('part_number_btn').innerHTML
+        if (topic_name == 'Topic Name') {
+            alert('select a quiz first')
+            return
+        }
+        if (part_number == 'Part Number') {
+            alert('select the part')
+            return
+        }
+        postData('/delete_part_of_quiz', { 'topic_name':topic_name, 'part_number':part_number})
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            if (data == 'success') alert('deleted')
+        });
+    }
+
+    function delete_the_whole_quiz() {
+        var topic_name = document.getElementById('topic_name_btn').innerHTML
+        var part_number = document.getElementById('part_number_btn').innerHTML
+        var question_paper_dropdown = document.getElementById('question_paper_dropdown').innerHTML
+        if (topic_name == 'Topic Name') {
+            alert('select a quiz first')
+            return
+        }
+        if (part_number == 'Part Number') {
+            alert('select the part')
+            return
+        }
+        if (question_paper_dropdown == 'question paper ') {
+            alert('select the question paper')
+            return
+        }
+        // alert(topic_name)
+        // return
+        postData('/delete_the_whole_quiz', { 'topic_name':topic_name, 
+        'question_paper':question_paper_dropdown, 
+        'part_number':part_number})
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            if (data == 'success') alert('deleted')
+        });
+    }
 
     function delete_question(question_num) {
         console.log(question_num)
@@ -287,6 +350,9 @@
     // for showing the selected part number on the button
     var part_number_exists = false
     function part_number_selected(part) {
+        const part_number_input = document.getElementById('part_number_input')
+        part_number_input.value = parseInt(part)
+
         // if the user selects another topic name then
         // delete all the fetched questions
         if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
@@ -300,12 +366,12 @@
         }
         // else show it in the input box
         else{
-            const part_number_input = document.getElementById('part_number_input')
+            // const part_number_input = document.getElementById('part_number_input')
             if (part != 'new') {
                 // if its not new then lock the input
                 part_number_input.readOnly = true
 
-                part_number_input.value = parseInt(part)
+                // part_number_input.value = parseInt(part)
                 part_number_exists = true
             }
             // if new is selected then clear the space if anything present
@@ -429,6 +495,11 @@
 
     function display_fetched_questions(data) {
         for (var i=0; i<data.length; i++){
+            // enable duration
+            var duration = document.getElementById('duration')
+            duration.hidden = false
+            document.getElementById('duration_input').value = data[0].duration      
+
             // insert a holder for the quiz
             add_more_questions()
             // insert content into the holders
@@ -461,9 +532,10 @@
             var radio_for_correct_answer = 'radio_' + (i+1)
             var radio_selected = document.getElementsByName(radio_for_correct_answer)
             // var user_checked_radio = false
-            var correct_choice = null
+            // var correct_choice = null
             for (var k=0; k<4; k++){
-                if (radio_selected[k] == data[i].correct) {
+                // console.log(question.children[k+1].children[1].value)
+                if (question.children[k+1].children[1].value == data[i].correct) {
                     radio_selected[k].checked = true
                 }
             }
@@ -485,9 +557,12 @@
             const part_number = document.getElementById('part_number_btn').innerHTML
             const question_paper = document.getElementById('question_paper_dropdown').innerHTML
             const quiz_name = topic_name+"part_"+part_number+question_paper
-            alert("here"+quiz_name)
+            const table_for_duration = topic_name+"part_"+part_number
+            // alert("here"+quiz_name)
 
-            postData('/get_quiz', { quiz_name })
+            postData('/get_quiz', { 'quiz_name':quiz_name,
+            'quiz_name_for_duration':table_for_duration,
+            'question_paper_for_duration':question_paper})
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
                 display_fetched_questions(data)                
@@ -576,6 +651,13 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // show buttons
+        document.getElementById('delete_part_of_quiz').hidden = false
+        document.getElementById('delete_topic').hidden = false
+
+        // show the delete_the_whole_quiz button
+        document.getElementById('delete_the_whole_quiz').hidden = false
+
         // if the user selects another topic name then
         // delete all the fetched questions
         // suppose we came from add quiz
@@ -627,6 +709,13 @@
     }
 
     function add_quiz(){
+        // hide buttons
+        document.getElementById('delete_part_of_quiz').hidden = true
+        document.getElementById('delete_topic').hidden = true
+
+        // hide the delete_the_whole_quiz button
+        document.getElementById('delete_the_whole_quiz').hidden = true
+
         // if the user selects another topic name then
         // delete all the fetched questions
         // suppose we came from edit quiz

@@ -91,6 +91,27 @@ app.post('/parts_from_db', (req,res) => {
 	});
 })
 
+// delete_topic
+app.post('/delete_topic', (req,res) => {
+	const data = req.body
+	console.log(data)
+	res.json('success')
+})
+
+// delete_part_of_quiz
+app.post('/delete_part_of_quiz', (req,res) => {
+	const data = req.body
+	console.log(data)
+	res.json('success')
+})
+
+// delete_the_whole_quiz
+app.post('/delete_the_whole_quiz', (req,res) => {
+	const data = req.body
+	console.log(data)
+	res.json('success')
+})
+
 // get the complete quiz
 app.post('/get_quiz', (req,res) => {
 	const data = req.body.quiz_name
@@ -100,7 +121,16 @@ app.post('/get_quiz', (req,res) => {
 	con.query("SELECT * FROM "+data, function (err, result, fields) {
 		if (err) throw err;
 		console.log(result);
-		res.json(result)
+		var data_to_send = result
+		// res.json(result)
+		const table = req.body.quiz_name_for_duration
+		const question_paper = req.body.question_paper_for_duration
+		con.query("SELECT duration FROM "+table+" WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
+			if (err) throw err;
+			console.log(result);
+			data_to_send[0]["duration"] = result[0].duration
+			res.json(data_to_send)
+		});
 	});
 })
 
