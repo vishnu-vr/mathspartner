@@ -709,6 +709,9 @@
     }
 
     function add_quiz(){
+        // removing part number of comming from edit mode
+        document.getElementById('part_number_input').value = ''
+
         // hide buttons
         document.getElementById('delete_part_of_quiz').hidden = true
         document.getElementById('delete_topic').hidden = true
