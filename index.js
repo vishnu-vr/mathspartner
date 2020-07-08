@@ -8,17 +8,17 @@ const { table } = require('console')
 const { json } = require('express')
 const session = require('express-session')
 
-const con = mysql.createConnection({
+const con = mysql.createPool({
 	host: creds.host,
 	user: creds.user,
 	password: creds.password,
 	database: creds.database
 });
 
-con.connect(function(err) {
-	if (err) throw err;
-	console.log("Database Connected!");
-});
+// con.connect(function(err) {
+// 	if (err) throw err;
+// 	console.log("Database Connected!");
+// });
 
 const app = express()
 
