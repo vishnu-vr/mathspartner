@@ -399,7 +399,7 @@ app.post('/add_quiz', (req,res) => {
 				console.log("Table created");
 				// after creating the info-table, add the first entry
 				// with id, question-paper and then duration
-				var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+data[0].duration+"')";
+				var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"')";
 				con.query(sql, function (err, result) {
 					if (err) throw err;
 					console.log("1 record inserted");
