@@ -502,11 +502,12 @@
         // reset the question count
         question_count = 0
 
-        for (var i=0; i<data.length; i++){
-            // enable duration
-            var duration = document.getElementById('duration')
-            duration.hidden = false
-            document.getElementById('duration_input').value = data[0].duration      
+        // enable duration
+        var duration = document.getElementById('duration')
+        duration.hidden = false
+        document.getElementById('duration_input').value = (data[0].duration)/60
+        
+        for (var i=0; i<data.length; i++){     
 
             // insert a holder for the quiz
             add_more_questions()
