@@ -13,100 +13,31 @@ console.log("Database Connected!");
 });
 
 
+// var table = 'RATIOpart_1'
+// var path = 'somepath'
+// var question_paper = 'question_paper_1'
+// var sql = "UPDATE "+table+" SET pdf_path = '"+path+"' WHERE question_paper = '"+question_paper+"'";
+// con.query(sql, function (err, result) {
+// 	if (err) throw err;
+// 	console.log("1 record updated");
+// });
 
-data = {
-  topic_name: 'sad',
-  question_paper: 'question_paper_2',
-  part_number: '2'
-}
-
-var quiz_table = data.topic_name+'part_'+data.part_number+data.question_paper
-
-// first delete the whole quiz table
-con.query("DROP TABLE "+quiz_table, function (err, result, fields) {
-	if (err) throw err;
-	console.log(result);
-	// then delete the question_paper entry from info-table
-	var info_table = data.topic_name+'part_'+data.part_number
-	con.query("DELETE FROM "+info_table+" WHERE question_paper = '"+data.question_paper+"' ", function (err, result, fields) {
-		if (err) throw err;
-		console.log(result);
-		// then check whether the info table is empty or not
-		// if its not empty then stop there
-		// else delete the table the info table and 
-		// remove the part entry from index_table
-		con.query("SELECT COUNT(*) FROM "+info_table, function (err, result, fields) {
-			if (err) throw err;
-			console.log(result);
-
-			if (result[0]['COUNT(*)'] == 0){
-				con.query("DROP TABLE "+info_table, function (err, result, fields) {
-					if (err) throw err;
-					console.log(result);
-					// after that remove the part number from index_table
-					con.query("SELECT parts FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result, fields) {
-						if (err) throw err;
-						console.log(result);
-
-						var parts = result[0].parts.split('#')
-
-						var part_to_be_removed = 'part_'+data.part_number
-						var updated_parts = []
-						for (var i=0; i<parts.length; i++){
-							if (parts[i] != part_to_be_removed) updated_parts.push(parts[i])
-						}
-						// if no part is remaining then remove that row (ie topic name)
-						if (updated_parts.length == 0){
-							con.query("DELETE FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
-							if (err) throw err;
-							console.log("1 record inserted");
-							});
-						}
-						// else update the part
-						else{
-							updated_parts=updated_parts.join('#')
-							con.query("UPDATE index_table SET parts = '"+updated_parts+"' WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
-							if (err) throw err;
-							console.log("1 record inserted");
-							});
-						}
-					});
-					
-				});
-			}
-		});
-	});
+var table_name_for_duration = 'RATIOpart_1'
+var question_paper = 'question_paper_1'
+let sql = "SELECT duration,pdf_path FROM " + table_name_for_duration + " WHERE question_paper = '"+question_paper+"' "
+con.query(sql, function (err, result, fields) {
+	if (err) {
+		console.log(err)//throw err;
+		res.render("<h1>something went wrong</h1>")
+	}
+	// console.log(result[0].duration);
+	const time = result[0].duration
+	const pdf_path = result[0].pdf_path
+	console.log(pdf_path)
+	// res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time})
 });
 
 
-
-
-
-// // retreiving index table
-// con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
-// 	if (err) throw err;
-// 	// console.log(result[0].topic_name);
-// 	var topics = []
-// 	for (var i=0; i<result.length; i++){
-// 		topics.push(result[i].topic_name)
-// 	}
-// 	// console.log(topics)
-// 	res.render('topics', {title:"topics", nav_selected:"quiz", heading:"TOPICS", topics:topics})
-// });
-
-// // inserting values to index_table
-// param = [
-//   {
-//     topic_name: 'RATIO',
-//     part_number: '2',
-//     diff_level: 'medium',
-//     question: 'asd',
-//     options: [ 'asd', 'asd', 'asd', 'asd' ],
-//     correct: 'asd',
-//     duration: '22',
-//     topic_name_exists: true
-//   }
-// ]
 // var sql = "INSERT INTO index_table VALUES ('RATIO', 'part_1#part_2#part_3')";
 // con.query(sql, function (err, result) {
 // if (err) throw err;

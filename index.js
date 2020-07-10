@@ -7,6 +7,7 @@ const mysql = require('mysql');
 const { table } = require('console')
 const { json } = require('express')
 const session = require('express-session')
+const fileupload = require('express-fileupload')
 
 const con = mysql.createPool({
 	host: creds.host,
@@ -35,6 +36,9 @@ const logger = (req,res,next) => {
 	// console.log(JSON.stringify(req.body))
 	next()
 }
+
+// fileupload
+app.use(fileupload())
 
 // public
 app.use(express.static(path.join(__dirname, '/public')));
@@ -462,7 +466,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 		for (var i=0; i<questions.length; i++) shuffle(questions[i].options)
 
 		// fetching the time limit for the quiz
-		let sql = "SELECT duration FROM " + table_name_for_duration + " WHERE question_paper = '"+req.params.question_paper+"' "
+		let sql = "SELECT duration,pdf_path FROM " + table_name_for_duration + " WHERE question_paper = '"+req.params.question_paper+"' "
 		con.query(sql, function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
@@ -470,7 +474,9 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 			}
 			// console.log(result[0].duration);
 			const time = result[0].duration
-			res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time})
+			const pdf_path = result[0].pdf_path
+
+			res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time, pdf_path:pdf_path})
 		});
 	});
 })
@@ -569,6 +575,24 @@ app.post('/api/', (req,res) => {
 app.post('/apierror', (req,res) => {
 	res.status(400).json({error:`boom an error. Hope you like it`})
 })
+
+// upload page
+app.get('/upload', (req,res) => {
+	res.render('upload')
+})
+
+// fileupload
+app.post('/fileupload', (req,res) => {
+	var file = req.files.inpFile
+	var name = file.name
+	console.log(file)
+	var file_path = './public/pdf_uploads/'+name+'.js'
+	file.mv(file_path, (err)=>{
+		if (err) console.log(err)
+	})
+	res.send("Asd")
+})
+
 
 // ######################################################################
 
