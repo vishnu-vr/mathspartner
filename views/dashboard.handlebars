@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <input id="part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button">
+                <input id="part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button" readonly>
                 </div>
             </div>
             
@@ -601,6 +601,12 @@
     var already_existing_parts_from_db = []
     var topic_name_exists = false
     function topic_name_selected(selected_topic_name){
+        // if topic name is selected then lock the
+        // part_number_input as default.
+        // it will be unlocked if a new part number
+        // has to be added
+        document.getElementById('part_number_input').readOnly = true
+
         // if the user selects another topic name then
         // delete all the fetched questions
         // if(editing_mode) document.getElementById('questions_and_options').innerHTML = ''
