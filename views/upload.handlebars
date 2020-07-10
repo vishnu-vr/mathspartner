@@ -14,7 +14,7 @@
         const formData = new FormData()
 
         if (inpFile.files[0]) {
-            formData.append('inpFile',inpFile.files[0],"asdasdasdasd")
+            formData.append('inpFile',inpFile.files[0],"filename")
             
             fetch(endpoint,{
                 method:"post",
@@ -23,7 +23,7 @@
                 console.log(data)
             })
         }
-        else console.log("file is missing")
+        else console.log("pdf file is missing")
 
 
     }

@@ -42,7 +42,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Correct Answers</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Progress Card</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="location.reload()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -217,15 +217,22 @@
         clearInterval(time_interval);
 
         // alert("you sure?")
+        var number_of_correct_answers = 0
+        var number_of_wrong_answers = 0
+        var number_of_NA = 0
         for (var i=0; i<questions.length; i++){
             if (user_selected_options[i] != null && 
             questions[i].correct == user_selected_options[i].selected_option_innerText) {
                 score++
+                number_of_correct_answers++
             }
             else if (user_selected_options[i] != null && 
             questions[i].correct != user_selected_options[i].selected_option_innerText){
                 score -= 0.33
+                number_of_wrong_answers++
             }
+            // un-attempted questions
+            if (user_selected_options[i] == null) number_of_NA++
         }
         // alert(score)
         const modal_body = document.getElementById('modal-body')
@@ -233,6 +240,17 @@
         var score_p = document.createElement('p')
         score_p.innerText = "SCORE : " + score
         modal_body.appendChild(score_p)
+        // after appending score show details
+        score_p = document.createElement('p')
+        score_p.innerText = "CORRECT ANSWERS : " + number_of_correct_answers
+        modal_body.appendChild(score_p)
+        score_p = document.createElement('p')
+        score_p.innerText = "WRONG ANSWERS : " + number_of_wrong_answers
+        modal_body.appendChild(score_p)
+        score_p = document.createElement('p')
+        score_p.innerText = "NA : " + number_of_NA
+        modal_body.appendChild(score_p)
+        modal_body.appendChild(document.createElement('hr'))
 
         // display all the correct answers
         for (var i=0; i<questions.length; i++){
@@ -256,8 +274,8 @@
         if (pdf_path != null && pdf_path != ""){
             // to download complete explaination
             var pdf_viewer = document.createElement('a')
-            pdf_viewer.href = pdf_path //'/pdf_uploads/test.pdf'
-            pdf_viewer.download = true
+            pdf_viewer.href = pdf_path //'/pdf_uploads/vishnupart_1question_paper_1.pdf' //
+            pdf_viewer.download = 'solutions'
             pdf_viewer.innerHTML = 'Download Complete Solution'
             modal_body.appendChild(pdf_viewer)
         }

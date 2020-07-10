@@ -79,6 +79,12 @@
                 <input id="duration_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
+            {{!-- upload pdf explaination --}}
+            <div id='pdf_explaination' class="mt-4">
+                <h6>Upload Explaination</h6>
+                <input type="file" id='inpFile' />
+                <div id='pdf_explaination_path'></div>
+            </div>
             {{!-- questions and options --}}
             <div id="questions_and_options">
 
@@ -350,6 +356,10 @@
             return
         }
 
+        // adding a null value
+        // the path will be updated later
+        questions_and_options_dic[0]['pdf_path'] = ''
+
         // if everything went well
         // sending data to back-end
         if (editing_mode) var url = '/edit_quiz'
@@ -358,6 +368,26 @@
         postData(url, questions_and_options_dic)
         .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
+            // after thats done we if there is a pdf uploaded we send
+            // it to the back-end
+            // <input type="file" id='inpFile' />
+            const inpFile = document.getElementById('inpFile')
+            const endpoint = '/fileupload'
+            const formData = new FormData()
+            var filename = questions_and_options_dic[0].topic_name + 'part_' + questions_and_options_dic[0].part_number + '#' + questions_and_options_dic[0].question_paper
+            // if pdf file exists
+            if (inpFile.files[0]) {
+                formData.append('inpFile',inpFile.files[0],filename)
+                
+                fetch(endpoint,{
+                    method:"post",
+                    body:formData
+                }).then((data) => {
+                    console.log(data)
+                })
+            }
+            else console.log("pdf file is missing")
+
             // if everything went fine refresh the page
             location.reload();
         });
@@ -368,6 +398,7 @@
     function part_number_selected(part) {
         // if in editing mode show the part number as button label
         if (editing_mode){
+            document.getElementById('pdf_explaination_path').innerHTML = ''
             // if the user selects another topic name then
             // delete all the fetched questions
             document.getElementById('questions_and_options').innerHTML = ''
@@ -520,6 +551,18 @@
         // reset the question count
         question_count = 0
 
+        // display the pdf_explaination file
+        var pdf_explaination = document.getElementById('pdf_explaination_path')
+        // if pdf_path available
+        if (data[0].pdf_path != null && data[0].pdf_path != ""){
+            // to download complete explaination
+            var pdf_viewer = document.createElement('a')
+            pdf_viewer.href = data[0].pdf_path //'/pdf_uploads/test.pdf'
+            pdf_viewer.download = true
+            pdf_viewer.innerHTML = 'Download Complete Solution'
+            pdf_explaination.appendChild(pdf_viewer)
+        }
+
         // enable duration
         var duration = document.getElementById('duration')
         duration.hidden = false
@@ -580,6 +623,7 @@
         // if editing mode then retrieve all the questions
         // and options from the database
         if (editing_mode) {
+            document.getElementById('pdf_explaination_path').innerHTML = ''
             const topic_name = document.getElementById('topic_name_btn').innerHTML
             const part_number = document.getElementById('part_number_btn').innerHTML
             const question_paper = document.getElementById('question_paper_dropdown').innerHTML
@@ -620,6 +664,7 @@
         // inserting the selected topic name as the button label
         // this feature is availble on when its edit mode
         if (editing_mode) {
+            document.getElementById('pdf_explaination_path').innerHTML = ''
             document.getElementById('part_number_btn').innerHTML = 'Part Number'
             document.getElementById('questions_and_options').innerHTML = ''
             const topic_name_btn = document.getElementById('topic_name_btn')
@@ -686,6 +731,9 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // resetting pdf
+        document.getElementById('pdf_explaination_path').innerHTML = ''
+
         // resetting duration
         document.getElementById('duration_input').value = ''
 
@@ -749,6 +797,9 @@
     }
 
     function add_quiz(){
+        // resetting pdf
+        document.getElementById('pdf_explaination_path').innerHTML = ''
+
         // removing part number of comming from edit mode
         document.getElementById('part_number_input').value = ''
         // resetting duration

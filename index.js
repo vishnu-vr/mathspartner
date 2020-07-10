@@ -4,10 +4,11 @@ const path = require('path')
 const shuffle = require('./helper_functions')
 var creds = require('./creds')
 const mysql = require('mysql');
-const { table } = require('console')
+const { table, Console } = require('console')
 const { json } = require('express')
 const session = require('express-session')
 const fileupload = require('express-fileupload')
+const fs = require('fs');
 
 const con = mysql.createPool({
 	host: creds.host,
@@ -214,10 +215,11 @@ app.post('/get_quiz', (req,res) => {
 		// res.json(result)
 		const table = req.body.quiz_name_for_duration
 		const question_paper = req.body.question_paper_for_duration
-		con.query("SELECT duration FROM "+table+" WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
+		con.query("SELECT duration,pdf_path FROM "+table+" WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
 			if (err) throw err;
 			console.log(result);
 			data_to_send[0]["duration"] = result[0].duration
+			data_to_send[0]["pdf_path"] = result[0].pdf_path
 			res.json(data_to_send)
 		});
 	});
@@ -310,10 +312,10 @@ app.post('/add_quiz', (req,res) => {
 	// case - 1 : topic name and part number exists (ie we are adding a new question_paper)
 	if (data[0].topic_name_exists && data[0].part_number_exists){
 		// first thing to do is : update the quiz details table
-		// with the new question_paper number and duration
+		// with the new question_paper number, duration and pdf_path
 		var table_name = data[0].topic_name+"part_"+data[0].part_number
 		// console.log(table_name)
-		con.query("INSERT INTO "+table_name+" (`id`, `question_paper`, `duration`) VALUES (NULL, '"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"')", function (err, result, fields) {
+		con.query("INSERT INTO "+table_name+" (`id`, `question_paper`, `duration`, `pdf_path`) VALUES (NULL, '"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"', '"+data[0].pdf_path+"')", function (err, result, fields) {
 			if (err) console.log("error")//throw err;
 			console.log(result);
 			// second is to create a table with questions
@@ -330,6 +332,8 @@ app.post('/add_quiz', (req,res) => {
 					console.log("row " +(i+1)+" inserted");
 					});
 				}
+				// return
+				res.json("add_quiz api called")
 			});
 		});
 	}
@@ -352,13 +356,13 @@ app.post('/add_quiz', (req,res) => {
 				// create an info-table of that part
 				var table_name = data[0].topic_name + part_number
 				// console.log(table_name)
-				var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20))";
+				var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20), pdf_path VARCHAR(255))";
 				con.query(sql, function (err, result) {
 					if (err) throw err;
 					console.log("Table created");
 					// after creating the info-table, add the first entry
 					// with id, question-paper and then duration
-					var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"')";
+					var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"', '"+data[0].pdf_path+"')";
 					con.query(sql, function (err, result) {
 						if (err) throw err;
 						console.log("1 record inserted");
@@ -378,6 +382,8 @@ app.post('/add_quiz', (req,res) => {
 								console.log("row " +(i+1)+" inserted");
 								});
 							}
+							// return message
+							res.json("add_quiz api called")
 						});
 					});
 				});
@@ -397,13 +403,13 @@ app.post('/add_quiz', (req,res) => {
 			// create an info-table of that part
 			var table_name = data[0].topic_name + part_number
 			// console.log(table_name)
-			var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20))";
+			var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20), pdf_path VARCHAR(255))";
 			con.query(sql, function (err, result) {
 				if (err) throw err;
 				console.log("Table created");
 				// after creating the info-table, add the first entry
-				// with id, question-paper and then duration
-				var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"')";
+				// with id, question-paper, duration and pdf_path
+				var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"', '"+data[0].pdf_path+"')";
 				con.query(sql, function (err, result) {
 					if (err) throw err;
 					console.log("1 record inserted");
@@ -415,7 +421,7 @@ app.post('/add_quiz', (req,res) => {
 					con.query(sql, function (err, result) {
 						if (err) throw err;
 						console.log("Table created");
-						// insert everythin
+						// insert everything
 						for (var i=0; i<data.length; i++){
 							var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 							con.query(sql, function (err, result) {
@@ -423,13 +429,13 @@ app.post('/add_quiz', (req,res) => {
 							console.log("row " +(i+1)+" inserted");
 							});
 						}
+						// return success
+						res.json("add_quiz api called")
 					});
 				});
 			});
 		});
 	}
-
-	res.json("add_quiz api called")
 })
 
 // quiz box
@@ -585,12 +591,27 @@ app.get('/upload', (req,res) => {
 app.post('/fileupload', (req,res) => {
 	var file = req.files.inpFile
 	var name = file.name
-	console.log(file)
-	var file_path = './public/pdf_uploads/'+name+'.js'
+	var table_name = name.split('#')[0]
+	var question_paper = name.split('#')[1]
+
+	name = table_name+question_paper
+	// console.log(file)
+	// saving the file
+	var file_path = './public/pdf_uploads/'+name+'.pdf'
 	file.mv(file_path, (err)=>{
 		if (err) console.log(err)
+		file_path = '/pdf_uploads/'+name+'.pdf'
+		con.query("UPDATE "+table_name+" SET pdf_path = '"+file_path+"' WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+			}
+		
+		});
 	})
-	res.send("Asd")
+
+	// updating the database with the new path
+
+	res.send("success")
 })
 
 

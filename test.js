@@ -22,19 +22,14 @@ console.log("Database Connected!");
 // 	console.log("1 record updated");
 // });
 
-var table_name_for_duration = 'RATIOpart_1'
+var table = 'vishnupart_1'
+var path = 'new_path'
 var question_paper = 'question_paper_1'
-let sql = "SELECT duration,pdf_path FROM " + table_name_for_duration + " WHERE question_paper = '"+question_paper+"' "
-con.query(sql, function (err, result, fields) {
+con.query("UPDATE "+table+" SET pdf_path = '"+path+"' WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
 	if (err) {
 		console.log(err)//throw err;
-		res.render("<h1>something went wrong</h1>")
 	}
-	// console.log(result[0].duration);
-	const time = result[0].duration
-	const pdf_path = result[0].pdf_path
-	console.log(pdf_path)
-	// res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time})
+
 });
 
 
