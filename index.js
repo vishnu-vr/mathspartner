@@ -545,6 +545,33 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	});
 })
 
+// fileupload
+app.post('/fileupload', (req,res) => {
+	var file = req.files.inpFile
+	var name = file.name
+	var table_name = name.split('#')[0]
+	var question_paper = name.split('#')[1]
+
+	name = table_name+question_paper
+	// console.log(file)
+	// saving the file
+	var file_path = './public/pdf_uploads/'+name+'.pdf'
+	file.mv(file_path, (err)=>{
+		if (err) console.log(err)
+		file_path = '/pdf_uploads/'+name+'.pdf'
+		con.query("UPDATE "+table_name+" SET pdf_path = '"+file_path+"' WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+			}
+		
+		});
+	})
+
+	// updating the database with the new path
+
+	res.send("success")
+})
+
 // classes
 app.get('/classes', (req,res) => res.render('classes', {title:"classes", nav_selected:"classes"}))
 
@@ -582,37 +609,10 @@ app.post('/apierror', (req,res) => {
 	res.status(400).json({error:`boom an error. Hope you like it`})
 })
 
-// upload page
-app.get('/upload', (req,res) => {
-	res.render('upload')
-})
-
-// fileupload
-app.post('/fileupload', (req,res) => {
-	var file = req.files.inpFile
-	var name = file.name
-	var table_name = name.split('#')[0]
-	var question_paper = name.split('#')[1]
-
-	name = table_name+question_paper
-	// console.log(file)
-	// saving the file
-	var file_path = './public/pdf_uploads/'+name+'.pdf'
-	file.mv(file_path, (err)=>{
-		if (err) console.log(err)
-		file_path = '/pdf_uploads/'+name+'.pdf'
-		con.query("UPDATE "+table_name+" SET pdf_path = '"+file_path+"' WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
-			if (err) {
-				console.log(err)//throw err;
-			}
-		
-		});
-	})
-
-	// updating the database with the new path
-
-	res.send("success")
-})
+// // upload page
+// app.get('/upload', (req,res) => {
+// 	res.render('upload')
+// })
 
 
 // ######################################################################
