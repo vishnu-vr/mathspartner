@@ -238,7 +238,7 @@
         const modal_body = document.getElementById('modal-body')
         modal_body.innerHTML = ""
         var score_p = document.createElement('p')
-        score_p.innerText = "SCORE : " + score
+        score_p.innerText = "SCORE : " + score.toFixed(2);
         modal_body.appendChild(score_p)
         // after appending score show details
         score_p = document.createElement('p')
@@ -255,17 +255,17 @@
         // display all the correct answers
         for (var i=0; i<questions.length; i++){
             var q = document.createElement('p')
-            q.innerText = questions[i].question
+            q.innerText = 'Q'+ (i+1) + ')  ' +questions[i].question
             modal_body.appendChild(q)
             var ca = document.createElement('p')
             
             if (user_selected_options[i] != null && questions[i].correct == user_selected_options[i].selected_option_innerText){
-                ca.innerHTML = user_selected_options[i].selected_option_innerText + " " + correct
+                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerText + " " + correct
             }
             else if (user_selected_options[i] != null && questions[i].correct != user_selected_options[i].selected_option_innerText){
-                ca.innerHTML = user_selected_options[i].selected_option_innerText + " " + wrong + "&nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
+                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerText + " " + wrong + "&nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
             }
-            else ca.innerHTML = " NA &nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
+            else ca.innerHTML = 'Ans'+ ')  ' + " NA &nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
             modal_body.appendChild(ca)
         }
 

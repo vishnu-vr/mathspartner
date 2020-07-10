@@ -232,7 +232,7 @@ app.post('/get_question_paper/:mode', (req,res) => {
 
 	var question_paper = data
 	var table = question_paper.topic_name+question_paper.part_number
-	var available_question_papers = ['question_paper_1','question_paper_2','question_paper_3']
+	var available_question_papers = ['question_paper_1','question_paper_2','question_paper_3','question_paper_4','question_paper_5','question_paper_6']
 	con.query("SELECT question_paper FROM " + table, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
@@ -587,9 +587,9 @@ app.post('/testbody' ,(req,res) => {
 	res.json("hey hey")
 })
 
-app.get('/', (req,res) => {
-	res.send("<h1>hello world!!</h1>")
-})
+// app.get('/', (req,res) => {
+// 	res.send("<h1>hello world!!</h1>")
+// })
 
 var dic = {name:'vishnu',age:'21'}
 

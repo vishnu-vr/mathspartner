@@ -68,6 +68,9 @@
                 <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
                 <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
                 <a class="dropdown-item" onclick="question_paper('question_paper_3')">question_paper_3</a>
+                <a class="dropdown-item" onclick="question_paper('question_paper_4')">question_paper_4</a>
+                <a class="dropdown-item" onclick="question_paper('question_paper_5')">question_paper_5</a>
+                <a class="dropdown-item" onclick="question_paper('question_paper_6')">question_paper_6</a>
             </div>
             </div>
             {{!-- duration input box --}}
@@ -434,8 +437,8 @@
                 // resetting the diff levels options to default when new part
                 // is selected
                 // <a class="dropdown-item" onclick="question_paper('question_paper_2')">question_paper_2</a>
-                var levels = ['question_paper_1','question_paper_2','question_paper_3']
-                for (var i=0; i<3; i++){
+                var levels = ['question_paper_1','question_paper_2','question_paper_3','question_paper_4','question_paper_5','question_paper_6']
+                for (var i=0; i<levels.length; i++){
                     var a= document.createElement('a')
                     a.className = 'dropdown-item'
                     a.setAttribute('onclick','question_paper("'+levels[i]+'")')
@@ -463,7 +466,7 @@
                 const permissible_question_papers = document.getElementById('permissible_question_papers')
                 if (data == null) {
                     permissible_question_papers.innerHTML = ''
-                    alert("You have already added question_paper_1, question_paper_2 and question_paper_3 quiz for this configuration")
+                    alert("You have already added all question papers for this configuration")
                 }
                 else{
                     // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
@@ -718,8 +721,8 @@
             document.getElementById('question_paper_dropdown').innerHTML = 'question paper '
             const permissible_question_papers = document.getElementById('permissible_question_papers')
             permissible_question_papers.innerHTML = ''
-            var levels = ['question_paper_1','question_paper_2','question_paper_3']
-            for (var i=0; i<3; i++){
+            var levels = ['question_paper_1','question_paper_2','question_paper_3','question_paper_4','question_paper_5','question_paper_6']
+            for (var i=0; i<levels.length; i++){
                 var a= document.createElement('a')
                 a.className = 'dropdown-item'
                 a.setAttribute('onclick','question_paper("'+levels[i]+'")')
