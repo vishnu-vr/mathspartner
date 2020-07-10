@@ -146,28 +146,28 @@ app.post('/delete_the_whole_quiz', (req,res) => {
 	var quiz_table = data.topic_name+'part_'+data.part_number+data.question_paper
 	// first delete the whole quiz table
 	con.query("DROP TABLE "+quiz_table, function (err, result, fields) {
-		if (err) throw err;
+		if (err) console.log(err)//throw err;
 		console.log(result);
 		// then delete the question_paper entry from info-table
 		var info_table = data.topic_name+'part_'+data.part_number
 		con.query("DELETE FROM "+info_table+" WHERE question_paper = '"+data.question_paper+"' ", function (err, result, fields) {
-			if (err) throw err;
+			if (err) console.log(err)//throw err;
 			console.log(result);
 			// then check whether the info table is empty or not
 			// if its not empty then stop there
 			// else delete the table the info table and 
 			// remove the part entry from index_table
 			con.query("SELECT COUNT(*) FROM "+info_table, function (err, result, fields) {
-				if (err) throw err;
+				if (err) console.log(err)//throw err;
 				console.log(result);
 	
 				if (result[0]['COUNT(*)'] == 0){
 					con.query("DROP TABLE "+info_table, function (err, result, fields) {
-						if (err) throw err;
+						if (err) console.log(err)//throw err;
 						console.log(result);
 						// after that remove the part number from index_table
 						con.query("SELECT parts FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result, fields) {
-							if (err) throw err;
+							if (err) console.log(err)//throw err;
 							console.log(result);
 	
 							var parts = result[0].parts.split('#')
@@ -180,7 +180,7 @@ app.post('/delete_the_whole_quiz', (req,res) => {
 							// if no part is remaining then remove that row (ie topic name)
 							if (updated_parts.length == 0){
 								con.query("DELETE FROM index_table WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
-								if (err) throw err;
+								if (err) console.log(err)//throw err;
 								console.log("1 record inserted");
 								});
 							}
@@ -188,7 +188,7 @@ app.post('/delete_the_whole_quiz', (req,res) => {
 							else{
 								updated_parts=updated_parts.join('#')
 								con.query("UPDATE index_table SET parts = '"+updated_parts+"' WHERE topic_name = '"+data.topic_name+"'", function (err, result) {
-								if (err) throw err;
+								if (err) console.log(err)//throw err;
 								console.log("1 record inserted");
 								});
 							}
@@ -209,14 +209,14 @@ app.post('/get_quiz', (req,res) => {
 	// res.json("asd")
 	// var table = 'RATIOpart_2question_paper_2'
 	con.query("SELECT * FROM "+data, function (err, result, fields) {
-		if (err) throw err;
+		if (err) console.log(err)//throw err;
 		console.log(result);
 		var data_to_send = result
 		// res.json(result)
 		const table = req.body.quiz_name_for_duration
 		const question_paper = req.body.question_paper_for_duration
 		con.query("SELECT duration,pdf_path FROM "+table+" WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
-			if (err) throw err;
+			if (err) console.log(err)//throw err;
 			console.log(result);
 			data_to_send[0]["duration"] = result[0].duration
 			data_to_send[0]["pdf_path"] = result[0].pdf_path
@@ -275,7 +275,7 @@ app.post('/edit_quiz', (req,res) => {
 	// first update duration
 	var info_table = data[0].topic_name+"part_"+data[0].part_number
 	con.query("UPDATE "+info_table+" SET duration = '"+parseInt(data[0].duration)*60+"' WHERE question_paper = '"+data[0].question_paper+"'", function (err, result, fields) {
-		if (err) throw err;
+		if (err) console.log(err)//throw err;
 		console.log(result);
 	});
 	
@@ -283,19 +283,19 @@ app.post('/edit_quiz', (req,res) => {
 	var table_name = data[0].topic_name+"part_"+data[0].part_number+data[0].question_paper
 	// console.log(table_name)
 	con.query("DROP TABLE "+table_name, function (err, result, fields) {
-		if (err) throw err;
+		if (err) console.log(err)//throw err;
 		console.log(result);
 	
 		// after deleting recreate it with new values
 		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
 		con.query(sql, function (err, result) {
-			if (err) throw err;
+			if (err) console.log(err)//throw err;
 			console.log("Table created");
 			// insert everything
 			for (var i=0; i<data.length; i++){
 				var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 				con.query(sql, function (err, result) {
-				if (err) throw err;
+				if (err) console.log(err)//throw err;
 				console.log("row " +(i+1)+" inserted");
 				});
 			}
@@ -328,7 +328,7 @@ app.post('/add_quiz', (req,res) => {
 				for (var i=0; i<data.length; i++){
 					var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 					con.query(sql, function (err, result) {
-					if (err) throw err;
+					if (err) console.log(err)//throw err;
 					console.log("row " +(i+1)+" inserted");
 					});
 				}
@@ -346,11 +346,11 @@ app.post('/add_quiz', (req,res) => {
 		// and append the new part with '#'
 		var part_number = 'part_' + data[0].part_number
 		con.query("SELECT parts FROM index_table WHERE topic_name = '"+data[0].topic_name+"'", function (err, result, fields) {
-			if (err) throw err;
+			if (err) console.log(err)//throw err;
 			var updated_parts = result[0].parts + "#" + part_number
 			// console.log(updated_parts);
 			con.query("UPDATE index_table SET parts = '"+updated_parts+"' WHERE topic_name = '"+data[0].topic_name+"'", function (err, result, fields) {
-				if (err) throw err;
+				if (err) console.log(err)//throw err;
 				// console.log(result)
 				// after updating index table we have to
 				// create an info-table of that part
@@ -358,13 +358,13 @@ app.post('/add_quiz', (req,res) => {
 				// console.log(table_name)
 				var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20), pdf_path VARCHAR(255))";
 				con.query(sql, function (err, result) {
-					if (err) throw err;
+					if (err) console.log(err)//throw err;
 					console.log("Table created");
 					// after creating the info-table, add the first entry
 					// with id, question-paper and then duration
 					var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"', '"+data[0].pdf_path+"')";
 					con.query(sql, function (err, result) {
-						if (err) throw err;
+						if (err) console.log(err)//throw err;
 						console.log("1 record inserted");
 						// after all that, create the actual table containing
 						// questions and insert the questions, options and
@@ -372,13 +372,13 @@ app.post('/add_quiz', (req,res) => {
 						table_name += data[0].question_paper
 						var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
 						con.query(sql, function (err, result) {
-							if (err) throw err;
+							if (err) console.log(err)//throw err;
 							console.log("Table created");
 							// insert everything
 							for (var i=0; i<data.length; i++){
 								var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 								con.query(sql, function (err, result) {
-								if (err) throw err;
+								if (err) console.log(err)//throw err;
 								console.log("row " +(i+1)+" inserted");
 								});
 							}
@@ -397,7 +397,7 @@ app.post('/add_quiz', (req,res) => {
 		// with topic name and part number
 		var part_number = 'part_' + data[0].part_number
 		con.query("INSERT INTO index_table VALUES (NULL, '"+data[0].topic_name+"', '"+part_number+"')", function (err, result, fields) {
-			if (err) throw err;
+			if (err) console.log(err)//throw err;
 			// console.log(result)
 			// after creating a new row in index table we have to
 			// create an info-table of that part
@@ -405,13 +405,13 @@ app.post('/add_quiz', (req,res) => {
 			// console.log(table_name)
 			var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question_paper VARCHAR(20), duration VARCHAR(20), pdf_path VARCHAR(255))";
 			con.query(sql, function (err, result) {
-				if (err) throw err;
+				if (err) console.log(err)//throw err;
 				console.log("Table created");
 				// after creating the info-table, add the first entry
 				// with id, question-paper, duration and pdf_path
 				var sql = "INSERT INTO "+table_name+" VALUES (1 ,'"+data[0].question_paper+"', '"+parseInt(data[0].duration)*60+"', '"+data[0].pdf_path+"')";
 				con.query(sql, function (err, result) {
-					if (err) throw err;
+					if (err) console.log(err)//throw err;
 					console.log("1 record inserted");
 					// after all that, create the actual table containing
 					// questions and insert the questions, options and
@@ -419,13 +419,13 @@ app.post('/add_quiz', (req,res) => {
 					table_name += data[0].question_paper
 					var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
 					con.query(sql, function (err, result) {
-						if (err) throw err;
+						if (err) console.log(err)//throw err;
 						console.log("Table created");
 						// insert everything
 						for (var i=0; i<data.length; i++){
 							var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 							con.query(sql, function (err, result) {
-							if (err) throw err;
+							if (err) console.log(err)//throw err;
 							console.log("row " +(i+1)+" inserted");
 							});
 						}
@@ -456,7 +456,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 	// console.log(table_name_for_questions)
 	let sql = "SELECT * FROM " + table_name_for_questions
 	con.query(sql, function (err, result, fields) {
-		if (err) throw err;
+		if (err) console.log(err)//throw err;
 		// console.log(result);
 		var questions = []
 		for (var i=0; i<result.length; i++){
