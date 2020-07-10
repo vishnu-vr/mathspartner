@@ -573,7 +573,61 @@ app.post('/fileupload', (req,res) => {
 })
 
 // classes
-app.get('/classes', (req,res) => res.render('classes', {title:"classes", nav_selected:"classes"}))
+app.get('/classes', (req,res) => {
+	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
+	,'work & time','simple interest']
+
+	con.query("SELECT topic_name FROM youtube", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
+		console.log(result);
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].topic_name)
+		}
+
+		res.render('classes', {title:"topics", nav_selected:"classes", heading:"TOPICS", topics:topics})
+	});
+
+});
+
+// /parts_yt/"+topic_id_.innerText
+app.get('/parts_yt/:topic_name', (req,res) => {
+	const topic_name = req.params.topic_name
+	con.query("SELECT part FROM youtube WHERE topic_name = '"+topic_name+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
+		console.log(result);
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			var part = 'part_' + result[i].part
+			topics.push(part)
+		}
+
+		res.render('classes', {title:"topics", nav_selected:"classes", heading:topic_name, topics:topics, parts:"true"})
+	});
+})
+
+// /youtube_videos/RATIO/part_1
+app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
+	const topic_name = req.params.topic_name
+	const part_number = req.params.part_number.split('_')[1]
+	const heading = topic_name + ' PART ' + part_number
+	// console.log(part_number)
+	con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+part_number+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+		}
+		// console.log(result[0].link);
+
+		res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:heading, link:result[0].link})
+	});
+})
 
 // about
 app.get('/about', (req,res) => res.render('about', {title:"about", nav_selected:"about"}))
