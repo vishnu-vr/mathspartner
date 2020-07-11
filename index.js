@@ -99,10 +99,102 @@ app.get('/dashboard', (req,res) => {
 		for (var i=0; i<result.length; i++){
 			topics.push(result[i].topic_name)
 		}
-		// console.log(topics)
-		res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board",topics_in_db:topics})
+		// get data for youtube
+		con.query("SELECT topic_name FROM youtube", function (err, result) {
+			if (err) console.log(err)//throw err;
+			// console.log("1 record updated");
+			var yt_topics = []
+			for (var i=0; i<result.length; i++){
+				yt_topics.push(result[i].topic_name)
+			}
+			res.render('dashboard', {title:"Dash Board", none:"none", heading:"Dash Board",topics_in_db:topics, yt_topics:yt_topics})
+		});
 	});
 	
+})
+
+// fetch yt_parts_from_db/
+app.post('/yt_parts_from_db', (req,res) => {
+	const data = req.body.yt_topic_name
+	con.query("SELECT part FROM youtube WHERE topic_name = '"+data+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.json(null)
+		}
+		console.log(result[0]);
+		// spliting parts
+		var parts = []
+		// result = result[0].parts.split('#')
+		for (var i=0; i<result.length; i++){
+			// console.log(part)
+			parts.push(result[i].part)
+		}
+		res.json(parts)
+	});
+})
+
+// yt_link_from_db
+app.post('/yt_link_from_db', (req,res) => {
+	const topic_name = req.body.yt_topic_name
+	const part = req.body.yt_part
+	con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+part+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.json(null)
+		}
+		console.log(result[0]);
+		res.json(result[0].link)
+	});
+})
+
+// yt_add_update
+app.post('/yt_add_update', (req,res) => {
+	const yt_topic_name = req.body.yt_topic_name
+	const yt_part_number_input = req.body.yt_part_number_input
+	const yt_link_input = req.body.yt_link_input
+	const yt_name_exists = req.body.yt_name_exists
+	const yt_part_exists = req.body.yt_part_exists
+	
+	// if name and part exists then simply update the link
+	if (yt_name_exists && yt_part_exists){
+		con.query("UPDATE youtube SET link = '"+yt_link_input+"' WHERE topic_name = '"+yt_topic_name+"' AND part = '"+yt_part_number_input+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json("failed")
+				return
+			}
+			// console.log(result[0]);
+			res.json("success")
+		});
+	}
+	// else add new row
+	else{
+		con.query("INSERT INTO youtube VALUES(NULL, '"+yt_topic_name+"', '"+yt_part_number_input+"', '"+yt_link_input+"')", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json("failed")
+				return
+			}
+			// console.log(result[0]);
+			res.json("success")
+		});
+	}
+})
+
+// yt_delete
+app.post('/yt_delete', (req,res) => {
+	const yt_topic_name = req.body.yt_topic_name
+	const yt_part_number_input = req.body.yt_part_number_input
+
+	con.query("DELETE FROM youtube WHERE topic_name = '"+yt_topic_name+"' AND part = '"+yt_part_number_input+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.json("failed")
+			return
+		}
+		// console.log(result[0]);
+		res.json("success")
+	});
 })
 
 // fetch parts_from_db/
@@ -112,6 +204,7 @@ app.post('/parts_from_db', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.json(null)
+			return
 		}
 		console.log(result[0]);
 		// spliting parts
@@ -662,11 +755,6 @@ app.post('/api/', (req,res) => {
 app.post('/apierror', (req,res) => {
 	res.status(400).json({error:`boom an error. Hope you like it`})
 })
-
-// // upload page
-// app.get('/upload', (req,res) => {
-// 	res.render('upload')
-// })
 
 
 // ######################################################################

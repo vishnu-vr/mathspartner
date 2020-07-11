@@ -6,6 +6,7 @@
     <nav id="nav" class="nav nav-pills flex-column flex-sm-row mt-5">
         <button id="add_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="add_quiz()">Add Quiz</button>
         <button id="edit_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="edit_quiz()">Edit Quiz</button>
+        <button id="add_youtube_links" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="add_youtube_links()">Add YouTube Videos</button>
         {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
         {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
     </nav>
@@ -121,6 +122,67 @@
             </div>
         </div>
         </div>
+    {{!-- YoutTube Controls --}}
+    <div id='youtube_controls' class="container ml-2 mt-4" hidden>
+        <div class="row mt-4">
+            {{!-- first column --}}
+            <div class="col-sm">
+            </div>
+            {{!-- second column --}}
+            <div class="col-sm">
+                {{!-- topic name --}}
+                <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <button id="yt_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
+                    <div class="dropdown-menu">
+                        <div class="yt_new_option">
+                            <p class="dropdown-item" onclick="yt_topic_name_selected('new')">New ?</p>
+                            <div role="separator" class="dropdown-divider"></div>
+                        </div>
+                        <div id="yt_already_existing_topics">
+                        <p class="dropdown-item" onclick="yt_topic_name_selected('ratio')">Ratio</p>
+                        <p class="dropdown-item" onclick="yt_topic_name_selected('another action')">Another action</p>
+                        <p class="dropdown-item" onclick="yt_topic_name_selected('something else')">Something else here</p>
+                        </div>
+                    </div>
+                </div>
+                <input id="yt_topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" readonly>
+                </div>
+
+                {{!-- part number dropdown select --}}
+                <div id='yt_part_number_dropdown'>
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <button id="yt_part_number_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Part Number</button>
+                        <div class="dropdown-menu">
+                            <div class="yt_new_option">
+                                <p class="dropdown-item" onclick="yt_part_number_selected('new')">New ?</p>
+                                <div role="separator" class="dropdown-divider"></div>
+                            </div>
+                            <div id="yt_already_existing_parts">
+
+                            </div>
+                        </div>
+                    </div>
+                    <input id="yt_part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button" readonly>
+                    </div>
+                    {{!-- input box for yt link --}}
+                    <input id="yt_link_input" type="text" class="form-control" readonly>
+                    {{!-- youtube player --}}
+                    <div id="yt_player" hidden>
+                        <div class="embed-responsive embed-responsive-16by9 mt-4">
+                            <iframe id='iframe' src="" class="embed-responsive-item" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <button id="yt_submit" type="button" class="btn btn-primary mt-4" onclick="yt_submit()">Submit</button>
+                    <button id="yt_delete" type="button" class="btn btn-danger mt-4" onclick="yt_delete()">Delete</button>
+                </div>
+            </div>
+            {{!-- third column --}}
+            <div class="col-sm">
+            </div>
+        </div>
+    </div>
 
   </div>
 </div>
@@ -188,7 +250,8 @@
             console.log(data); // JSON data parsed by `data.json()` call
             if (data == 'success') {
                 alert('deleted')
-                edit_quiz()
+                location.reload();
+                // edit_quiz()
             }
         });
     }
@@ -210,6 +273,18 @@
         t.setAttribute('onclick',"topic_name_selected('"+topics_in_db[i]+"')") 
         t.innerHTML = topics_in_db[i]
         already_existing_topics.appendChild(t)
+    }
+
+    // youtube section
+    const yt_already_existing_topics = document.getElementById('yt_already_existing_topics')
+    yt_already_existing_topics.innerHTML = ''
+    const yt_topics = {{{json yt_topics}}}
+    for (var i=0; i<yt_topics.length; i++){
+        var t = document.createElement('p')
+        t.className = 'dropdown-item'
+        t.setAttribute('onclick',"yt_topic_name_selected('"+yt_topics[i]+"')") 
+        t.innerHTML = yt_topics[i]
+        yt_already_existing_topics.appendChild(t)
     }
 
     // final submission for both editing or adding quiz
@@ -734,6 +809,12 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // disabling youtube
+        document.getElementById('youtube_controls').hidden = true
+
+        // enabling controls
+        document.getElementById('add_quiz_controls').hidden = false
+
         // resetting pdf
         document.getElementById('pdf_explaination_path').innerHTML = ''
 
@@ -800,6 +881,12 @@
     }
 
     function add_quiz(){
+        // disabling youtube
+        document.getElementById('youtube_controls').hidden = true
+
+        // enabling controls
+        document.getElementById('add_quiz_controls').hidden = false
+
         // resetting pdf
         document.getElementById('pdf_explaination_path').innerHTML = ''
 
@@ -864,4 +951,167 @@
     }
 
     document.getElementById('title').innerText = "{{title}}"
+
+
+    // ##################   YOUTUBE ###########################
+
+    // global
+    var yt_name_exists = false
+    var yt_part_exists = false
+    var yt_already_existing_parts_from_db = []
+
+    const yt_part_number_input = document.getElementById('yt_part_number_input')
+    const yt_topic_name = document.getElementById('yt_topic_name')
+    const yt_already_existing_parts = document.getElementById('yt_already_existing_parts')
+    const yt_player = document.getElementById('yt_player')
+    const iframe = document.getElementById('iframe')
+    const yt_link_input = document.getElementById('yt_link_input')
+
+    // when Add YouTube Videos is clicked
+    function add_youtube_links(){
+        document.getElementById('add_quiz_controls').hidden = true
+        document.getElementById('selected_option').innerHTML = "YouTube"
+        document.getElementById('youtube_controls').hidden = false
+        document.getElementById('greeting').hidden = true
+    }
+
+    function yt_topic_name_selected(topic){
+        // if a new topic is selected whether is 'new' or old
+        // controls below it should be locked (ie part number)
+        // and reset to default
+        yt_part_number_input.readOnly = true
+        yt_part_number_input.value = ''
+        yt_already_existing_parts.innerHTML = ''
+        yt_player.hidden = true
+        yt_link_input.readOnly = true
+        yt_link_input.value = ''
+
+        // if topic_name is 'new' then unlock topic_name_input
+        // so that they can enter the new name
+        // else if its not 'new' then display the 
+        // selected name and relock input if its unlocked
+        if (topic == 'new'){
+            yt_topic_name.readOnly = false
+            yt_topic_name.value = ''
+            yt_name_exists = false
+        }
+        else{
+            yt_topic_name.readOnly = true
+            yt_topic_name.value = topic
+            yt_name_exists = true
+            
+            // if selected topic is not new then
+            // fetch the available parts of that topic
+            // and insert into yt_already_existing_parts
+            // fetching parts available to the video
+            postData('/yt_parts_from_db', {'yt_topic_name':topic})
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+                yt_already_existing_parts_from_db = data
+                // <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
+                
+                yt_already_existing_parts.innerHTML = ''
+                for (var i=0; i<data.length; i++){
+                    var p = document.createElement('p')
+                    p.className = 'dropdown-item'
+                    p.setAttribute('onclick','yt_part_number_selected("'+data[i]+'")')
+                    p.innerHTML = data[i]
+                    yt_already_existing_parts.appendChild(p)
+                }
+            });
+        }
+    }
+
+    function yt_part_number_selected(part){
+        // reseting controls below this to default (ie player)
+        yt_player.hidden = true
+        yt_link_input.readOnly = true
+        yt_link_input.value = ''
+
+        if (part == 'new'){
+            // if new then unlock input box
+            // and reset old selection so that user
+            // can add new
+            yt_part_number_input.readOnly = false
+            yt_part_number_input.value = ''
+            yt_link_input.readOnly = false
+            yt_part_exists = false
+        }
+        else{
+            // if not new then lock input box
+            // and display selection
+            yt_part_number_input.readOnly = true
+            yt_part_number_input.value = part
+            yt_part_exists = true
+
+            // fetching link
+            var link = ''
+            postData('/yt_link_from_db', {'yt_topic_name':yt_topic_name.value,'yt_part':part})
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+                // fetch the link and append to player as src
+                yt_link_input.readOnly = false
+                yt_link_input.value = data
+                yt_player.hidden = false
+                iframe.src = data
+            });
+        }
+    }
+
+    function yt_submit(){
+        // checking
+        if (yt_topic_name.value == '') {
+            alert("name is missing")
+            return
+        }
+
+        if (yt_part_number_input.value == '') {
+            alert("part is missing")
+            return
+        }
+
+        if (yt_link_input.value == '') {
+            alert("link is missing")
+            return
+        }
+
+        var send = {yt_topic_name:yt_topic_name.value,
+        yt_part_number_input:yt_part_number_input.value,
+        yt_link_input:yt_link_input.value,
+        yt_name_exists:yt_name_exists,
+        yt_part_exists:yt_part_exists}
+
+        // send to back-end
+        postData('/yt_add_update', send)
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            if (data == 'failed') alert("process failed")
+            location.reload();
+        });
+    }
+
+    function yt_delete(){
+        // checking
+        if (yt_topic_name.value == '') {
+            alert("name is missing")
+            return
+        }
+
+        if (yt_part_number_input.value == '') {
+            alert("part is missing")
+            return
+        }
+
+        var send = {yt_topic_name:yt_topic_name.value,
+        yt_part_number_input:yt_part_number_input.value}
+
+        // send to back-end
+        postData('/yt_delete', send)
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            if (data == 'failed') alert("process failed")
+            location.reload();
+        });
+    }
+
 </script>
