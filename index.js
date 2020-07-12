@@ -17,6 +17,13 @@ const con = mysql.createPool({
 	database: creds.database
 });
 
+const new_con = mysql.createPool({
+	host: "192.168.64.2",
+	user: "vishnu",
+	password: "2020",
+	database: "new_mathspartner"
+});
+
 // con.connect(function(err) {
 // 	if (err) throw err;
 // 	console.log("Database Connected!");
@@ -124,7 +131,7 @@ app.post('/change_names', (req,res) => {
 	// const new_question_paper = req.body.new_question_paper
 	var data = req.body
 	// console.log(data)
-	res.json("asd")
+	// res.json("asd")
 
 	if (data.old_question_paper){
 		console.log('all changes are required')
@@ -136,18 +143,53 @@ app.post('/change_names', (req,res) => {
 	}
 	if (data.old_topic_name){
 		console.log('only name is required')
-		return
+		// return
+		var changes = []
+		con.query("SELECT parts FROM index_table WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
+			// console.log(result[0]);
+			var parts = result[0].parts.split('#')
+			for (var i=0; i<parts.length; i++){
+				changes.push({'old':data.old_topic_name+parts[i],'new':data.new_topic_name+parts[i]})
+			}
+
+			// looping through old part tables
+			for (var i=0; i<changes.length; i++){
+				con.query("SELECT question_paper FROM "+changes[i].old, function (err, result, fields) {
+					if (err) {
+						console.log(err)//throw err;
+						res.json('failed')
+						return
+					}
+					// console.log(result[0]);
+					// res.json("success")
+					for (var j=0; j<result.length; j++){
+						changes.push({'old':changes[i].old+result[0].question_paper,'new':changes[i].new+result[0].question_paper})
+					}
+				});
+			}
+			console.log("***************************")
+			// after fetching all required details, start renaming
+			for (var i=0; i<changes.length; i++){
+				con.query("ALTER TABLE "+changes[0].old+" RENAME TO "+changes[0].new, function (err, result, fields) {
+					if (err) {
+						console.log(err)//throw err;
+						res.json('failed')
+						return
+					}
+					// console.log(result[0]);
+					// res.json(result[0].link)
+				});
+			}
+
+			res.json("success")
+		});
 	}
-	return
-	con.query("SELECT part FROM youtube WHERE topic_name = '"+data+"'", function (err, result, fields) {
-		if (err) {
-			console.log(err)//throw err;
-			res.json('failed')
-			return
-		}
-		console.log(result[0]);
-		res.json("success")
-	});
+	// return
 })
 
 // fetch yt_parts_from_db/
@@ -585,7 +627,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 	const table_name_for_questions = req.params.topic_name + req.params.part_no + req.params.question_paper
 	// console.log(table_name_for_questions)
 	let sql = "SELECT * FROM " + table_name_for_questions
-	con.query(sql, function (err, result, fields) {
+	new_con.query(sql, function (err, result, fields) {
 		if (err) console.log(err)//throw err;
 		// console.log(result);
 		var questions = []
@@ -602,8 +644,8 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 		for (var i=0; i<questions.length; i++) shuffle(questions[i].options)
 
 		// fetching the time limit for the quiz
-		let sql = "SELECT duration,pdf_path FROM " + table_name_for_duration + " WHERE question_paper = '"+req.params.question_paper+"' "
-		con.query(sql, function (err, result, fields) {
+		let sql = "SELECT duration,pdf_path FROM quiz WHERE question_paper = '"+req.params.question_paper+"' AND part = '"+req.params.part_no+"'"
+		new_con.query(sql, function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.render("<h1>something went wrong</h1>")
@@ -622,7 +664,7 @@ app.get('/quiz', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
 						,'work & time','simple interest']
 
-	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
+	new_con.query("SELECT DISTINCT topic_name FROM quiz", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -641,26 +683,31 @@ app.get('/quiz', (req,res) => {
 app.get('/parts/:topic_name', (req,res) => {
 	var dummy_parts = ['part-1','part-2','part-3']
 	let name = req.params.topic_name
-	let sql = "SELECT parts FROM index_table WHERE topic_name = '"+name+"' "
-	con.query(sql, function (err, result, fields) {
+	let sql = "SELECT DISTINCT part FROM quiz WHERE topic_name = '"+name+"' "
+	new_con.query(sql, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
 		}
 		// console.log(result[0].parts);
-		var topics = result[0].parts.split('#')
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].part)
+		}
 		res.render('topics', {title:"topics", nav_selected:"quiz", heading:req.params.topic_name, topics:topics, part:true})
 	});
 })
 
 // question_paper page
 app.get('/question_paper/:topic_name/:part_no', (req,res) => {
-	const heading = req.params.topic_name + " " + req.params.part_no
+	
 	var dummy_question_papers = ['question_paper_1','question_paper_1','question_paper_1']
 
-	const table_name = req.params.topic_name+req.params.part_no
-	let sql = "SELECT question_paper FROM " + table_name
-	con.query(sql, function (err, result, fields) {
+	const topic_name = req.params.topic_name
+	const part_number = req.params.part_no
+	const heading = topic_name+" "+req.params.part_no
+	let sql = "SELECT question_paper FROM quiz WHERE topic_name = '"+topic_name+"' AND part = '"+part_number+"'"
+	new_con.query(sql, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -707,7 +754,7 @@ app.get('/classes', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
 	,'work & time','simple interest']
 
-	con.query("SELECT topic_name FROM youtube", function (err, result, fields) {
+	new_con.query("SELECT topic_name FROM youtube", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
