@@ -113,6 +113,43 @@ app.get('/dashboard', (req,res) => {
 	
 })
 
+// change_names
+app.post('/change_names', (req,res) => {
+
+	// const old_topic_name = req.body.old_topic_name
+	// const new_topic_name = req.body.new_topic_name
+	// const old_part_number = req.body.old_part_number
+	// const new_part_number = req.body.new_part_number
+	// const old_question_paper = req.body.old_question_paper
+	// const new_question_paper = req.body.new_question_paper
+	var data = req.body
+	// console.log(data)
+	res.json("asd")
+
+	if (data.old_question_paper){
+		console.log('all changes are required')
+		return
+	}
+	if (data.old_part_number){
+		console.log('changes upto part number')
+		return
+	}
+	if (data.old_topic_name){
+		console.log('only name is required')
+		return
+	}
+	return
+	con.query("SELECT part FROM youtube WHERE topic_name = '"+data+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
+		console.log(result[0]);
+		res.json("success")
+	});
+})
+
 // fetch yt_parts_from_db/
 app.post('/yt_parts_from_db', (req,res) => {
 	const data = req.body.yt_topic_name

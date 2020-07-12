@@ -234,7 +234,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">New Part Number</span>
                     </div>
-                    <input id="cn_new_part_number" type="text" class="form-control" aria-describedby="basic-addon1">
+                    <input id="cn_new_part_number" type="number" class="form-control" aria-describedby="basic-addon1">
                 </div>
 
                 {{!-- question paper --}}
@@ -268,6 +268,8 @@
                     <a class="dropdown-item" onclick="cn_question_paper('question_paper_6','new')">question_paper_6</a>
                 </div>
                 </div>
+
+                <button id="cn_submit_btn" type="button" class="btn btn-primary mt-4" onclick="cn_submit()">Submit</button>
 
             </div>
             {{!-- third column --}}
@@ -1345,6 +1347,62 @@
         else{
             cn_new_question_papers_btn.innerHTML = question_paper
         }
+    }
+
+    function cn_submit(){
+        // validations / checking
+        // if all the three boxes are empty then notify it
+        if (cn_topic_name.value == '' && cn_part_number_input.value == '' && cn_current_question_papers_btn.innerText == 'question paper '){
+            alert('No changes specified')
+            return
+        }
+
+        // if topic name is selected then new
+        // name should also be specified
+        if (cn_topic_name.value != '' && cn_new_topic_name.value == ''){
+            alert('new topic name is missing')
+            return
+        }
+
+        if (cn_part_number_input.value != '' && cn_new_part_number.value == ''){
+            alert('new part number is missing')
+            return
+        }
+
+        if (cn_current_question_papers_btn.innerText != 'question paper ' && cn_new_question_papers_btn.innerText == 'new question paper '){
+            alert('new question paper is missing')
+            return
+        }
+
+        var data_to_send = {}
+
+        if (cn_topic_name.value != '' && cn_new_topic_name.value != ''){
+            data_to_send['old_topic_name'] = cn_topic_name.value
+            data_to_send['new_topic_name'] = cn_new_topic_name.value
+        }
+
+        if (cn_part_number_input.value != '' && cn_new_part_number.value != ''){
+            data_to_send['old_part_number'] = cn_part_number_input.value
+            data_to_send['new_part_number'] = cn_new_part_number.value
+        }
+
+        if (cn_current_question_papers_btn.innerHTML != 'question paper ' && cn_new_question_papers_btn.innerHTML != 'new question paper '){
+            data_to_send['old_question_paper'] = cn_current_question_papers_btn.innerHTML
+            data_to_send['new_question_paper'] = cn_new_question_papers_btn.innerHTML
+        }
+
+        // if all that is okay
+        postData('/change_names', data_to_send)
+        .then(data => {
+            // console.log("here"+data); // JSON data parsed by `data.json()` call
+            // const permissible_question_papers = document.getElementById('permissible_question_papers')
+            if (data == 'failed') {
+                alert("something went wrong")
+                return
+            }
+            // if everything went fine
+
+        });
     }
 
 </script>
