@@ -7,6 +7,7 @@
         <button id="add_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="add_quiz()">Add Quiz</button>
         <button id="edit_quiz" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="edit_quiz()">Edit Quiz</button>
         <button id="add_youtube_links" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="add_youtube_links()">Add YouTube Videos</button>
+        <button id="change_names" type="button" class="flex-sm-fill text-sm-center btn btn-dark" onclick="change_names()">Change Names</button>
         {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
         {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
     </nav>
@@ -184,6 +185,97 @@
         </div>
     </div>
 
+    {{!-- Change Names Controls --}}
+    <div id='change_name_controls' class="container ml-2 mt-4" hidden>
+        <div class="row mt-4">
+            {{!-- first column --}}
+            <div class="col-sm">
+            </div>
+            {{!-- second column --}}
+            <div class="col-sm">
+                {{!-- topic name --}}
+                <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <button id="cn_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
+                    <div class="dropdown-menu">
+                        <div id="cn_already_existing_topics">
+                        <p class="dropdown-item" onclick="cn_topic_name_selected('ratio')">Ratio</p>
+                        <p class="dropdown-item" onclick="cn_topic_name_selected('another action')">Another action</p>
+                        <p class="dropdown-item" onclick="cn_topic_name_selected('something else')">Something else here</p>
+                        </div>
+                    </div>
+                </div>
+                <input id="cn_topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" readonly>
+                </div>
+                {{!-- new topic name --}}
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">New Topic Name</span>
+                    </div>
+                    <input id="cn_new_topic_name" type="text" class="form-control" aria-describedby="basic-addon1">
+                </div>
+                
+                {{!-- part number dropdown select --}}
+                <div id='cn_part_number_dropdown'>
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <button id="cn_part_number_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Part Number</button>
+                        <div class="dropdown-menu">
+                            <div id="cn_already_existing_parts">
+
+                            </div>
+                        </div>
+                    </div>
+                    <input id="cn_part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button" readonly>
+                    </div>
+                </div>
+                {{!-- new part number --}}
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">New Part Number</span>
+                    </div>
+                    <input id="cn_new_part_number" type="text" class="form-control" aria-describedby="basic-addon1">
+                </div>
+
+                {{!-- question paper --}}
+                <div class="dropdown show">
+                <a id="cn_current_question_papers_btn" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    question paper
+                </a>
+
+                <div id="cn_current_question_papers" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_1','current')">question_paper_1</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_2','current')">question_paper_2</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_3','current')">question_paper_3</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_4','current')">question_paper_4</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_5','current')">question_paper_5</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_6','current')">question_paper_6</a>
+                </div>
+                </div>
+
+                {{!-- new question paper --}}
+                <div class="dropdown show mt-3">
+                <a id="cn_new_question_papers_btn" class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    new question paper
+                </a>
+
+                <div id="cn_new_permissible_question_papers" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_1','new')">question_paper_1</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_2','new')">question_paper_2</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_3','new')">question_paper_3</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_4','new')">question_paper_4</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_5','new')">question_paper_5</a>
+                    <a class="dropdown-item" onclick="cn_question_paper('question_paper_6','new')">question_paper_6</a>
+                </div>
+                </div>
+
+            </div>
+            {{!-- third column --}}
+            <div class="col-sm">
+            </div>
+        </div>
+    </div>
+
   </div>
 </div>
 
@@ -286,6 +378,18 @@
         t.innerHTML = yt_topics[i]
         yt_already_existing_topics.appendChild(t)
     }
+
+    // change names section
+    const cn_already_existing_topics = document.getElementById('cn_already_existing_topics')
+    cn_already_existing_topics.innerHTML = ''
+    // const topics_in_db = {{{json topics_in_db}}}
+    for (var i=0; i<topics_in_db.length; i++){
+        var t = document.createElement('p')
+        t.className = 'dropdown-item'
+        t.setAttribute('onclick',"cn_topic_name_selected('"+topics_in_db[i]+"')") 
+        t.innerHTML = topics_in_db[i]
+        cn_already_existing_topics.appendChild(t)
+    }    
 
     // final submission for both editing or adding quiz
     function final_submit() {
@@ -809,6 +913,9 @@
 
     var editing_mode = false
     function edit_quiz(){
+        // disabling change names
+        document.getElementById('change_name_controls').hidden = true
+
         // disabling youtube
         document.getElementById('youtube_controls').hidden = true
 
@@ -881,6 +988,9 @@
     }
 
     function add_quiz(){
+        // disabling change names
+        document.getElementById('change_name_controls').hidden = true
+
         // disabling youtube
         document.getElementById('youtube_controls').hidden = true
 
@@ -973,6 +1083,7 @@
         document.getElementById('selected_option').innerHTML = "YouTube"
         document.getElementById('youtube_controls').hidden = false
         document.getElementById('greeting').hidden = true
+        document.getElementById('change_name_controls').hidden = true
     }
 
     function yt_topic_name_selected(topic){
@@ -1112,6 +1223,128 @@
             if (data == 'failed') alert("process failed")
             location.reload();
         });
+    }
+
+    // ################### CHANGE NAMES ###################
+
+    // global
+    const cn_topic_name = document.getElementById('cn_topic_name')
+    const cn_new_topic_name = document.getElementById('cn_new_topic_name')
+    const cn_part_number_input = document.getElementById('cn_part_number_input')
+    const cn_already_existing_parts = document.getElementById('cn_already_existing_parts')
+    const cn_new_part_number = document.getElementById('cn_new_part_number')
+    const cn_current_question_papers = document.getElementById('cn_current_question_papers')
+    const cn_new_permissible_question_papers = document.getElementById('cn_new_permissible_question_papers')
+    const cn_current_question_papers_btn = document.getElementById('cn_current_question_papers_btn')
+    const cn_new_question_papers_btn = document.getElementById('cn_new_question_papers_btn')
+
+    function change_names(){
+        document.getElementById('change_name_controls').hidden = false
+        document.getElementById('add_quiz_controls').hidden = true
+        document.getElementById('selected_option').innerHTML = "Change Names"
+        document.getElementById('youtube_controls').hidden = true
+        document.getElementById('greeting').hidden = true
+    }
+
+    function cn_topic_name_selected(topic){
+        // resetting all controls below this
+        cn_topic_name.value = topic
+        cn_new_topic_name.value = ''
+        cn_part_number_input.value = ''
+        cn_already_existing_parts.innerHTML = ''
+        cn_new_part_number.value = ''
+        cn_current_question_papers.innerHTML = ''
+        cn_new_permissible_question_papers.innerHTML = ''
+        cn_current_question_papers_btn.innerHTML = 'question paper '
+        cn_new_question_papers_btn.innerHTML = 'new question paper '
+
+        // fetching parts available to the quiz
+        postData('/parts_from_db', {selected_topic_name:topic})
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            already_existing_parts_from_db = data
+            // console.log("asdasdasd")
+            // <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
+            // cn_already_existing_parts = document.getElementById('cn_already_existing_parts')
+            cn_already_existing_parts.innerHTML = ''
+            for (var i=0; i<data.length; i++){
+                // console.log("asdasdasd")
+                var p = document.createElement('p')
+                p.className = 'dropdown-item'
+                p.setAttribute('onclick','cn_part_number_selected("'+data[i]+'")')
+                p.innerHTML = data[i]
+                cn_already_existing_parts.appendChild(p)
+            }
+        });
+    }
+
+    function cn_part_number_selected(part) {
+        // resetting all below it
+        cn_part_number_input.value = part
+        cn_new_part_number.value = ''
+        cn_current_question_papers.innerHTML = ''
+        cn_new_permissible_question_papers.innerHTML = ''
+        cn_current_question_papers_btn.innerHTML = 'question paper '
+        cn_new_question_papers_btn.innerHTML = 'new question paper '
+        // alert("asd")
+
+        // fetching diff levels
+        // available in db
+        postData('/get_question_paper/edit', {"part_number":'part_'+part,"topic_name":cn_topic_name.value})
+        .then(data => {
+            // console.log("here"+data); // JSON data parsed by `data.json()` call
+            // const permissible_question_papers = document.getElementById('permissible_question_papers')
+            if (data == null) {
+                cn_current_question_papers.innerHTML = ''
+                alert("You have already added all question papers for this configuration")
+            }
+            else{
+                // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
+                cn_current_question_papers.innerHTML = ''
+                for (var i=0; i<data.length; i++){
+                    var a = document.createElement('a')
+                    a.className = 'dropdown-item'
+                    // const current_ = 'current'
+                    a.setAttribute('onclick','cn_question_paper("'+data[i]+'","'+'current'+'")')
+                    a.innerHTML = data[i]
+                    cn_current_question_papers.appendChild(a)
+                }
+            }
+        });
+        // permissible
+        postData('/get_question_paper/add', {"part_number":'part_'+part,"topic_name":cn_topic_name.value})
+        .then(data => {
+            // console.log("here"+data); // JSON data parsed by `data.json()` call
+            // const permissible_question_papers = document.getElementById('permissible_question_papers')
+            if (data == null) {
+                cn_new_permissible_question_papers.innerHTML = ''
+                alert("You have already added all question papers for this configuration")
+            }
+            else{
+                // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
+                cn_new_permissible_question_papers.innerHTML = ''
+                for (var i=0; i<data.length; i++){
+                    var a = document.createElement('a')
+                    a.className = 'dropdown-item'
+                    // const current_ = 'current'
+                    a.setAttribute('onclick','cn_question_paper("'+data[i]+'","'+'new'+'")')
+                    a.innerHTML = data[i]
+                    cn_new_permissible_question_papers.appendChild(a)
+                }
+            }
+        });
+    }
+
+    function cn_question_paper(question_paper,c_or_n){
+        // if current box option is clicked then display
+        // it in current btn
+        if (c_or_n == 'current'){
+            cn_current_question_papers_btn.innerHTML = question_paper
+        }
+        // else display it in new box btn
+        else{
+            cn_new_question_papers_btn.innerHTML = question_paper
+        }
     }
 
 </script>
