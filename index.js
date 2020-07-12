@@ -96,7 +96,7 @@ app.get('/dashboard', (req,res) => {
 		// console.log("USER NOT LOGGED IN")
 	}
 
-	con.query("SELECT topic_name FROM index_table", function (err, result, fields) {
+	new_con.query("SELECT DISTINCT topic_name FROM quiz", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -107,7 +107,7 @@ app.get('/dashboard', (req,res) => {
 			topics.push(result[i].topic_name)
 		}
 		// get data for youtube
-		con.query("SELECT topic_name FROM youtube", function (err, result) {
+		new_con.query("SELECT topic_name FROM youtube", function (err, result) {
 			if (err) console.log(err)//throw err;
 			// console.log("1 record updated");
 			var yt_topics = []
@@ -279,7 +279,7 @@ app.post('/yt_delete', (req,res) => {
 // fetch parts_from_db/
 app.post('/parts_from_db', (req,res) => {
 	const data = req.body.selected_topic_name
-	con.query("SELECT parts FROM index_table WHERE topic_name = '"+data+"'", function (err, result, fields) {
+	new_con.query("SELECT DISTINCT part FROM quiz WHERE topic_name = '"+data+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.json(null)
@@ -288,10 +288,10 @@ app.post('/parts_from_db', (req,res) => {
 		console.log(result[0]);
 		// spliting parts
 		var parts = []
-		result = result[0].parts.split('#')
+		// result = result[0].parts.split('#')
 		for (var i=0; i<result.length; i++){
 			// console.log(part)
-			parts.push(result[i].slice(-1))
+			parts.push(result[i].part.slice(-1))
 		}
 		res.json(parts)
 	});
@@ -373,22 +373,31 @@ app.post('/delete_the_whole_quiz', (req,res) => {
 	});
 	res.json('success')
 })
-
+// {
+// 	topic_name: 'RATIO',
+// 	part_number: 'part_1',
+// 	question_paper_for_duration: 'question_paper_1'
+//   }
 // get the complete quiz
 app.post('/get_quiz', (req,res) => {
-	const data = req.body.quiz_name
-	console.log(data)
+	const data = req.body
+	console.log(req.body)
 	// res.json("asd")
-	// var table = 'RATIOpart_2question_paper_2'
-	con.query("SELECT * FROM "+data, function (err, result, fields) {
+	var table = data.topic_name+data.part_number+data.question_paper
+	new_con.query("SELECT * FROM "+table, function (err, result, fields) {
 		if (err) console.log(err)//throw err;
 		console.log(result);
+		// return
 		var data_to_send = result
 		// res.json(result)
-		const table = req.body.quiz_name_for_duration
-		const question_paper = req.body.question_paper_for_duration
-		con.query("SELECT duration,pdf_path FROM "+table+" WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
-			if (err) console.log(err)//throw err;
+		// const table = req.body.quiz_name_for_duration
+		// const question_paper = req.body.question_paper_for_duration
+		new_con.query("SELECT duration,pdf_path FROM quiz WHERE question_paper = '"+data.question_paper+"' AND part = '"+data.part_number+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json("failed")
+				return
+			}
 			console.log(result);
 			data_to_send[0]["duration"] = result[0].duration
 			data_to_send[0]["pdf_path"] = result[0].pdf_path
@@ -403,14 +412,15 @@ app.post('/get_question_paper/:mode', (req,res) => {
 	console.log(data)
 
 	var question_paper = data
-	var table = question_paper.topic_name+question_paper.part_number
+	// var table = question_paper.topic_name+question_paper.part_number
 	var available_question_papers = ['question_paper_1','question_paper_2','question_paper_3','question_paper_4','question_paper_5','question_paper_6']
-	con.query("SELECT question_paper FROM " + table, function (err, result, fields) {
+	new_con.query("SELECT question_paper FROM quiz WHERE topic_name = '"+question_paper.topic_name+"' AND part = '"+question_paper.part_number+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.json(null)
+			return
 		}
-		// console.log(result);
+		console.log(result);
 	
 		var question_papers_in_db = []
 		for (var i=0; i<result.length; i++){

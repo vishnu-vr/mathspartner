@@ -815,9 +815,9 @@
             const table_for_duration = topic_name+"part_"+part_number
             // alert("here"+quiz_name)
 
-            postData('/get_quiz', { 'quiz_name':quiz_name,
-            'quiz_name_for_duration':table_for_duration,
-            'question_paper_for_duration':question_paper})
+            postData('/get_quiz', { 'topic_name':topic_name,
+            'part_number':"part_"+part_number,
+            'question_paper':question_paper})
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
                 display_fetched_questions(data)                
