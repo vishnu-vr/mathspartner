@@ -90,6 +90,11 @@
                 <input type="file" id='inpFile' />
                 <div id='pdf_explaination_path'></div>
             </div>
+            {{!-- turn on_off switch --}}
+            <div class="custom-control custom-switch mt-4">
+                <input type="checkbox" class="custom-control-input" id="on_off_switch" checked>
+                <label class="custom-control-label" for="on_off_switch">On / Off</label>
+            </div>
             {{!-- questions and options --}}
             <div id="questions_and_options">
 
@@ -544,6 +549,10 @@
         // the path will be updated later
         questions_and_options_dic[0]['pdf_path'] = ''
 
+        // the on/off toggle status
+        const on_off_switch = document.getElementById('on_off_switch')
+        questions_and_options_dic[0]['on_off'] = on_off_switch.checked
+
         // if everything went well
         // sending data to back-end
         if (editing_mode) var url = '/edit_quiz'
@@ -558,7 +567,7 @@
             const inpFile = document.getElementById('inpFile')
             const endpoint = '/fileupload'
             const formData = new FormData()
-            var filename = questions_and_options_dic[0].topic_name + 'part_' + questions_and_options_dic[0].part_number + '#' + questions_and_options_dic[0].question_paper
+            var filename = questions_and_options_dic[0].topic_name + '#' + 'part_' + questions_and_options_dic[0].part_number + '#' + questions_and_options_dic[0].question_paper
             // if pdf file exists
             if (inpFile.files[0]) {
                 formData.append('inpFile',inpFile.files[0],filename)
@@ -734,6 +743,11 @@
 
         // reset the question count
         question_count = 0
+
+        // display on_off status
+        const on_off_switch = document.getElementById('on_off_switch')
+        if (data[0].on_off  == 'true') on_off_switch.checked = true
+        else on_off_switch.checked = false
 
         // display the pdf_explaination file
         var pdf_explaination = document.getElementById('pdf_explaination_path')
@@ -1375,13 +1389,23 @@
         }
 
         var data_to_send = {}
-
+        // if necessary details are provided then append data to data_to_send
         if (cn_topic_name.value != '' && cn_new_topic_name.value != ''){
+            // if the new name already exists then alert and return
+            if (topics_in_db.includes(cn_new_topic_name.value)){
+                alert('this name already exists. Try some other name')
+                return
+            }
             data_to_send['old_topic_name'] = cn_topic_name.value
             data_to_send['new_topic_name'] = cn_new_topic_name.value
         }
 
         if (cn_part_number_input.value != '' && cn_new_part_number.value != ''){
+            // if the new part number already exists then alert and return
+            if (already_existing_parts_from_db.includes(cn_new_part_number.value)){
+                alert('the entered part for already exists for this quiz. Try some other number')
+                return
+            }
             data_to_send['old_part_number'] = cn_part_number_input.value
             data_to_send['new_part_number'] = cn_new_part_number.value
         }
