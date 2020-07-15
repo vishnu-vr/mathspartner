@@ -120,48 +120,122 @@ app.get('/dashboard', (req,res) => {
 	
 })
 
+// {
+// 	changes_in_name: true,
+// 	old_topic_name: 'vishnu',
+// 	new_topic_name: 'ramesh',
+// 	changes_in_part: true,
+// 	old_part_number: '1',
+// 	new_part_number: '3',
+// 	changes_in_question_paper: true,
+// 	old_question_paper: 'question_paper_1',
+// 	new_question_paper: 'question_paper_6'
+//   }
 // change_names
 app.post('/change_names', (req,res) => {
 
-	// const old_topic_name = req.body.old_topic_name
-	// const new_topic_name = req.body.new_topic_name
-	// const old_part_number = req.body.old_part_number
-	// const new_part_number = req.body.new_part_number
-	// const old_question_paper = req.body.old_question_paper
-	// const new_question_paper = req.body.new_question_paper
 	var data = req.body
-	// console.log(data)
+	console.log(data)
 	// res.json("asd")
-
-	if (data.old_question_paper){
-		console.log('all changes are required')
-		return
-	}
-	if (data.old_part_number){
-		console.log('changes upto part number')
-		return
-	}
-	if (data.old_topic_name){
-		console.log('only name is required')
-		return
-		// don't know whether what i have coded below is correct. Please cross check first
-		con.query("UPDATE quiz SET topic_name = '"+data.new_topic_name+"' WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
+	// return
+	if (data.changes_in_question_paper){
+		console.log('changes in question paper required')
+		// return
+		var changes_required = []
+		changes_required.push({old:data.old_topic_name+data.old_part_number+data.old_question_paper,new:data.old_topic_name+data.old_part_number+data.new_question_paper})
+		console.log(changes_required)
+		// return
+		new_con.query("UPDATE quiz SET question_paper = '"+data.new_question_paper+"' WHERE topic_name = '"+data.old_topic_name+"' AND question_paper = '"+data.old_question_paper+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json('failed')
 				return
 			}
-			con.query("ALTER TABLE quiz RENAME TO = "+data.new_topic_name, function (err, result, fields) {
+			for (var i=0; i<changes_required.length; i++){
+				new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
+					if (err) {
+						console.log(err)//throw err;
+						res.json('failed')
+						return
+					}
+				});
+			}
+			// res.json('success')
+		});
+	}
+	// return
+	if (data.changes_in_part){
+		console.log('changes in part number required')
+		// return
+		new_con.query("SELECT question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
+
+			var changes_required = []
+			for (var i=0; i<result.length; i++){
+				changes_required.push({old:data.old_topic_name+data.old_part_number+result[i].question_paper,new:data.old_topic_name+data.new_part_number+result[i].question_paper})
+			}
+			console.log(changes_required)
+			// return
+			new_con.query("UPDATE quiz SET part = '"+data.new_part_number+"' WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
 				if (err) {
 					console.log(err)//throw err;
 					res.json('failed')
 					return
 				}
-				res.json('success')
+				for (var i=0; i<changes_required.length; i++){
+					new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
+						if (err) {
+							console.log(err)//throw err;
+							res.json('failed')
+							return
+						}
+					});
+				}
+				// res.json('success')
+			});
+		});
+	}
+	if (data.changes_in_name){
+		console.log('changes in name required')
+		// return		
+		new_con.query("SELECT part,question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
+
+			var changes_required = []
+			for (var i=0; i<result.length; i++){
+				changes_required.push({old:data.old_topic_name+result[i].part+result[i].question_paper,new:data.new_topic_name+result[i].part+result[i].question_paper})
+			}
+			console.log(changes_required)
+			// return
+			new_con.query("UPDATE quiz SET topic_name = '"+data.new_topic_name+"' WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
+				if (err) {
+					console.log(err)//throw err;
+					res.json('failed')
+					return
+				}
+				for (var i=0; i<changes_required.length; i++){
+					new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
+						if (err) {
+							console.log(err)//throw err;
+							res.json('failed')
+							return
+						}
+					});
+				}
+				// res.json('success')
 			});
 		});
 	}
 	// return
+	res.json('success')
 })
 
 // fetch yt_parts_from_db/

@@ -1294,6 +1294,7 @@
         });
     }
 
+    var cn_already_existing_questions_papers_in_db = []
     function cn_part_number_selected(part) {
         // resetting all below it
         cn_part_number_input.value = part
@@ -1304,7 +1305,7 @@
         cn_new_question_papers_btn.innerHTML = 'new question paper '
         // alert("asd")
 
-        // fetching diff levels
+        // fetching different question papers
         // available in db
         postData('/get_question_paper/edit', {"part_number":'part_'+part,"topic_name":cn_topic_name.value})
         .then(data => {
@@ -1315,6 +1316,7 @@
                 alert("You have already added all question papers for this configuration")
             }
             else{
+                cn_already_existing_questions_papers_in_db = data
                 // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
                 cn_current_question_papers.innerHTML = ''
                 for (var i=0; i<data.length; i++){
@@ -1328,27 +1330,16 @@
             }
         });
         // permissible
-        postData('/get_question_paper/add', {"part_number":'part_'+part,"topic_name":cn_topic_name.value})
-        .then(data => {
-            // console.log("here"+data); // JSON data parsed by `data.json()` call
-            // const permissible_question_papers = document.getElementById('permissible_question_papers')
-            if (data == null) {
-                cn_new_permissible_question_papers.innerHTML = ''
-                alert("You have already added all question papers for this configuration")
-            }
-            else{
-                // <a class="dropdown-item" onclick="question_paper('question_paper_1')">question_paper_1</a>
-                cn_new_permissible_question_papers.innerHTML = ''
-                for (var i=0; i<data.length; i++){
-                    var a = document.createElement('a')
-                    a.className = 'dropdown-item'
-                    // const current_ = 'current'
-                    a.setAttribute('onclick','cn_question_paper("'+data[i]+'","'+'new'+'")')
-                    a.innerHTML = data[i]
-                    cn_new_permissible_question_papers.appendChild(a)
-                }
-            }
-        });
+        var data = ['question_paper_1','question_paper_2','question_paper_3','question_paper_4','question_paper_5','question_paper_6']
+        cn_new_permissible_question_papers.innerHTML = ''
+        for (var i=0; i<data.length; i++){
+            var a = document.createElement('a')
+            a.className = 'dropdown-item'
+            // const current_ = 'current'
+            a.setAttribute('onclick','cn_question_paper("'+data[i]+'","'+'new'+'")')
+            a.innerHTML = data[i]
+            cn_new_permissible_question_papers.appendChild(a)
+        }
     }
 
     function cn_question_paper(question_paper,c_or_n){
@@ -1366,67 +1357,106 @@
     function cn_submit(){
         // validations / checking
         // if all the three boxes are empty then notify it
-        if (cn_topic_name.value == '' && cn_part_number_input.value == '' && cn_current_question_papers_btn.innerText == 'question paper '){
-            alert('No changes specified')
+        if (cn_topic_name.value == '' || cn_part_number_input.value == '' || cn_current_question_papers_btn.innerText == 'question paper '
+        || cn_new_topic_name.value == '' || cn_new_part_number.value == '' || cn_new_question_papers_btn.innerHTML == 'new question paper '){
+            alert('Please fill everything')
             return
         }
 
-        // if topic name is selected then new
-        // name should also be specified
-        if (cn_topic_name.value != '' && cn_new_topic_name.value == ''){
-            alert('new topic name is missing')
-            return
-        }
+        // the logic here is like this : even if the user has to only change
+        // the question paper, still they have to provide the new topic name
+        // and new part number which can be same as the old one.
 
-        if (cn_part_number_input.value != '' && cn_new_part_number.value == ''){
-            alert('new part number is missing')
-            return
-        }
-
-        if (cn_current_question_papers_btn.innerText != 'question paper ' && cn_new_question_papers_btn.innerText == 'new question paper '){
-            alert('new question paper is missing')
-            return
-        }
-
+        // but if the given part number or topic name is not equal to the 
+        // old one then that parameters will also be aken into consideration
+        // for changing.
         var data_to_send = {}
-        // if necessary details are provided then append data to data_to_send
-        if (cn_topic_name.value != '' && cn_new_topic_name.value != ''){
+        var change_required = false
+        // ########## NAME ########################
+        // if new name is same as old name
+        // then it will not be changed
+        if (cn_topic_name.value == cn_new_topic_name.value){
+            data_to_send['changes_in_name'] = false
+        }
+        // if they are not same then check whether it already exists or not
+        else{
             // if the new name already exists then alert and return
             if (topics_in_db.includes(cn_new_topic_name.value)){
                 alert('this name already exists. Try some other name')
                 return
             }
-            data_to_send['old_topic_name'] = cn_topic_name.value
-            data_to_send['new_topic_name'] = cn_new_topic_name.value
+            // if its an entirely new name
+            else{
+                data_to_send['changes_in_name'] = true
+                data_to_send['old_topic_name'] = cn_topic_name.value
+                data_to_send['new_topic_name'] = cn_new_topic_name.value
+                change_required = true
+            }
         }
 
-        if (cn_part_number_input.value != '' && cn_new_part_number.value != ''){
+        // ########## PART NUMBER ########################
+        // if new and old part number is same 
+        if (cn_part_number_input.value == cn_new_part_number.value){
+            data_to_send['changes_in_part'] = false
+        }
+        else{
             // if the new part number already exists then alert and return
             if (already_existing_parts_from_db.includes(cn_new_part_number.value)){
-                alert('the entered part for already exists for this quiz. Try some other number')
+                alert('the entered part number already exists for this quiz. Try some other number')
                 return
             }
-            data_to_send['old_part_number'] = cn_part_number_input.value
-            data_to_send['new_part_number'] = cn_new_part_number.value
+            // if its an entirely new part number
+            else{
+                data_to_send['changes_in_part'] = true
+                data_to_send['old_topic_name'] = cn_topic_name.value
+                // data_to_send['new_topic_name'] = cn_new_topic_name.value
+                data_to_send['old_part_number'] = 'part_'+cn_part_number_input.value
+                data_to_send['new_part_number'] = 'part_'+cn_new_part_number.value
+                change_required = true
+            }
         }
 
-        if (cn_current_question_papers_btn.innerHTML != 'question paper ' && cn_new_question_papers_btn.innerHTML != 'new question paper '){
-            data_to_send['old_question_paper'] = cn_current_question_papers_btn.innerHTML
-            data_to_send['new_question_paper'] = cn_new_question_papers_btn.innerHTML
+        // ########## QUESTION PAPER ########################
+        // if new and old question papers are the same
+        if (cn_current_question_papers_btn.innerHTML == cn_new_question_papers_btn.innerHTML){
+            data_to_send['changes_in_question_paper'] = false
         }
-
-        // if all that is okay
-        postData('/change_names', data_to_send)
-        .then(data => {
-            // console.log("here"+data); // JSON data parsed by `data.json()` call
-            // const permissible_question_papers = document.getElementById('permissible_question_papers')
-            if (data == 'failed') {
-                alert("something went wrong")
+        else{
+            // if the new question paper already exists then alert and return
+            if (cn_already_existing_questions_papers_in_db.includes(cn_new_question_papers_btn.innerHTML)){
+                alert('this question paper already exists for this quiz. Try some other question paper')
                 return
             }
-            // if everything went fine
+            else{
+                data_to_send['changes_in_question_paper'] = true
+                data_to_send['old_topic_name'] = cn_topic_name.value
+                // data_to_send['new_topic_name'] = cn_new_topic_name.value
+                data_to_send['old_part_number'] = 'part_'+cn_part_number_input.value
+                // data_to_send['new_part_number'] = cn_new_part_number.value
+                data_to_send['old_question_paper'] = cn_current_question_papers_btn.innerHTML
+                data_to_send['new_question_paper'] = cn_new_question_papers_btn.innerHTML
+                change_required = true
+            }
+        }
 
-        });
+        if (change_required){
+            // if all that is okay
+            postData('/change_names', data_to_send)
+            .then(data => {
+                // console.log("here"+data); // JSON data parsed by `data.json()` call
+                // const permissible_question_papers = document.getElementById('permissible_question_papers')
+                if (data == 'failed') {
+                    alert("something went wrong")
+                    return
+                }
+                // if everything went fine
+                location.reload();
+            });
+        }
+        else{
+            alert("no changes specified")
+            return
+        }
     }
 
 </script>

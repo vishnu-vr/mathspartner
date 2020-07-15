@@ -4,7 +4,7 @@ var con = mysql.createConnection({
 	host: "192.168.64.2",
 	user: "vishnu",
 	password: "2020",
-	database: "mathspartner"
+	database: "old_mathspartner"
   });
   
 con.connect(function(err) {
@@ -21,18 +21,21 @@ console.log("Database Connected!");
 // 	if (err) throw err;
 // 	console.log("1 record updated");
 // });
-
-var table = 'vishnupart_1'
-var path = 'new_path'
-var question_paper = 'question_paper_1'
-con.query("UPDATE "+table+" SET pdf_path = '"+path+"' WHERE question_paper = '"+question_paper+"'", function (err, result, fields) {
-	if (err) {
-		console.log(err)//throw err;
+async function do_stuff(){
+	var a = false
+	try{
+		con.query("ALTER TABLE vishnu RENAME TO vishnu")
 	}
+	catch(err){
+		console.log(err)
+	}
+	
+	console.log("after")
+}
 
-});
+do_stuff()
 
-
+// console.log("asd")
 // var sql = "INSERT INTO index_table VALUES ('RATIO', 'part_1#part_2#part_3')";
 // con.query(sql, function (err, result) {
 // if (err) throw err;
