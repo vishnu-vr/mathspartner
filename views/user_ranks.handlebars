@@ -61,6 +61,7 @@
             // console.log(data); // JSON data parsed by `data.json()` call
             const already_seen_quiz_names = result.already_seen_quiz_names
             const data = result.data
+            document.getElementById('tables').innerHTML = ''
             for (var i=0; i<already_seen_quiz_names.length; i++){
                 generate_result_table(data[already_seen_quiz_names[i]])
             }
@@ -87,9 +88,15 @@
         // head row
         var tr = document.createElement('tr')
         // headings
+
         var th = document.createElement('th')
         th.scope = 'col'
         th.innerHTML = '#'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Rank'
         tr.appendChild(th)
 
         var th = document.createElement('th')
@@ -126,19 +133,27 @@
         // document.getElementById('table').hidden = false
         // const table_body = document.getElementById('table_body')
         // table_body.innerHTML = ''
+        var rank = 1
+        var previous_score = data[0].score
         for (var i=0; i<data.length; i++){
+            // incrementing rank
+            if (data[i].score != previous_score){
+                previous_score = data[i].score
+                rank++
+            }
+
             var tr = document.createElement('tr')
 
             // #
+            var td = document.createElement('td')
+            td.innerHTML = (i+1)
+            tr.appendChild(td)
+
+            // rank
             var th = document.createElement('th')
             th.scope = 'row'
-            th.innerHTML = (i+1)
+            th.innerHTML = rank
             tr.appendChild(th)
-
-            // #
-            // var td = document.createElement('td')
-            // td.innerHTML = (i+1)
-            // tr.appendChild(td)
 
             // name
             var td = document.createElement('td')
