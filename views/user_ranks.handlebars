@@ -1,0 +1,178 @@
+<div class="row">
+  <div class="col-sm">
+    <h1 class="mt-4 text-center">User Results</h1>
+
+    {{!-- date picker --}}
+    <div class="mt-4 text-center">
+        <label for="date">Pick a date:</label>
+        <input type="date" id="date" name="date">
+        <button class="btn btn-primary" type="button" onclick="chosen_date()">Get Results</button>
+    </div>
+
+    {{!-- quiz name of that date --}}
+    {{!-- <h3 id='quiz_name'class='mt-4 text-center'></h3> --}}
+
+    {{!-- table for ranks --}}
+    <div id='tables'>
+        {{!-- <table class="table mt-4">
+        <thead class="thead-dark">
+            <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Score</th>
+            <th scope="col">Correct</th>
+            <th scope="col">Wrong</th>
+            <th scope="col">NA</th>
+            <th scope="col">Quiz</th>
+            </tr>
+        </thead>
+        <tbody id='table_body'>
+            <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>100</td>
+            <td>5</td>
+            <td>0</td>
+            <td>0</td>
+            </tr>
+        </tbody>
+        </table> --}}
+    </div>
+    {{!-- table for ranks --}}
+
+
+
+  </div>
+</div>
+
+<script>
+    // set the title
+    document.getElementById('title').innerText = "{{title}}"
+    
+    {{!-- // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active' --}}
+
+    const quiz_name = document.getElementById('quiz_name')
+    function chosen_date(){
+        var date_chosen = document.getElementById('date')
+        postData('get_user_details', {date_chosen:date_chosen.value})
+        .then(result => {
+            // console.log(data); // JSON data parsed by `data.json()` call
+            const already_seen_quiz_names = result.already_seen_quiz_names
+            const data = result.data
+            for (var i=0; i<already_seen_quiz_names.length; i++){
+                generate_result_table(data[already_seen_quiz_names[i]])
+            }
+        });
+    }
+
+
+
+    {{!-- var data = {{{json user_details}}} || [{name:'vishnu',score:'100',correct:'5',wrong:'0',na:'0'}] --}}
+
+    function generate_result_table(data){
+        const tables = document.getElementById('tables')
+
+        var h3 = document.createElement('h3')
+        h3.className = 'mt-4 text-center'
+        h3.innerHTML = data[0].quiz_name
+
+        // table
+        var table = document.createElement('table')
+        table.className = 'table mt-4'
+        // head
+        var thead = document.createElement('thead')
+        thead.className = 'thead-dark'
+        // head row
+        var tr = document.createElement('tr')
+        // headings
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = '#'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Name'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Score'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Correct'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Wrong'
+        tr.appendChild(th)
+
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'NA'
+        tr.appendChild(th)
+
+        thead.appendChild(tr)
+        table.appendChild(thead)
+
+        // table body
+        var table_body = document.createElement('tbody')
+
+        // document.getElementById('table').hidden = false
+        // const table_body = document.getElementById('table_body')
+        // table_body.innerHTML = ''
+        for (var i=0; i<data.length; i++){
+            var tr = document.createElement('tr')
+
+            // #
+            var th = document.createElement('th')
+            th.scope = 'row'
+            th.innerHTML = (i+1)
+            tr.appendChild(th)
+
+            // #
+            // var td = document.createElement('td')
+            // td.innerHTML = (i+1)
+            // tr.appendChild(td)
+
+            // name
+            var td = document.createElement('td')
+            td.innerHTML = data[i].name
+            tr.appendChild(td)
+            // score
+            var td = document.createElement('td')
+            td.innerHTML = data[i].score
+            tr.appendChild(td)
+            // correct
+            var td = document.createElement('td')
+            td.innerHTML = data[i].correct
+            tr.appendChild(td)
+            // wrong
+            var td = document.createElement('td')
+            td.innerHTML = data[i].wrong
+            tr.appendChild(td)
+            // na
+            var td = document.createElement('td')
+            td.innerHTML = data[i].na
+            tr.appendChild(td)
+            // quiz name
+            // var td = document.createElement('td')
+            // td.innerHTML = data[i].quiz_name
+            // tr.appendChild(td)
+
+            table_body.appendChild(tr)
+        }
+
+        table.appendChild(table_body)
+
+        tables.appendChild(h3)
+        tables.appendChild(table)
+    }
+
+
+</script>

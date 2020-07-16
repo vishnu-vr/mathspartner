@@ -586,7 +586,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 app.post('/save_user_results', (req,res) => {
 	console.log(req.body)
 	const data = req.body
-	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`) VALUES (NULL, '"+data.name+"', '"+data.score+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"')", function (err, result) {
+	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`) VALUES (NULL, '"+data.name+"', '"+parseFloat(data.score)+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"', '"+data.date+"', '"+data.quiz_name+"')", function (err, result) {
 		if (err) {
 			console.log(err)
 			res.json("failed")
@@ -594,6 +594,48 @@ app.post('/save_user_results', (req,res) => {
 		}
 		res.json("success")
 	});
+	
+})
+
+// get_user_details
+app.post('/get_user_details', (req,res) =>{
+	const date_chosen = req.body.date_chosen
+	new_con.query("SELECT * FROM `user_details` WHERE `date` = '"+date_chosen+"' ORDER BY `user_details`.`score` DESC", function (err,result) {
+		if (err){
+			console.log(err)
+			res.json(null)
+			return
+		}
+		
+
+		var already_seen_quiz_names = []
+		var data = {}
+		for (var i=0; i<result.length; i++){
+			if (already_seen_quiz_names.includes(result[i].quiz_name)){
+				data[result[i].quiz_name].push(result[i])
+			}
+			else{
+				already_seen_quiz_names.push(result[i].quiz_name)
+				data[result[i].quiz_name] = []
+				data[result[i].quiz_name].push(result[i])
+			}
+		}
+
+		res.json({already_seen_quiz_names,data})
+	})
+})
+
+// rank_page
+app.get('/user_ranks', (req,res) =>{
+	// new_con.query('SELECT * from user_details ORDER BY score DESC', function (err,result) {
+	// 	if (err){
+	// 		console.log(err)
+	// 		res.json(null)
+	// 		return
+	// 	}
+		
+	// })
+	res.render('user_ranks',{title:"Rank"})
 	
 })
 

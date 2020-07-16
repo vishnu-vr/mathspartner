@@ -12,64 +12,54 @@ var new_con = mysql.createPool({
 // console.log("Database Connected!");
 // });
 
-async function querydb(){
-	try{
-		var result = await new_con.query("SELECT * FROM quiz")
-		result = result[0]
-		console.table(result)
+var result = [
+{
+    id: 8,
+    name: 'ramesh',
+    score: 100,
+    correct: 0,
+    wrong: 0,
+    na: 2,
+    date: '2020-07-17',
+    quiz_name: 'vishnu part_1 question_paper_1'
+  },
+  {
+    id: 9,
+    name: 'asd',
+    score: 50,
+    correct: 0,
+    wrong: 0,
+    na: 1,
+    date: '2020-07-17',
+    quiz_name: 'suresh part_4 question_paper_3'
+  },
+  {
+    id: 10,
+    name: 'vishnu',
+    score: 0,
+    correct: 0,
+    wrong: 0,
+    na: 1,
+    date: '2020-07-17',
+    quiz_name: 'suresh part_4 question_paper_3'
+  }
+]
+// console.log(result[0])
+var already_seen_quiz_names = []
+var data_to_send = {}
+for (var i=0; i<result.length; i++){
+	if (already_seen_quiz_names.includes(result[i].quiz_name)){
+		data_to_send[result[i].quiz_name].push(result[i])
 	}
-	catch(err){
-		console.log(err)
+	else{
+		already_seen_quiz_names.push(result[i].quiz_name)
+		data_to_send[result[i].quiz_name] = []
+		data_to_send[result[i].quiz_name].push(result[i])
 	}
 }
-
-// querydb()
-
-
-data = {
-  changes_in_name: true,
-  old_topic_name: 'vishnu1',
-  new_topic_name: 'vishnu1',
-  changes_in_part: false,
-  changes_in_question_paper: false
-}
-
-
-async function change_part(data){
-	// return
-	try{
-		var result = await new_con.query("SELECT question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'")
-	}
-	catch (err) {
-		console.log(err)//throw err;
-		res.json('failed')
-		return
-	}
-
-	var changes_required = []
-	for (var i=0; i<result.length; i++){
-		changes_required.push({old:data.old_topic_name+data.old_part_number+result[i].question_paper,new:data.old_topic_name+data.new_part_number+result[i].question_paper})
-	}
-	console.log(changes_required)
-	// return
-	try{
-		await new_con.query("UPDATE quiz SET part = '"+data.new_part_number+"' WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'")
-	}
-	catch (err) {
-		console.log(err)//throw err;
-		res.json('failed')
-		return
-	}
-	for (var i=0; i<changes_required.length; i++){
-		try{
-			await new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new)
-		}
-		catch (err) {
-			console.log(err)//throw err;
-			res.json('failed')
-			return
-		}
-	}
+console.log(already_seen_quiz_names)
+for (var i=0; i<already_seen_quiz_names.length; i++){
+	console.log(data_to_send[already_seen_quiz_names[i]])
 }
 
 // console.log("asd")

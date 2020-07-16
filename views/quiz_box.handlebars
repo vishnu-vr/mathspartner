@@ -315,13 +315,22 @@
         }
 
         if (mode == 'test'){
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
+
+            today = yyyy + '-' + mm + '-' + dd;
+            const quiz_name = document.getElementById('heading').innerHTML
             const name = document.getElementById('name_of_user')
             var data_to_send = {
                 'name':name.value,
                 'score':score.toFixed(2),
                 'correct':number_of_correct_answers,
                 'wrong':number_of_wrong_answers,
-                'na':number_of_NA
+                'na':number_of_NA,
+                'date':today,
+                'quiz_name':quiz_name
             }
             postData('/save_user_results', data_to_send)
             .then(data => {
