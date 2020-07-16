@@ -218,7 +218,7 @@ app.post('/yt_parts_from_db', (req,res) => {
 app.post('/yt_link_from_db', (req,res) => {
 	const topic_name = req.body.yt_topic_name
 	const part = req.body.yt_part
-	new_con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+part+"'", function (err, result, fields) {
+	new_con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+'part_'+part+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.json(null)
@@ -239,7 +239,7 @@ app.post('/yt_add_update', (req,res) => {
 	
 	// if name and part exists then simply update the link
 	if (yt_name_exists && yt_part_exists){
-		new_con.query("UPDATE youtube SET link = '"+yt_link_input+"' WHERE topic_name = '"+yt_topic_name+"' AND part = '"+yt_part_number_input+"'", function (err, result, fields) {
+		new_con.query("UPDATE youtube SET link = '"+yt_link_input+"' WHERE topic_name = '"+yt_topic_name+"' AND part = '"+'part_'+yt_part_number_input+"'", function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json("failed")
@@ -251,7 +251,7 @@ app.post('/yt_add_update', (req,res) => {
 	}
 	// else add new row
 	else{
-		new_con.query("INSERT INTO youtube VALUES(NULL, '"+yt_topic_name+"', '"+yt_part_number_input+"', '"+yt_link_input+"')", function (err, result, fields) {
+		new_con.query("INSERT INTO youtube VALUES(NULL, '"+yt_topic_name+"', '"+'part_'+yt_part_number_input+"', '"+yt_link_input+"')", function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json("failed")
