@@ -635,7 +635,7 @@ app.get('/user_ranks', (req,res) =>{
 	// 	}
 		
 	// })
-	res.render('user_ranks',{title:"Rank"})
+	res.render('user_ranks',{title:"Rank", nav_selected:'user_ranks'})
 	
 })
 
