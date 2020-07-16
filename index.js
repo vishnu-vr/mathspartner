@@ -107,9 +107,13 @@ app.get('/dashboard', (req,res) => {
 			topics.push(result[i].topic_name)
 		}
 		// get data for youtube
-		new_con.query("SELECT topic_name FROM youtube", function (err, result) {
-			if (err) console.log(err)//throw err;
-			// console.log("1 record updated");
+		new_con.query("SELECT DISTINCT topic_name FROM youtube", function (err, result) {
+			if (err) {
+				console.log(err)//throw err;
+				res.render("<h1>something went wrong</h1>")
+			}
+			// console.log("asdasdasdas")
+			// console.log(result);
 			var yt_topics = []
 			for (var i=0; i<result.length; i++){
 				yt_topics.push(result[i].topic_name)
@@ -155,9 +159,43 @@ app.post('/change_names', async (req,res) => {
 	res.json('success')
 })
 
+// yt_change_names
+app.post('/yt_change_names', async (req,res) => {
+
+	var data = req.body
+	console.log(data)
+	// res.json("asd")
+	// return
+	if (data.changes_in_part){
+		console.log('changes in part number required')
+		try{
+			new_con.query("UPDATE youtube SET part = '"+data.new_part_number+"' WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'")
+		}
+		catch (err) {
+			console.log(err);
+			res.json('failed')
+			return
+		}
+	}
+	if (data.changes_in_name){
+		console.log('changes in name required')
+		try{
+			new_con.query("UPDATE youtube SET topic_name = '"+data.new_topic_name+"' WHERE topic_name = '"+data.old_topic_name+"'")
+		}
+		catch (err) {
+		console.log(err);
+		res.json('failed')
+		return
+		}
+	}
+	// return
+	res.json('success')
+})
+
 // fetch yt_parts_from_db/
 app.post('/yt_parts_from_db', (req,res) => {
 	const data = req.body.yt_topic_name
+	// console.log(data)
 	new_con.query("SELECT part FROM youtube WHERE topic_name = '"+data+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
@@ -170,7 +208,7 @@ app.post('/yt_parts_from_db', (req,res) => {
 		// result = result[0].parts.split('#')
 		for (var i=0; i<result.length; i++){
 			// console.log(part)
-			parts.push(result[i].part)
+			parts.push(result[i].part.split('_')[1])
 		}
 		res.json(parts)
 	});
@@ -637,7 +675,7 @@ app.get('/classes', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
 	,'work & time','simple interest']
 
-	new_con.query("SELECT topic_name FROM youtube", function (err, result, fields) {
+	new_con.query("SELECT DISTINCT topic_name FROM youtube", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -664,7 +702,7 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 		console.log(result);
 		var topics = []
 		for (var i=0; i<result.length; i++){
-			var part = 'part_' + result[i].part
+			var part = result[i].part
 			topics.push(part)
 		}
 
@@ -675,8 +713,8 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 // /youtube_videos/RATIO/part_1
 app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
 	const topic_name = req.params.topic_name
-	const part_number = req.params.part_number.split('_')[1]
-	const heading = topic_name + ' PART ' + part_number
+	const part_number = req.params.part_number
+	const heading = topic_name + ' ' +part_number
 	// console.log(part_number)
 	new_con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+part_number+"'", function (err, result, fields) {
 		if (err) {

@@ -275,7 +275,54 @@
                 </div>
 
                 <button id="cn_submit_btn" type="button" class="btn btn-primary mt-4" onclick="cn_submit()">Submit</button>
+                <hr>
 
+                {{!-- YouTube Change Names --}}
+                <h3 style="text-align: center;">YouTube</h3>
+                {{!-- topic name --}}
+                <div class="input-group input-group-sm mb-3 mt-4">
+                <div class="input-group-prepend">
+                    <button id="cn_yt_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
+                    <div class="dropdown-menu">
+                        <div id="cn_yt_already_existing_topics">
+                        <p class="dropdown-item" onclick="cn_yt_topic_name_selected('ratio')">Ratio</p>
+                        <p class="dropdown-item" onclick="cn_yt_topic_name_selected('another action')">Another action</p>
+                        <p class="dropdown-item" onclick="cn_yt_topic_name_selected('something else')">Something else here</p>
+                        </div>
+                    </div>
+                </div>
+                <input id="cn_yt_topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" readonly>
+                </div>
+                {{!-- new topic name --}}
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">New Topic Name</span>
+                    </div>
+                    <input id="cn_yt_new_topic_name" type="text" class="form-control" aria-describedby="basic-addon1">
+                </div>
+                
+                {{!-- part number dropdown select --}}
+                <div id='cn_yt_part_number_dropdown'>
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <button id="cn_yt_part_number_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Part Number</button>
+                        <div class="dropdown-menu">
+                            <div id="cn_yt_already_existing_parts">
+
+                            </div>
+                        </div>
+                    </div>
+                    <input id="cn_yt_part_number_input" type="number" class="form-control" aria-label="Text input with dropdown button" readonly>
+                    </div>
+                </div>
+                {{!-- new part number --}}
+                <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">New Part Number</span>
+                    </div>
+                    <input id="cn_yt_new_part_number" type="number" class="form-control" aria-describedby="basic-addon1">
+                </div>
+                <button id="cn_yt_submit_btn" type="button" class="btn btn-primary mt-2" onclick="cn_yt_submit()">Submit</button>
             </div>
             {{!-- third column --}}
             <div class="col-sm">
@@ -397,6 +444,18 @@
         t.innerHTML = topics_in_db[i]
         cn_already_existing_topics.appendChild(t)
     }    
+
+    // youtube change names section
+    const cn_yt_already_existing_topics = document.getElementById('cn_yt_already_existing_topics')
+    cn_yt_already_existing_topics.innerHTML = ''
+    // const yt_topics = {{{json yt_topics}}}
+    for (var i=0; i<yt_topics.length; i++){
+        var t = document.createElement('p')
+        t.className = 'dropdown-item'
+        t.setAttribute('onclick',"cn_yt_topic_name_selected('"+yt_topics[i]+"')") 
+        t.innerHTML = yt_topics[i]
+        cn_yt_already_existing_topics.appendChild(t)
+    } 
 
     // final submission for both editing or adding quiz
     function final_submit() {
@@ -1202,6 +1261,13 @@
             return
         }
 
+        var splitted = yt_link_input.value.split(' ')
+        splitted = splitted[3].split('"')
+        yt_link_input.value = splitted[1]
+
+        // alert(yt_link_input.value)
+        // return
+
         var send = {yt_topic_name:yt_topic_name.value,
         yt_part_number_input:yt_part_number_input.value,
         yt_link_input:yt_link_input.value,
@@ -1457,6 +1523,131 @@
             alert("no changes specified")
             return
         }
+    }
+
+    // ############## YouTube Change Names ###################
+    // global
+    const cn_yt_topic_name = document.getElementById('cn_yt_topic_name')
+    const cn_yt_part_number_input = document.getElementById('cn_yt_part_number_input')
+    const cn_yt_new_topic_name = document.getElementById('cn_yt_new_topic_name')
+    const cn_yt_new_part_number = document.getElementById('cn_yt_new_part_number')
+
+    function cn_yt_topic_name_selected(name){
+        // resetting every controls below this
+        cn_yt_part_number_input.value = ''
+        cn_yt_new_topic_name.value = ''
+        cn_yt_new_part_number.value = ''
+
+        cn_yt_topic_name.value = name
+
+        // fetching parts available to the topic
+        postData('/yt_parts_from_db', {'yt_topic_name':name})
+        .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            yt_already_existing_parts_from_db = data
+            // console.log("asdasdasd")
+            // <p class="dropdown-item" onclick="part_number_selected('part_1')">part_1</p>
+            // cn_already_existing_parts = document.getElementById('cn_already_existing_parts')
+            cn_yt_already_existing_parts.innerHTML = ''
+            for (var i=0; i<data.length; i++){
+                // console.log("asdasdasd")
+                var p = document.createElement('p')
+                p.className = 'dropdown-item'
+                p.setAttribute('onclick','cn_yt_part_number_selected("'+data[i]+'")')
+                p.innerHTML = data[i]
+                cn_yt_already_existing_parts.appendChild(p)
+            }
+        });
+    }
+    
+    function cn_yt_part_number_selected(part){
+        // resetting every control below this
+        cn_yt_new_part_number.value = ''
+
+        cn_yt_part_number_input.value = part
+    }
+
+    function cn_yt_submit(){
+        // validations / checking
+        // if all the three boxes are empty then notify it
+        if (cn_yt_topic_name.value == '' || cn_yt_part_number_input.value == '' 
+        || cn_yt_new_topic_name.value == '' || cn_yt_new_part_number.value == ''){
+            alert('Please fill everything')
+            return
+        }
+
+        // the logic here is like this : even if the user has to only change
+        // the question paper, still they have to provide the new topic name
+        // and new part number which can be same as the old one.
+
+        // but if the given part number or topic name is not equal to the 
+        // old one then that parameters will also be aken into consideration
+        // for changing.
+        var data_to_send = {}
+        var change_required = false
+        // ########## NAME ########################
+        // if new name is same as old name
+        // then it will not be changed
+        if (cn_yt_topic_name.value == cn_yt_new_topic_name.value){
+            data_to_send['changes_in_name'] = false
+        }
+        // if they are not same then check whether it already exists or not
+        else{
+            // if the new name already exists then alert and return
+            if (yt_topics.includes(cn_yt_new_topic_name.value)){
+                alert('this name already exists. Try some other name')
+                return
+            }
+            // if its an entirely new name
+            else{
+                data_to_send['changes_in_name'] = true
+                data_to_send['old_topic_name'] = cn_yt_topic_name.value
+                data_to_send['new_topic_name'] = cn_yt_new_topic_name.value
+                change_required = true
+            }
+        }
+
+        // ########## PART NUMBER ########################
+        // if new and old part number is same 
+        if (cn_yt_part_number_input.value == cn_yt_new_part_number.value){
+            data_to_send['changes_in_part'] = false
+        }
+        else{
+            // if the new part number already exists then alert and return
+            if (yt_already_existing_parts_from_db.includes(cn_yt_new_part_number.value)){
+                alert('the entered part number already exists for this quiz. Try some other number')
+                return
+            }
+            // if its an entirely new part number
+            else{
+                data_to_send['changes_in_part'] = true
+                data_to_send['old_topic_name'] = cn_yt_topic_name.value
+                // data_to_send['new_topic_name'] = cn_yt_new_topic_name.value
+                data_to_send['old_part_number'] = 'part_'+cn_yt_part_number_input.value
+                data_to_send['new_part_number'] = 'part_'+cn_yt_new_part_number.value
+                change_required = true
+            }
+        }
+
+        if (change_required){
+            // if all that is okay
+            postData('/yt_change_names', data_to_send)
+            .then(data => {
+                // console.log("here"+data); // JSON data parsed by `data.json()` call
+                // const permissible_question_papers = document.getElementById('permissible_question_papers')
+                if (data == 'failed') {
+                    alert("something went wrong")
+                    return
+                }
+                // if everything went fine
+                location.reload();
+            });
+        }
+        else{
+            alert('no change specified')
+            return
+        }
+
     }
 
 </script>
