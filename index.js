@@ -509,7 +509,7 @@ app.post('/add_quiz', (req,res) => {
 })
 
 // quiz box
-app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
+app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 
 	const heading = req.params.topic_name + " " + req.params.part_no + " " + req.params.question_paper
 	var dummy_questions = [
@@ -570,12 +570,31 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 				// console.log(result[0].duration);
 				const time = result[0].duration
 				const pdf_path = result[0].pdf_path
+
+				// checking the mode
+				if (req.params.mode == 'test') var mode = 'test'
+				else var mode = 'normal'
 	
-				res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time, pdf_path:pdf_path})
+				res.render('quiz_box', {title:"quiz_box", nav_selected:"quiz", heading:heading, questions:questions, time:time, pdf_path:pdf_path, mode:mode})
 			});
 		});
 
 	});
+})
+
+// save_user_results
+app.post('/save_user_results', (req,res) => {
+	console.log(req.body)
+	const data = req.body
+	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`) VALUES (NULL, '"+data.name+"', '"+data.score+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"')", function (err, result) {
+		if (err) {
+			console.log(err)
+			res.json("failed")
+			return
+		}
+		res.json("success")
+	});
+	
 })
 
 // topics page

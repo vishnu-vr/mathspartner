@@ -6,8 +6,24 @@
     {{!-- free column --}}
     <div class="col-lg"> 
     <h1 id="heading" class="mt-4 text-center"></h1>
+    {{!-- user details --}}
+    <div class="row mt-4" id='user_details'>
+        <div class="col-sm">
+        </div>
+        <div class="col-sm text-center">
+            <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Name</span>
+            </div>
+            <input id='name_of_user' type="text" class="form-control" placeholder="Enter Your Name" aria-label="name" aria-describedby="basic-addon1">
+            </div>
+            <button id='start_quiz_btn' type="button" class="btn btn-primary" onclick="start_quiz()">Start Quiz</button>
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
     {{!-- quiz box --}}
-    <div class="jumbotron mt-4 text-center">
+    <div class="jumbotron mt-4 text-center" id='jumbotron' hidden>
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
     {{!-- question --}}
     <p class="text-right" id="timer">timer here</p>
@@ -70,6 +86,24 @@
     // get the questions and answers
     var questions = {{{json questions }}}
 
+    // start quiz button
+    function start_quiz(){
+        if (mode == 'test'){
+            // check whether the user has provided their name
+            const name_of_user = document.getElementById('name_of_user')
+            if (name_of_user.value == ''){
+                alert('Please provide your name')
+                return
+            }
+        }
+        // disable the button
+        document.getElementById('start_quiz_btn').disabled = true
+        // make the jumbotron visible
+        document.getElementById('jumbotron').hidden = false
+        // start the timer
+        startTimer(timeee,timer)
+    }
+
     // timer
     var time_interval = null
     const timer = document.getElementById('timer')
@@ -93,7 +127,7 @@
     }
     // set the value as seconds * minutes * hours
     var timeee = {{ time }}
-    startTimer(timeee,timer)
+    {{!-- startTimer(timeee,timer) --}}
 
     // next and previous buttons
     const next_button = document.getElementById('next')
@@ -279,6 +313,28 @@
             pdf_viewer.innerHTML = 'Download Complete Solution'
             modal_body.appendChild(pdf_viewer)
         }
+
+        if (mode == 'test'){
+            const name = document.getElementById('name_of_user')
+            var data_to_send = {
+                'name':name.value,
+                'score':score.toFixed(2),
+                'correct':number_of_correct_answers,
+                'wrong':number_of_wrong_answers,
+                'na':number_of_NA
+            }
+            postData('/save_user_results', data_to_send)
+            .then(data => {
+                console.log(data); // JSON data parsed by `data.json()` call
+            });
+        }
+    }
+
+    // if test mode
+    const mode = "{{mode}}"
+    if (mode != 'test'){
+        document.getElementById('user_details').hidden = true
+        start_quiz()
     }
 
 </script>
