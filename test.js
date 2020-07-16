@@ -1,39 +1,76 @@
-var mysql = require('mysql');
+var mysql = require('mysql2/promise');
 
-var con = mysql.createConnection({
+var new_con = mysql.createPool({
 	host: "192.168.64.2",
 	user: "vishnu",
 	password: "2020",
-	database: "old_mathspartner"
+	database: "mathspartner"
   });
   
-con.connect(function(err) {
-if (err) throw err;
-console.log("Database Connected!");
-});
-
-
-// var table = 'RATIOpart_1'
-// var path = 'somepath'
-// var question_paper = 'question_paper_1'
-// var sql = "UPDATE "+table+" SET pdf_path = '"+path+"' WHERE question_paper = '"+question_paper+"'";
-// con.query(sql, function (err, result) {
-// 	if (err) throw err;
-// 	console.log("1 record updated");
+// con.connect(function(err) {
+// if (err) throw err;
+// console.log("Database Connected!");
 // });
-async function do_stuff(){
-	var a = false
+
+async function querydb(){
 	try{
-		con.query("ALTER TABLE vishnu RENAME TO vishnu")
+		var result = await new_con.query("SELECT * FROM quiz")
+		result = result[0]
+		console.table(result)
 	}
 	catch(err){
 		console.log(err)
 	}
-	
-	console.log("after")
 }
 
-do_stuff()
+// querydb()
+
+
+data = {
+  changes_in_name: true,
+  old_topic_name: 'vishnu1',
+  new_topic_name: 'vishnu1',
+  changes_in_part: false,
+  changes_in_question_paper: false
+}
+
+
+async function change_part(data){
+	// return
+	try{
+		var result = await new_con.query("SELECT question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'")
+	}
+	catch (err) {
+		console.log(err)//throw err;
+		res.json('failed')
+		return
+	}
+
+	var changes_required = []
+	for (var i=0; i<result.length; i++){
+		changes_required.push({old:data.old_topic_name+data.old_part_number+result[i].question_paper,new:data.old_topic_name+data.new_part_number+result[i].question_paper})
+	}
+	console.log(changes_required)
+	// return
+	try{
+		await new_con.query("UPDATE quiz SET part = '"+data.new_part_number+"' WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'")
+	}
+	catch (err) {
+		console.log(err)//throw err;
+		res.json('failed')
+		return
+	}
+	for (var i=0; i<changes_required.length; i++){
+		try{
+			await new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new)
+		}
+		catch (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
+	}
+}
 
 // console.log("asd")
 // var sql = "INSERT INTO index_table VALUES ('RATIO', 'part_1#part_2#part_3')";

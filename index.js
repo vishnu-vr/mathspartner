@@ -1,7 +1,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
-const shuffle = require('./helper_functions')
+const help = require('./helper_functions')
 var creds = require('./creds')
 const mysql = require('mysql2/promise');//require('mysql');
 const { table, Console } = require('console')
@@ -132,7 +132,7 @@ app.get('/dashboard', (req,res) => {
 // 	new_question_paper: 'question_paper_6'
 //   }
 // change_names
-app.post('/change_names', (req,res) => {
+app.post('/change_names', async (req,res) => {
 
 	var data = req.body
 	console.log(data)
@@ -140,99 +140,16 @@ app.post('/change_names', (req,res) => {
 	// return
 	if (data.changes_in_question_paper){
 		console.log('changes in question paper required')
-		// return
-		var changes_required = []
-		changes_required.push({old:data.old_topic_name+data.old_part_number+data.old_question_paper,new:data.old_topic_name+data.old_part_number+data.new_question_paper})
-		console.log(changes_required)
-		// return
-		new_con.query("UPDATE quiz SET question_paper = '"+data.new_question_paper+"' WHERE topic_name = '"+data.old_topic_name+"' AND question_paper = '"+data.old_question_paper+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
-			if (err) {
-				console.log(err)//throw err;
-				res.json('failed')
-				return
-			}
-			for (var i=0; i<changes_required.length; i++){
-				new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
-					if (err) {
-						console.log(err)//throw err;
-						res.json('failed')
-						return
-					}
-				});
-			}
-			// res.json('success')
-		});
+		await help.change_question_paper(data,new_con)
 	}
 	// return
 	if (data.changes_in_part){
 		console.log('changes in part number required')
-		// return
-		new_con.query("SELECT question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
-			if (err) {
-				console.log(err)//throw err;
-				res.json('failed')
-				return
-			}
-
-			var changes_required = []
-			for (var i=0; i<result.length; i++){
-				changes_required.push({old:data.old_topic_name+data.old_part_number+result[i].question_paper,new:data.old_topic_name+data.new_part_number+result[i].question_paper})
-			}
-			console.log(changes_required)
-			// return
-			new_con.query("UPDATE quiz SET part = '"+data.new_part_number+"' WHERE topic_name = '"+data.old_topic_name+"' AND part = '"+data.old_part_number+"'", function (err, result, fields) {
-				if (err) {
-					console.log(err)//throw err;
-					res.json('failed')
-					return
-				}
-				for (var i=0; i<changes_required.length; i++){
-					new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
-						if (err) {
-							console.log(err)//throw err;
-							res.json('failed')
-							return
-						}
-					});
-				}
-				// res.json('success')
-			});
-		});
+		await help.change_part(data,new_con)
 	}
 	if (data.changes_in_name){
 		console.log('changes in name required')
-		// return		
-		new_con.query("SELECT part,question_paper FROM quiz WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
-			if (err) {
-				console.log(err)//throw err;
-				res.json('failed')
-				return
-			}
-
-			var changes_required = []
-			for (var i=0; i<result.length; i++){
-				changes_required.push({old:data.old_topic_name+result[i].part+result[i].question_paper,new:data.new_topic_name+result[i].part+result[i].question_paper})
-			}
-			console.log(changes_required)
-			// return
-			new_con.query("UPDATE quiz SET topic_name = '"+data.new_topic_name+"' WHERE topic_name = '"+data.old_topic_name+"'", function (err, result, fields) {
-				if (err) {
-					console.log(err)//throw err;
-					res.json('failed')
-					return
-				}
-				for (var i=0; i<changes_required.length; i++){
-					new_con.query("ALTER TABLE "+changes_required[i].old+" RENAME TO "+changes_required[i].new, function (err, result, fields) {
-						if (err) {
-							console.log(err)//throw err;
-							res.json('failed')
-							return
-						}
-					});
-				}
-				// res.json('success')
-			});
-		});
+		await help.change_name(data,new_con)
 	}
 	// return
 	res.json('success')
@@ -602,8 +519,8 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper', (req,res) => {
 				questions.push({question:result[i].question, options:options,correct:result[i].correct})
 			}
 			// console.log(questions)
-			shuffle(questions)
-			for (var i=0; i<questions.length; i++) shuffle(questions[i].options)
+			help.shuffle(questions)
+			for (var i=0; i<questions.length; i++) help.shuffle(questions[i].options)
 	
 			// fetching the time limit for the quiz
 			let sql = "SELECT duration,pdf_path FROM quiz WHERE question_paper = '"+req.params.question_paper+"' AND part = '"+req.params.part_no+"'"
