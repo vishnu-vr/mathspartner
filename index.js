@@ -103,6 +103,7 @@ app.get('/dashboard', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		// console.log(result[0].topic_name);
 		var topics = []
@@ -114,6 +115,7 @@ app.get('/dashboard', (req,res) => {
 			if (err) {
 				console.log(err)//throw err;
 				res.render("<h1>something went wrong</h1>")
+				return
 			}
 			// console.log("asdasdasdas")
 			// console.log(result);
@@ -356,7 +358,11 @@ app.post('/get_quiz', (req,res) => {
 	// res.json("asd")
 	var table = data.topic_name+data.part_number+data.question_paper
 	new_con.query("SELECT * FROM "+table, function (err, result, fields) {
-		if (err) console.log(err)//throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
 		console.log(result);
 		// return
 		var data_to_send = result
@@ -429,10 +435,18 @@ app.post('/edit_quiz', (req,res) => {
 	// first update duration
 	// var info_table = data[0].topic_name+"part_"+data[0].part_number
 	new_con.query("UPDATE quiz SET duration = '"+parseInt(data[0].duration)*60+"' WHERE question_paper = '"+data[0].question_paper+"' AND part = '"+"part_"+data[0].part_number+"' AND topic_name = '"+data[0].topic_name+"'", function (err, result, fields) {
-		if (err) console.log(err)//throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
 		console.log(result);
 		new_con.query("UPDATE quiz SET on_off = '"+data[0].on_off+"' WHERE question_paper = '"+data[0].question_paper+"' AND part = '"+"part_"+data[0].part_number+"' AND topic_name = '"+data[0].topic_name+"'", function (err, result, fields) {
-			if (err) console.log(err)//throw err;
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
 			console.log(result);
 		});
 	});
@@ -441,19 +455,31 @@ app.post('/edit_quiz', (req,res) => {
 	var table_name = data[0].topic_name+"part_"+data[0].part_number+data[0].question_paper
 	// console.log(table_name)
 	new_con.query("DROP TABLE "+table_name, function (err, result, fields) {
-		if (err) console.log(err)//throw err;
+		if (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
 		console.log(result);
 	
 		// after deleting recreate it with new values
 		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
 		new_con.query(sql, function (err, result) {
-			if (err) console.log(err)//throw err;
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
 			console.log("Table created");
 			// insert everything
 			for (var i=0; i<data.length; i++){
 				var sql = "INSERT INTO "+table_name+" VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
 				new_con.query(sql, function (err, result) {
-				if (err) console.log(err)//throw err;
+				if (err) {
+					console.log(err)//throw err;
+					res.json('failed')
+					return
+				}
 				console.log("row " +(i+1)+" inserted");
 				});
 			}
@@ -569,6 +595,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 				if (err) {
 					console.log(err)//throw err;
 					res.render("<h1>something went wrong</h1>")
+					return
 				}
 				// console.log(result[0].duration);
 				const time = result[0].duration
@@ -651,6 +678,7 @@ app.get('/quiz', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		// console.log(result[0].topic_name);
 		var topics = []
@@ -671,6 +699,7 @@ app.get('/parts/:topic_name', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		// console.log(result[0].parts);
 		var topics = []
@@ -694,6 +723,7 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		// console.log(result);
 		var topics = []
@@ -721,7 +751,11 @@ app.post('/fileupload', (req,res) => {
 	// saving the file
 	var file_path = './public/pdf_uploads/'+name+'.pdf'
 	file.mv(file_path, (err)=>{
-		if (err) console.log(err)
+		if (err) {
+			console.log(err)
+			res.json('failed')
+			return
+		}
 		file_path = '/pdf_uploads/'+name+'.pdf'
 		new_con.query("UPDATE quiz SET pdf_path = '"+file_path+"' WHERE topic_name = '"+topic_name+"' AND part = '"+part_number+"' AND question_paper = '"+question_paper+"'", function (err, result, fields) {
 			if (err) {
@@ -743,6 +777,7 @@ app.get('/classes', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		console.log(result);
 		var topics = []
@@ -762,6 +797,7 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		console.log(result);
 		var topics = []
@@ -784,6 +820,7 @@ app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
+			return
 		}
 		// console.log(result[0].link);
 
