@@ -2,7 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const help = require('./helper_functions')
-// var creds = require('./creds')
+var creds = require('./creds')
 const mysql = require('mysql2/promise');//require('mysql');
 const { table, Console } = require('console')
 const { json } = require('express')
@@ -18,10 +18,10 @@ const fs = require('fs');
 // });
 
 const new_con = mysql.createPool({
-	host: "63.141.243.98",
-	user: "mathspar_vishnu",
-	password: "@Aa5714628",
-	database: "mathspar_mathspartner"
+	host: creds.host,
+	user: creds.user,
+	password: creds.password,
+	database: creds.database
 });
 
 // con.connect(function(err) {
@@ -63,7 +63,10 @@ app.use(session({secret:"sadsad123qdw12das",resave:false,saveUninitialized:true}
 // ########################### HTML RENDERING ###########################################
 
 // home
-app.get('/', (req,res) => res.render('home', {title:"Maths Partner"}))
+app.get('/', (req,res) => {
+	// res.render('home', {title:"Maths Partner"})
+	res.redirect('/quiz')
+})
 
 // login
 app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
@@ -586,7 +589,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 app.post('/save_user_results', (req,res) => {
 	console.log(req.body)
 	const data = req.body
-	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`) VALUES (NULL, '"+data.name+"', '"+parseFloat(data.score)+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"', '"+data.date+"', '"+data.quiz_name+"')", function (err, result) {
+	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`, `time_taken`) VALUES (NULL, '"+data.name+"', '"+parseFloat(data.score)+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"', '"+data.date+"', '"+data.quiz_name+"', '"+data.time_taken+"')", function (err, result) {
 		if (err) {
 			console.log(err)
 			res.json("failed")
@@ -600,14 +603,14 @@ app.post('/save_user_results', (req,res) => {
 // get_user_details
 app.post('/get_user_details', (req,res) =>{
 	const date_chosen = req.body.date_chosen
-	new_con.query("SELECT * FROM `user_details` WHERE `date` = '"+date_chosen+"' ORDER BY `user_details`.`score` DESC", function (err,result) {
+	new_con.query("SELECT * FROM `user_details` WHERE `date` = '"+date_chosen+"' ORDER BY score DESC,time_taken ASC", function (err,result) {
 		if (err){
 			console.log(err)
 			res.json(null)
 			return
 		}
 		
-
+		// console.table(result)
 		var already_seen_quiz_names = []
 		var data = {}
 		for (var i=0; i<result.length; i++){

@@ -89,10 +89,10 @@
         var tr = document.createElement('tr')
         // headings
 
-        var th = document.createElement('th')
+        {{!-- var th = document.createElement('th')
         th.scope = 'col'
         th.innerHTML = '#'
-        tr.appendChild(th)
+        tr.appendChild(th) --}}
 
         var th = document.createElement('th')
         th.scope = 'col'
@@ -124,6 +124,11 @@
         th.innerHTML = 'NA'
         tr.appendChild(th)
 
+        var th = document.createElement('th')
+        th.scope = 'col'
+        th.innerHTML = 'Time'
+        tr.appendChild(th)
+
         thead.appendChild(tr)
         table.appendChild(thead)
 
@@ -135,19 +140,21 @@
         // table_body.innerHTML = ''
         var rank = 1
         var previous_score = data[0].score
+        var previous_time = data[0].time_taken
         for (var i=0; i<data.length; i++){
             // incrementing rank
-            if (data[i].score != previous_score){
+            if (data[i].score != previous_score || data[i].time_taken != previous_time){
                 previous_score = data[i].score
+                var previous_time = data[i].time_taken
                 rank++
             }
 
             var tr = document.createElement('tr')
 
-            // #
+            {{!-- // #
             var td = document.createElement('td')
             td.innerHTML = (i+1)
-            tr.appendChild(td)
+            tr.appendChild(td) --}}
 
             // rank
             var th = document.createElement('th')
@@ -174,6 +181,10 @@
             // na
             var td = document.createElement('td')
             td.innerHTML = data[i].na
+            tr.appendChild(td)
+            // time
+            var td = document.createElement('td')
+            td.innerHTML = data[i].time_taken
             tr.appendChild(td)
             // quiz name
             // var td = document.createElement('td')

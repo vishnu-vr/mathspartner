@@ -106,6 +106,7 @@
 
     // timer
     var time_interval = null
+    var current_time = 0
     const timer = document.getElementById('timer')
     function startTimer(duration, display) {
         var timer = duration, minutes, seconds;
@@ -117,7 +118,8 @@
             seconds = seconds < 10 ? "0" + seconds : seconds;
 
             display.textContent = minutes + ":" + seconds;
-
+            current_time = timer
+            // console.log(current_time)
             if (--timer < 0) {
                 timer = duration;
                 alert("Sorry, times up!!!")
@@ -323,6 +325,17 @@
             today = yyyy + '-' + mm + '-' + dd;
             const quiz_name = document.getElementById('heading').innerHTML
             const name = document.getElementById('name_of_user')
+
+            // var minutes = parseInt(timeee / 60, 10)
+            // var seconds = parseInt(timeee % 60, 10)
+            // var total_time = parseFloat(minutes+'.'+seconds)
+            // alert(total_time)
+            var time_taken = timeee - current_time
+            var minutes = parseInt(time_taken / 60, 10)
+            var seconds = parseInt(time_taken % 60, 10)
+            time_taken = parseFloat(minutes+'.'+seconds)
+            // alert(time_taken)
+            // return
             var data_to_send = {
                 'name':name.value,
                 'score':score.toFixed(2),
@@ -330,7 +343,8 @@
                 'wrong':number_of_wrong_answers,
                 'na':number_of_NA,
                 'date':today,
-                'quiz_name':quiz_name
+                'quiz_name':quiz_name,
+                'time_taken':time_taken
             }
             postData('/save_user_results', data_to_send)
             .then(data => {
