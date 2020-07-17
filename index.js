@@ -27,12 +27,6 @@ const new_con = mysql.createPool({
 	database: creds.database
 });
 
-// const new_con = mysql.createPool({
-// 	host: "63.141.243.98",
-// 	user: "mathspar_vishnu",
-// 	password: "@Aa5714628",
-// 	database: "mathspar_mathspartner"
-// });
 
 // con.connect(function(err) {
 // 	if (err) throw err;

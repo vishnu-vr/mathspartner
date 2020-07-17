@@ -1,40 +1,10 @@
 Server up on port 5000
 log : http://localhost:5000/
 log : http://localhost:5000/quiz
-log : http://localhost:5000/parts/test
-log : http://localhost:5000/question_paper/test/part_1
-log : http://localhost:5000/quiz_box/test/part_1/question_paper_1/normal
-log : http://localhost:5000/quiz_box/test/part_1/question_paper_1/normal
-log : http://localhost:5000/quiz_box/test/part_1/question_paper_1/normal
-log : http://localhost:5000/user_ranks
-log : http://localhost:5000/get_user_details
-log : http://localhost:5000/quiz
-log : http://localhost:5000/parts/unimon
-log : http://localhost:5000/login
-log : http://localhost:5000/user_authentication
-{ username: 'admin', password: 'admin' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_21' }
-log : http://localhost:5000/get_question_paper/edit
-{ part_number: 'part_21', topic_name: 'unimon' }
-[ TextRow { question_paper: 'question_paper_1' } ]
-edit
-log : http://localhost:5000/get_quiz
-{
-  topic_name: 'unimon',
-  part_number: 'part_21',
-  question_paper: 'question_paper_1'
-}
+log : http://localhost:5000/classes
 [
-  TextRow {
-    id: 1,
-    question: 'asd',
-    option_1: 'asd',
-    option_2: 'asd',
-    option_3: 'asd',
-    option_4: 'asd',
-    correct: 'asd'
-  }
+  TextRow { topic_name: 'RATIO' },
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'GEOMETRY- CIRCLE' },
+  TextRow { topic_name: 'SPEED AND TIME' }
 ]
-[ TextRow { duration: 1320, pdf_path: '', on_off: 'true' } ]
