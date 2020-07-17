@@ -18,10 +18,10 @@ const fs = require('fs');
 // });
 
 const new_con = mysql.createPool({
-	host: creds.host,
-	user: creds.user,
-	password: creds.password,
-	database: creds.database
+	host: "63.141.243.98",
+	user: "mathspar_vishnu",
+	password: "@Aa5714628",
+	database: "mathspar_mathspartner"
 });
 
 // con.connect(function(err) {
