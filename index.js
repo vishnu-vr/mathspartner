@@ -2,7 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const help = require('./helper_functions')
-var creds = require('./creds')
+// var creds = require('./creds')
 const mysql = require('mysql2/promise');//require('mysql');
 const { table, Console } = require('console')
 const { json } = require('express')
@@ -18,10 +18,10 @@ const fs = require('fs');
 // });
 
 const new_con = mysql.createPool({
-	host: creds.host,
-	user: creds.user,
-	password: creds.password,
-	database: creds.database
+	host: "63.141.243.98",
+	user: "mathspar_vishnu",
+	password: "@Aa5714628",
+	database: "mathspar_mathspartner"
 });
 
 // con.connect(function(err) {
