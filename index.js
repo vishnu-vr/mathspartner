@@ -10,6 +10,16 @@ const session = require('express-session')
 const fileupload = require('express-fileupload')
 const fs = require('fs');
 
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
+
+
 const new_con = mysql.createPool({
 	host: creds.host,
 	user: creds.user,
