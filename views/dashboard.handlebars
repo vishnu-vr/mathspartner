@@ -636,12 +636,13 @@
                     body:formData
                 }).then((data) => {
                     console.log(data)
+                    location.reload();
                 })
             }
             else console.log("pdf file is missing")
 
             // if everything went fine refresh the page
-            location.reload();
+            // location.reload();
         });
     }
 
