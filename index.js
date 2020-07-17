@@ -2,7 +2,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const help = require('./helper_functions')
-// var creds = require('./creds')
+var creds = require('./creds')
 const mysql = require('mysql2/promise');//require('mysql');
 const { table, Console } = require('console')
 const { json } = require('express')
@@ -10,19 +10,19 @@ const session = require('express-session')
 const fileupload = require('express-fileupload')
 const fs = require('fs');
 
-// const con = mysql.createPool({
-// 	host: creds.host,
-// 	user: creds.user,
-// 	password: creds.password,
-// 	database: creds.database
-// });
-
 const new_con = mysql.createPool({
-	host: "63.141.243.98",
-	user: "mathspar_vishnu",
-	password: "@Aa5714628",
-	database: "mathspar_mathspartner"
+	host: creds.host,
+	user: creds.user,
+	password: creds.password,
+	database: creds.database
 });
+
+// const new_con = mysql.createPool({
+// 	host: "63.141.243.98",
+// 	user: "mathspar_vishnu",
+// 	password: "@Aa5714628",
+// 	database: "mathspar_mathspartner"
+// });
 
 // con.connect(function(err) {
 // 	if (err) throw err;
@@ -299,7 +299,7 @@ app.post('/parts_from_db', (req,res) => {
 		// result = result[0].parts.split('#')
 		for (var i=0; i<result.length; i++){
 			// console.log(part)
-			parts.push(result[i].part.slice(-1))
+			parts.push(result[i].part.split('_')[1])
 		}
 		res.json(parts)
 	});
@@ -575,7 +575,10 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 			return
 		}
 		// if the quiz is off don't return the quiz
-		console.log(result)
+		if (result[0]==null) {
+			res.render('error')
+			return
+		}
 		if (result[0].on_off == 'false'){
 			// res.send("<h1>THIS QUIZ IS TEMPORARLY TURNED OFF. TRY AGAIN AFTER SOMETIME.")
 			res.render('error')
