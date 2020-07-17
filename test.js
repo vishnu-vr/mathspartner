@@ -1,4 +1,5 @@
 var mysql = require('mysql2/promise');
+var fs = require('fs')
 
 var new_con = mysql.createPool({
 	host: "192.168.64.2",
@@ -12,55 +13,15 @@ var new_con = mysql.createPool({
 // console.log("Database Connected!");
 // });
 
-var result = [
-{
-    id: 8,
-    name: 'ramesh',
-    score: 100,
-    correct: 0,
-    wrong: 0,
-    na: 2,
-    date: '2020-07-17',
-    quiz_name: 'vishnu part_1 question_paper_1'
-  },
-  {
-    id: 9,
-    name: 'asd',
-    score: 50,
-    correct: 0,
-    wrong: 0,
-    na: 1,
-    date: '2020-07-17',
-    quiz_name: 'suresh part_4 question_paper_3'
-  },
-  {
-    id: 10,
-    name: 'vishnu',
-    score: 0,
-    correct: 0,
-    wrong: 0,
-    na: 1,
-    date: '2020-07-17',
-    quiz_name: 'suresh part_4 question_paper_3'
-  }
-]
-// console.log(result[0])
-var already_seen_quiz_names = []
-var data_to_send = {}
-for (var i=0; i<result.length; i++){
-	if (already_seen_quiz_names.includes(result[i].quiz_name)){
-		data_to_send[result[i].quiz_name].push(result[i])
-	}
-	else{
-		already_seen_quiz_names.push(result[i].quiz_name)
-		data_to_send[result[i].quiz_name] = []
-		data_to_send[result[i].quiz_name].push(result[i])
-	}
-}
-console.log(already_seen_quiz_names)
-for (var i=0; i<already_seen_quiz_names.length; i++){
-	console.log(data_to_send[already_seen_quiz_names[i]])
-}
+var pdf_path = 'public/pdf_uploads/vishnupart_1question_paper_1.pdf'
+fs.unlink(pdf_path, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  
+    console.log('file removed')
+})
 
 // console.log("asd")
 // var sql = "INSERT INTO index_table VALUES ('RATIO', 'part_1#part_2#part_3')";

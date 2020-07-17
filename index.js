@@ -336,13 +336,31 @@ app.post('/delete_the_whole_quiz', (req,res) => {
 			res.json('failed')
 			return
 		}
-		new_con.query("DELETE FROM quiz WHERE topic_name = '"+data.topic_name+"' AND part = '"+'part_'+data.part_number+"' AND question_paper = '"+data.question_paper+"'", function (err, result, fields) {
+		// obtain pdf_path for deletion
+		new_con.query("SELECT pdf_path FROM quiz WHERE topic_name = '"+data.topic_name+"' AND part = '"+'part_'+data.part_number+"' AND question_paper = '"+data.question_paper+"'", function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json('failed')
 				return
 			}
-			res.json("success")
+			// deleting the file async
+			var pdf_path = './public'+result[0].pdf_path
+			fs.unlink(pdf_path, (err) => {
+				if (err) {
+				  console.error(err)
+				  return
+				}
+			  
+				console.log('file removed')
+			})
+			new_con.query("DELETE FROM quiz WHERE topic_name = '"+data.topic_name+"' AND part = '"+'part_'+data.part_number+"' AND question_paper = '"+data.question_paper+"'", function (err, result, fields) {
+				if (err) {
+					console.log(err)//throw err;
+					res.json('failed')
+					return
+				}
+				res.json('success')
+			});
 		});
 	});
 })
