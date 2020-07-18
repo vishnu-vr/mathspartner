@@ -1,10 +1,7 @@
 Server up on port 5000
-log : http://localhost:5000/
-log : http://localhost:5000/quiz
-log : http://localhost:5000/classes
+log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
 [
-  TextRow { topic_name: 'RATIO' },
-  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
-  TextRow { topic_name: 'GEOMETRY- CIRCLE' },
-  TextRow { topic_name: 'SPEED AND TIME' }
+  TextRow { part: 'part_1' },
+  TextRow { part: 'part_2' },
+  TextRow { part: 'part_3' }
 ]

@@ -798,7 +798,7 @@ app.get('/classes', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
 	,'work & time','simple interest']
 
-	new_con.query("SELECT DISTINCT topic_name FROM youtube", function (err, result, fields) {
+	new_con.query("SELECT DISTINCT topic_name FROM youtube ORDER BY topic_name", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -818,7 +818,7 @@ app.get('/classes', (req,res) => {
 // /parts_yt/"+topic_id_.innerText
 app.get('/parts_yt/:topic_name', (req,res) => {
 	const topic_name = req.params.topic_name
-	new_con.query("SELECT part FROM youtube WHERE topic_name = '"+topic_name+"'", function (err, result, fields) {
+	new_con.query("SELECT part FROM youtube WHERE topic_name = '"+topic_name+"' ORDER BY part", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
