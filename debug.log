@@ -1,7 +1,34 @@
 Server up on port 5000
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_1' }
+log : http://localhost:5000/get_question_paper/edit
+{ part_number: 'part_1', topic_name: 'new1' }
+[ TextRow { question_paper: 'question_paper_1' } ]
+edit
+log : http://localhost:5000/get_quiz
+{
+  topic_name: 'new1',
+  part_number: 'part_1',
+  question_paper: 'question_paper_1'
+}
 [
-  TextRow { part: 'part_1' },
-  TextRow { part: 'part_2' },
-  TextRow { part: 'part_3' }
+  TextRow {
+    id: 1,
+    question: 'asd',
+    option_1: 'asd',
+    option_2: 'asd',
+    option_3: 'asd',
+    option_4: 'asd',
+    correct: 'asd'
+  }
 ]
+[
+  TextRow {
+    duration: 1320,
+    pdf_path: '/pdf_uploads/new1part_1question_paper_1.pdf',
+    on_off: 'true'
+  }
+]
+log : http://localhost:5000/delete_the_whole_quiz
+file removed
+log : http://localhost:5000/dashboard

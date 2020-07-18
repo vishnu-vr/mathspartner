@@ -672,9 +672,14 @@
                 }).then((data) => {
                     console.log(data)
                     location.reload();
+                    // add_quiz()
                 })
             }
-            else console.log("pdf file is missing")
+            else {
+                console.log("pdf file is missing")
+                location.reload();
+                // add_quiz()
+            }
 
             // if everything went fine refresh the page
             // location.reload();
