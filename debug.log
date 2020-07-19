@@ -1,120 +1,12 @@
 Server up on port 5000
-log : http://localhost:5000/
-log : http://localhost:5000/quiz
-Error: connect ETIMEDOUT
-    at PoolConnection._handleTimeoutError (/Users/vishnu/Desktop/mathspartner/node_modules/mysql2/lib/connection.js:178:17)
-    at listOnTimeout (internal/timers.js:549:17)
-    at processTimers (internal/timers.js:492:7) {
-  errorno: 'ETIMEDOUT',
-  code: 'ETIMEDOUT',
-  syscall: 'connect',
-  fatal: true
-}
-log : http://localhost:5000/quiz
-log : http://localhost:5000/login
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_2' }
+log : http://localhost:5000/dashboard
 log : http://localhost:5000/user_authentication
 { username: 'admin', password: 'admin' }
 log : http://localhost:5000/dashboard
-log : http://localhost:5000/add_quiz
-[
-  {
-    topic_name: 'asd',
-    part_number: '1',
-    question_paper: 'question_paper_1',
-    question: 'asd',
-    options: [ 'asd', 'asd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '22',
-    topic_name_exists: false,
-    part_number_exists: false,
-    pdf_path: '',
-    on_off: true
-  }
-]
-Table created
-row 2 inserted
 log : http://localhost:5000/dashboard
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_2' }
 log : http://localhost:5000/parts_from_db
 TextRow { part: 'part_1' }
-log : http://localhost:5000/get_question_paper/add
-{ part_number: 'part_1', topic_name: 'asd' }
-[ TextRow { question_paper: 'question_paper_1' } ]
-add
-log : http://localhost:5000/add_quiz
-[
-  {
-    topic_name: 'asd',
-    part_number: '1',
-    question_paper: 'question_paper_2',
-    question: 'asd',
-    options: [ 'asd', 'asd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '22',
-    topic_name_exists: true,
-    part_number_exists: true,
-    pdf_path: '',
-    on_off: true
-  },
-  {
-    topic_name: 'asd',
-    part_number: '1',
-    question_paper: 'question_paper_2',
-    question: 'asd',
-    options: [ 'asd', 'asdasd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '22',
-    topic_name_exists: true,
-    part_number_exists: true
-  }
-]
-Table created
-row 3 inserted
-log : http://localhost:5000/dashboard
-row 3 inserted
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/add_quiz
-[
-  {
-    topic_name: 'asdasd',
-    part_number: '2',
-    question_paper: 'question_paper_1',
-    question: 'asd',
-    options: [ 'asd', 'asd', 'asd', 'asd' ],
-    correct: 'asd',
-    duration: '2',
-    topic_name_exists: false,
-    part_number_exists: false,
-    pdf_path: '',
-    on_off: true
-  }
-]
-Table created
-row 2 inserted
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }

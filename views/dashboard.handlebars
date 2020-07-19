@@ -1112,6 +1112,8 @@
 
         // enabling controls
         document.getElementById('add_quiz_controls').hidden = false
+        // locking the first input box as default
+        document.getElementById('topic_name').readOnly = true
 
         // resetting pdf
         document.getElementById('pdf_explaination_path').innerHTML = ''
