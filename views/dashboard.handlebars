@@ -40,7 +40,7 @@
                     </div>
                 </div>
             </div>
-            <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" onkeyup="uppercase()" readonly>
+            <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" onkeyup="uppercase('topic_name')" readonly>
             </div>
             {{!-- part number input box --}}
 
@@ -159,7 +159,7 @@
                         </div>
                     </div>
                 </div>
-                <input id="yt_topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" readonly>
+                <input id="yt_topic_name" type="text" class="form-control" onkeyup="uppercase('yt_topic_name')" aria-label="Text input with dropdown button" readonly>
                 </div>
 
                 {{!-- part number dropdown select --}}
@@ -227,7 +227,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="basic-addon1">New Topic Name</span>
                     </div>
-                    <input id="cn_new_topic_name" type="text" class="form-control" aria-describedby="basic-addon1">
+                    <input id="cn_new_topic_name" type="text" class="form-control" onkeyup="uppercase('cn_new_topic_name')" aria-describedby="basic-addon1">
                 </div>
                 
                 {{!-- part number dropdown select --}}
@@ -386,8 +386,8 @@
     }
 
     // uppercase covertion for topic name input
-    function uppercase() {
-        var x = document.getElementById("topic_name");
+    function uppercase(input_box) {
+        var x = document.getElementById(input_box);
         x.value = x.value.toUpperCase();
     }
 

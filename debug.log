@@ -1,3 +1,8 @@
-Server up on port 80
-log : http://localhost/
-log : http://localhost/quiz
+Server up on port 5000
+log : http://localhost:5000/login
+log : http://localhost:5000/user_authentication
+{ username: 'admin', password: 'admin' }
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
