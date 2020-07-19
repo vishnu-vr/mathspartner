@@ -26,9 +26,11 @@
         var topic_body = document.getElementById('topic_body')
         // var dropdown_list = topic_body.getElementsByTagName('div')
         // drop=topic_body
+        if ("{{ parts }}") var child_number = 1
+        else var child_number = 0
         for (var i=0; i<topic_body.childElementCount; i++){
             // console.log(topic_body.children[i].firstElementChild.firstElementChild.innerHTML)
-            var text_content = topic_body.children[i].firstElementChild.firstElementChild.innerHTML
+            var text_content = topic_body.children[i].children[child_number].firstElementChild.innerHTML
             if (text_content.toUpperCase().indexOf(search_key) > -1){
                 // console.log(dropdown_list[i].innerHTML)
                 topic_body.children[i].style.display = ''
@@ -67,10 +69,23 @@
       outter_card_div.className = 'card ml-4 mt-4'
       outter_card_div.style = 'width: 18rem;'
 
+      if ("{{ parts }}"){
+        // card image (youtube thumbnail)
+        // <img class="card-img-top" src="..." alt="Card image cap">
+        var thumbnail = document.createElement('img')
+        thumbnail.class = 'card-img-top'
+        var yt_id = 'J3U08kSx5KM'
+        thumbnail.src = 'https://i.ytimg.com/vi/'+yt_id+'/mqdefault.jpg'
+        thumbnail.alt = 'Card image cap'
+        // appending image
+        outter_card_div.appendChild(thumbnail)
+      }
+
       outter_card_div.appendChild(card_body)
 
       topic_body.appendChild(outter_card_div)
     }
+    // if ("{{ parts }}") console.log("hey hey")
 
     function topic_selected(topic_id) {
       const topic_id_ = document.getElementById(topic_id)
