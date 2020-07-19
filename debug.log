@@ -1,46 +1,65 @@
 Server up on port 5000
-log : http://localhost:5000/
-log : http://localhost:5000/quiz
+log : http://localhost:5000/parts_yt/RATIO
+[
+  TextRow {
+    part: 'part_1',
+    link: 'https://www.youtube.com/embed/mVrgsOJOiKM?list=PLD2p__EPSmoQXMXl6XkDuffeIgJe7HHMe'
+  },
+  TextRow {
+    part: 'part_2',
+    link: 'https://www.youtube.com/embed/rGSyATIIEXg'
+  }
+]
 log : http://localhost:5000/classes
 [
   TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
   TextRow { topic_name: 'RATIO' }
 ]
 log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
+[
+  TextRow {
+    part: 'part_1',
+    link: 'https://www.youtube.com/embed/psjL83QPyLo'
+  },
+  TextRow {
+    part: 'part_3',
+    link: 'https://www.youtube.com/embed/J3U08kSx5KM'
+  }
+]
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/parts_yt/RATIO
+[
+  TextRow {
+    part: 'part_1',
+    link: 'https://www.youtube.com/embed/mVrgsOJOiKM?list=PLD2p__EPSmoQXMXl6XkDuffeIgJe7HHMe'
+  },
+  TextRow {
+    part: 'part_2',
+    link: 'https://www.youtube.com/embed/rGSyATIIEXg'
+  }
+]
 log : http://localhost:5000/classes
 [
   TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
   TextRow { topic_name: 'RATIO' }
 ]
 log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/youtube_videos/GEOMETRY-%20TRIANGLES/part_1
-log : http://localhost:5000/youtube_videos/GEOMETRY-%20TRIANGLES/part_3
+[
+  TextRow {
+    part: 'part_1',
+    link: 'https://www.youtube.com/embed/psjL83QPyLo'
+  },
+  TextRow {
+    part: 'part_3',
+    link: 'https://www.youtube.com/embed/J3U08kSx5KM'
+  }
+]
 log : http://localhost:5000/classes
 [
   TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
   TextRow { topic_name: 'RATIO' }
 ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/classes
-[
-  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
-  TextRow { topic_name: 'RATIO' }
-]
-log : http://localhost:5000/parts_yt/GEOMETRY-%20TRIANGLES
-[ TextRow { part: 'part_1' }, TextRow { part: 'part_3' } ]
-log : http://localhost:5000/youtube_videos/GEOMETRY-%20TRIANGLES/part_1

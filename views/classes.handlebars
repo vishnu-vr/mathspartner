@@ -18,12 +18,14 @@
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
 
+    const topic_body = document.getElementById('topic_body')
+    
     // seach box
     // var drop = null
     function filterFunction(){
         // alert('asd')
         var search_key = document.getElementById('search_inp').value.toUpperCase()
-        var topic_body = document.getElementById('topic_body')
+        //var topic_body = document.getElementById('topic_body')
         // var dropdown_list = topic_body.getElementsByTagName('div')
         // drop=topic_body
         if ("{{ parts }}") var child_number = 1
@@ -42,10 +44,11 @@
     // get available topics
     var topics = {{{json topics }}}
 
+    if ("{{ parts }}") var links = {{{json links}}}
     // console.log(topics)
 
     // creating topic cards
-    const topic_body = document.getElementById('topic_body')
+    
     topic_body .innerHTML = ''
     for (var i=0; i<topics.length; i++){
       // card title - h5
@@ -74,7 +77,7 @@
         // <img class="card-img-top" src="..." alt="Card image cap">
         var thumbnail = document.createElement('img')
         thumbnail.class = 'card-img-top'
-        var yt_id = 'J3U08kSx5KM'
+        var yt_id = links[i]//'J3U08kSx5KM'
         thumbnail.src = 'https://i.ytimg.com/vi/'+yt_id+'/mqdefault.jpg'
         thumbnail.alt = 'Card image cap'
         // appending image

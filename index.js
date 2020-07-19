@@ -818,7 +818,7 @@ app.get('/classes', (req,res) => {
 // /parts_yt/"+topic_id_.innerText
 app.get('/parts_yt/:topic_name', (req,res) => {
 	const topic_name = req.params.topic_name
-	new_con.query("SELECT part FROM youtube WHERE topic_name = '"+topic_name+"' ORDER BY part", function (err, result, fields) {
+	new_con.query("SELECT part,link FROM youtube WHERE topic_name = '"+topic_name+"' ORDER BY part", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render("<h1>something went wrong</h1>")
@@ -826,12 +826,17 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 		}
 		console.log(result);
 		var topics = []
+		var links = []
 		for (var i=0; i<result.length; i++){
 			var part = result[i].part
 			topics.push(part)
+
+			var link_pos = result[i].link.split('/').length - 1
+			var vid_id = result[i].link.split('/')[link_pos].split('?')
+			links.push(vid_id[0])
 		}
 
-		res.render('classes', {title:"topics", nav_selected:"classes", heading:topic_name, topics:topics, parts:"true"})
+		res.render('classes', {title:"topics", nav_selected:"classes", heading:topic_name, topics:topics, parts:"true", links:links})
 	});
 })
 
