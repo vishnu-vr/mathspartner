@@ -1,4 +1,22 @@
 Server up on port 5000
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/user_authentication
+{ username: 'admin', password: 'admin' }
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/dashboard
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_2' }
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_2' }
+log : http://localhost:5000/parts_from_db
+TextRow { part: 'part_1' }
 log : http://localhost:5000/parts_from_db
 TextRow { part: 'part_2' }
 log : http://localhost:5000/dashboard
@@ -6,7 +24,63 @@ log : http://localhost:5000/user_authentication
 { username: 'admin', password: 'admin' }
 log : http://localhost:5000/dashboard
 log : http://localhost:5000/dashboard
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_2' }
-log : http://localhost:5000/parts_from_db
-TextRow { part: 'part_1' }
+log : http://localhost:5000/
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/quiz
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/quiz
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/quiz
+log : http://localhost:5000/parts/new2
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/classes
+[
+  TextRow { topic_name: 'GEOMETRY- TRIANGLES' },
+  TextRow { topic_name: 'RATIO' }
+]
+log : http://localhost:5000/parts_yt/RATIO
+[ TextRow { part: 'part_1' }, TextRow { part: 'part_2' } ]
+log : http://localhost:5000/quiz

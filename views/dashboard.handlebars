@@ -25,6 +25,10 @@
             <div class="input-group-prepend">
                 <button id="topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                 <div class="dropdown-menu">
+                    <div id='search'>
+                        <input type="text" placeholder="Search.." id="search_inp" onkeyup="filterFunction()">
+                    </div>
+                    <hr>
                     <div class="new_option">
                         <p class="dropdown-item" onclick="topic_name_selected('new')">New ?</p>
                         <div role="separator" class="dropdown-divider"></div>
@@ -36,7 +40,7 @@
                     </div>
                 </div>
             </div>
-            <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" readonly>
+            <input id="topic_name" type="text" class="form-control" aria-label="Text input with dropdown button" onkeyup="uppercase()" readonly>
             </div>
             {{!-- part number input box --}}
 
@@ -370,6 +374,27 @@
 
     function logout (){
         window.location.replace("/logout")
+    }
+
+    // uppercase covertion for topic name input
+    function uppercase() {
+        var x = document.getElementById("topic_name");
+        x.value = x.value.toUpperCase();
+    }
+
+    // search function for topic name selection
+    function filterFunction(){
+        // alert('asd')
+        var search_key = document.getElementById('search_inp').value.toUpperCase()
+        var already_existing_topics_div = document.getElementById('already_existing_topics')
+        var dropdown_list = already_existing_topics_div.getElementsByTagName('p')
+        for (var i=0; i<dropdown_list.length; i++){
+            if (dropdown_list[i].innerHTML.toUpperCase().indexOf(search_key) > -1){
+                // console.log(dropdown_list[i].innerHTML)
+                dropdown_list[i].style.display = ''
+            }
+            else dropdown_list[i].style.display = 'none'
+        }
     }
 
     function delete_topic() {
