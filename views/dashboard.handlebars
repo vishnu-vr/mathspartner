@@ -25,8 +25,8 @@
             <div class="input-group-prepend">
                 <button id="topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                 <div class="dropdown-menu">
-                    <div id='search'>
-                        <input type="text" placeholder="Search.." id="search_inp" onkeyup="filterFunction()">
+                    <div class="ml-2 mr-2">
+                        <input type="text" placeholder="Search.." id="search_inp" onkeyup="filterFunction('search_inp','already_existing_topics')">
                     </div>
                     <hr>
                     <div class="new_option">
@@ -145,6 +145,9 @@
                 <div class="input-group-prepend">
                     <button id="yt_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                     <div class="dropdown-menu">
+                        <div class="ml-2">
+                            <input type="text" placeholder="Search.." id="yt_search_inp" onkeyup="filterFunction('yt_search_inp','yt_already_existing_topics')">
+                        </div>
                         <div class="yt_new_option">
                             <p class="dropdown-item" onclick="yt_topic_name_selected('new')">New ?</p>
                             <div role="separator" class="dropdown-divider"></div>
@@ -207,6 +210,9 @@
                 <div class="input-group-prepend">
                     <button id="cn_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                     <div class="dropdown-menu">
+                        <div class="ml-2 mr-2 mb-2">
+                            <input type="text" placeholder="Search.." id="cn_search_inp" onkeyup="filterFunction('cn_search_inp','cn_already_existing_topics')">
+                        </div>
                         <div id="cn_already_existing_topics">
                         <p class="dropdown-item" onclick="cn_topic_name_selected('ratio')">Ratio</p>
                         <p class="dropdown-item" onclick="cn_topic_name_selected('another action')">Another action</p>
@@ -288,6 +294,9 @@
                 <div class="input-group-prepend">
                     <button id="cn_yt_topic_name_btn" class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Topic Name</button>
                     <div class="dropdown-menu">
+                        <div class="ml-2 mr-2 mb-2">
+                            <input type="text" placeholder="Search.." id="cn_yt_search_inp" onkeyup="filterFunction('cn_yt_search_inp','cn_yt_already_existing_topics')">
+                        </div>
                         <div id="cn_yt_already_existing_topics">
                         <p class="dropdown-item" onclick="cn_yt_topic_name_selected('ratio')">Ratio</p>
                         <p class="dropdown-item" onclick="cn_yt_topic_name_selected('another action')">Another action</p>
@@ -383,10 +392,10 @@
     }
 
     // search function for topic name selection
-    function filterFunction(){
+    function filterFunction(search_box,already_existing_topics){
         // alert('asd')
-        var search_key = document.getElementById('search_inp').value.toUpperCase()
-        var already_existing_topics_div = document.getElementById('already_existing_topics')
+        var search_key = document.getElementById(search_box).value.toUpperCase()
+        var already_existing_topics_div = document.getElementById(already_existing_topics)
         var dropdown_list = already_existing_topics_div.getElementsByTagName('p')
         for (var i=0; i<dropdown_list.length; i++){
             if (dropdown_list[i].innerHTML.toUpperCase().indexOf(search_key) > -1){
