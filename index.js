@@ -850,11 +850,14 @@ app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
 	new_con.query("SELECT link FROM youtube WHERE topic_name = '"+topic_name+"' AND part = '"+part_number+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
-		// console.log(result[0].link);
-
+		console.log(result);
+		if (result.length == 0) {
+			res.send("<h1>Video Has Been Taken Down</h1>")
+			return
+		}
 		res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:heading, link:result[0].link})
 	});
 })
