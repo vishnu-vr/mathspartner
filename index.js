@@ -24,7 +24,8 @@ const new_con = mysql.createPool({
 	host: creds.host,
 	user: creds.user,
 	password: creds.password,
-	database: creds.database
+	database: creds.database,
+	charset: "utf8_general_ci"
 });
 
 
@@ -486,7 +487,7 @@ app.post('/edit_quiz', (req,res) => {
 		console.log(result);
 	
 		// after deleting recreate it with new values
-		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
+		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(2555), option_1 VARCHAR(2555), option_2 VARCHAR(2555), option_3 VARCHAR(2555), option_4 VARCHAR(2555), correct VARCHAR(2555))";
 		new_con.query(sql, function (err, result) {
 			if (err) {
 				console.log(err)//throw err;
@@ -539,9 +540,13 @@ app.post('/add_quiz', (req,res) => {
 		}
 		// second is to create a table with questions, answers and correct choice
 		var table_name = data[0].topic_name+'part_'+data[0].part_number+data[0].question_paper
-		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(255), option_1 VARCHAR(20), option_2 VARCHAR(20), option_3 VARCHAR(20), option_4 VARCHAR(20), correct VARCHAR(20))";
+		var sql = "CREATE TABLE "+table_name+" (id INT AUTO_INCREMENT PRIMARY KEY, question VARCHAR(2555), option_1 VARCHAR(2555), option_2 VARCHAR(2555), option_3 VARCHAR(2555), option_4 VARCHAR(2555), correct VARCHAR(2555))";
 		new_con.query(sql, function (err, result) {
-			if (err) console.log("error")//throw err;
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
 			console.log("Table created");
 			// then add the questions
 			for (var i=0; i<data.length; i++){
@@ -855,7 +860,7 @@ app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
 		}
 		console.log(result);
 		if (result.length == 0) {
-			res.send("<h1>Video Has Been Taken Down</h1>")
+			res.send("<h1>Video Doesn't exist</h1>")
 			return
 		}
 		res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:heading, link:result[0].link})

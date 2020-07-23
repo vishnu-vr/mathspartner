@@ -532,7 +532,7 @@
         // console.log("hey")
         // topic name
         var topic_name = document.getElementById('topic_name')
-        if (topic_name.value == '') {
+        if (topic_name.value.trim() == '') {
             alert("topic name is missing")
             return
         }
@@ -605,7 +605,7 @@
                         return
                     }
                     // if option present
-                    options_list.push(question.children[j].children[1].value)
+                    options_list.push(question.children[j].children[1].value.trim())
                 }
                 // check for the correct choice radio check
                 var radio_for_correct_answer = 'radio_' + i
@@ -630,7 +630,7 @@
                 // cross checking whether the new entered name or part number is present in
                 // the db or not (can't fully trust the user)
                 if (!topic_name_exists){
-                    if (topics_in_db.includes(topic_name.value)) {
+                    if (topics_in_db.includes(topic_name.value.trim())) {
                         // topic_name_exists = true
                         alert("You choose new topic name, but this quiz alreay exists")
                         return
@@ -645,12 +645,12 @@
                     }
                 }
                 
-                var dic_to_send = {'topic_name':topic_name.value,
+                var dic_to_send = {'topic_name':topic_name.value.trim(),
                 'part_number':part_number_input.value.toString(),
                 'question_paper':question_paper_dropdown.innerHTML,
-                'question':question.children[0].children[2].value,
+                'question':question.children[0].children[2].value.trim(),
                 'options':options_list,
-                'correct':correct_choice,
+                'correct':correct_choice.trim(),
                 'duration':duration_input.value,
                 'topic_name_exists':topic_name_exists,
                 'part_number_exists':part_number_exists}
@@ -1323,7 +1323,7 @@
 
     function yt_submit(){
         // checking
-        if (yt_topic_name.value == '') {
+        if (yt_topic_name.value.trim() == '') {
             alert("name is missing")
             return
         }
@@ -1333,19 +1333,19 @@
             return
         }
 
-        if (yt_link_input.value == '') {
+        if (yt_link_input.value.trim() == '') {
             alert("link is missing")
             return
         }
 
-        var splitted = yt_link_input.value.split(' ')
+        var splitted = yt_link_input.value.trim().split(' ')
         splitted = splitted[3].split('"')
         yt_link_input.value = splitted[1]
 
         // alert(yt_link_input.value)
         // return
 
-        var send = {yt_topic_name:yt_topic_name.value,
+        var send = {yt_topic_name:yt_topic_name.value.trim(),
         yt_part_number_input:yt_part_number_input.value,
         yt_link_input:yt_link_input.value,
         yt_name_exists:yt_name_exists,
@@ -1501,7 +1501,7 @@
         // validations / checking
         // if all the three boxes are empty then notify it
         if (cn_topic_name.value == '' || cn_part_number_input.value == '' || cn_current_question_papers_btn.innerText == 'question paper '
-        || cn_new_topic_name.value == '' || cn_new_part_number.value == '' || cn_new_question_papers_btn.innerHTML == 'new question paper '){
+        || cn_new_topic_name.value.trim() == '' || cn_new_part_number.value == '' || cn_new_question_papers_btn.innerHTML == 'new question paper '){
             alert('Please fill everything')
             return
         }
@@ -1518,13 +1518,13 @@
         // ########## NAME ########################
         // if new name is same as old name
         // then it will not be changed
-        if (cn_topic_name.value == cn_new_topic_name.value){
+        if (cn_topic_name.value == cn_new_topic_name.value.trim()){
             data_to_send['changes_in_name'] = false
         }
         // if they are not same then check whether it already exists or not
         else{
             // if the new name already exists then alert and return
-            if (topics_in_db.includes(cn_new_topic_name.value)){
+            if (topics_in_db.includes(cn_new_topic_name.value.trim())){
                 alert('this name already exists. Try some other name')
                 return
             }
@@ -1532,7 +1532,7 @@
             else{
                 data_to_send['changes_in_name'] = true
                 data_to_send['old_topic_name'] = cn_topic_name.value
-                data_to_send['new_topic_name'] = cn_new_topic_name.value
+                data_to_send['new_topic_name'] = cn_new_topic_name.value.trim()
                 change_required = true
             }
         }
@@ -1552,7 +1552,6 @@
             else{
                 data_to_send['changes_in_part'] = true
                 data_to_send['old_topic_name'] = cn_topic_name.value
-                // data_to_send['new_topic_name'] = cn_new_topic_name.value
                 data_to_send['old_part_number'] = 'part_'+cn_part_number_input.value
                 data_to_send['new_part_number'] = 'part_'+cn_new_part_number.value
                 change_required = true
@@ -1573,7 +1572,6 @@
             else{
                 data_to_send['changes_in_question_paper'] = true
                 data_to_send['old_topic_name'] = cn_topic_name.value
-                // data_to_send['new_topic_name'] = cn_new_topic_name.value
                 data_to_send['old_part_number'] = 'part_'+cn_part_number_input.value
                 // data_to_send['new_part_number'] = cn_new_part_number.value
                 data_to_send['old_question_paper'] = cn_current_question_papers_btn.innerHTML
@@ -1648,7 +1646,7 @@
         // validations / checking
         // if all the three boxes are empty then notify it
         if (cn_yt_topic_name.value == '' || cn_yt_part_number_input.value == '' 
-        || cn_yt_new_topic_name.value == '' || cn_yt_new_part_number.value == ''){
+        || cn_yt_new_topic_name.value.trim() == '' || cn_yt_new_part_number.value == ''){
             alert('Please fill everything')
             return
         }
@@ -1665,13 +1663,13 @@
         // ########## NAME ########################
         // if new name is same as old name
         // then it will not be changed
-        if (cn_yt_topic_name.value == cn_yt_new_topic_name.value){
+        if (cn_yt_topic_name.value == cn_yt_new_topic_name.value.trim()){
             data_to_send['changes_in_name'] = false
         }
         // if they are not same then check whether it already exists or not
         else{
             // if the new name already exists then alert and return
-            if (yt_topics.includes(cn_yt_new_topic_name.value)){
+            if (yt_topics.includes(cn_yt_new_topic_name.value.trim())){
                 alert('this name already exists. Try some other name')
                 return
             }
@@ -1679,7 +1677,7 @@
             else{
                 data_to_send['changes_in_name'] = true
                 data_to_send['old_topic_name'] = cn_yt_topic_name.value
-                data_to_send['new_topic_name'] = cn_yt_new_topic_name.value
+                data_to_send['new_topic_name'] = cn_yt_new_topic_name.value.trim()
                 change_required = true
             }
         }
@@ -1699,7 +1697,6 @@
             else{
                 data_to_send['changes_in_part'] = true
                 data_to_send['old_topic_name'] = cn_yt_topic_name.value
-                // data_to_send['new_topic_name'] = cn_yt_new_topic_name.value
                 data_to_send['old_part_number'] = 'part_'+cn_yt_part_number_input.value
                 data_to_send['new_part_number'] = 'part_'+cn_yt_new_part_number.value
                 change_required = true
