@@ -274,8 +274,9 @@ app.post('/yt_add_update', (req,res) => {
 
 // yt_delete
 app.post('/yt_delete', (req,res) => {
+	// console.log(req.body)
 	const yt_topic_name = req.body.yt_topic_name
-	const yt_part_number_input = req.body.yt_part_number_input
+	const yt_part_number_input = 'part_'+req.body.yt_part_number_input
 
 	new_con.query("DELETE FROM youtube WHERE topic_name = '"+yt_topic_name+"' AND part = '"+yt_part_number_input+"'", function (err, result, fields) {
 		if (err) {
