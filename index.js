@@ -94,6 +94,95 @@ app.post('/user_authentication', (req,res) => {
 	}
 })
 
+// gk
+app.get('/gk/:parent', (req,res) =>{
+	var parent = req.params.parent
+	new_con.query("SELECT * FROM gk where parent = '"+parent+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.render("<h1>something went wrong</h1>")
+			return
+		}
+		console.log(result)
+		// if its the end of the link
+		// then its a quiz
+		if (result[0].child == 'null'){
+			// res.send([parent,result[0].duration,result[0].on_off])
+			var redirect_link = '/gkquiz/'+parent+'/normal'
+			res.redirect(redirect_link)
+			return
+		}
+		var topics = []
+		for (var i=0; i<result.length; i++){
+			topics.push(result[i].child)
+		}
+		if (parent == 'null') {
+			var heading = "TOPICS"
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true'})
+		}
+		else {
+			var heading = parent
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics})
+		}
+	});
+})
+
+// gk quiz
+app.get('/gkquiz/:quiz/:mode', (req,res) =>{
+	var quiz = req.params.quiz
+	console.log(quiz)
+	// check whether the quiz is on or off
+	new_con.query("SELECT * FROM gk WHERE parent = '"+quiz+"'", function (err, result, fields) {
+		if (err) {
+			console.log(err)//throw err;
+			res.render('error')
+			return
+		}
+		// if the quiz is off don't return the quiz
+		if (result[0]==null) {
+			res.render('error')
+			return
+		}
+		if (result[0].on_off == 'false' && req.params.mode == 'normal'){
+			// res.send("<h1>THIS QUIZ IS TEMPORARLY TURNED OFF. TRY AGAIN AFTER SOMETIME.")
+			res.render('error')
+			return
+		}
+		// console.log('asd')
+		var duration = result[0].duration
+		var pdf_path = result[0].pdf_path
+		let sql = "SELECT * FROM `"+quiz+"`"
+		console.log(sql)
+		new_con.query(sql, function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.render('error')
+				return
+			}
+			// console.log(result);
+			var questions = []
+			for (var i=0; i<result.length; i++){
+				var options = []
+				options.push(result[i].option_1)
+				options.push(result[i].option_2)
+				options.push(result[i].option_3)
+				options.push(result[i].option_4)
+				questions.push({question:result[i].question, options:options,correct:result[i].correct})
+			}
+			// console.log(questions)
+			help.shuffle(questions)
+			for (var i=0; i<questions.length; i++) help.shuffle(questions[i].options)
+
+			// checking the mode
+			if (req.params.mode == 'test') var mode = 'test'
+			else var mode = 'normal'
+
+			res.render('quiz_box', {title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode})
+		});
+
+	});
+})
+
 // dashboard
 app.get('/dashboard', (req,res) => {
 	// first check whether the user has already logged in or not
@@ -393,7 +482,7 @@ app.post('/get_quiz', (req,res) => {
 		// res.json(result)
 		// const table = req.body.quiz_name_for_duration
 		// const question_paper = req.body.question_paper_for_duration
-		new_con.query("SELECT duration,pdf_path,on_off FROM quiz WHERE question_paper = '"+data.question_paper+"' AND part = '"+data.part_number+"'", function (err, result, fields) {
+		new_con.query("SELECT duration,pdf_path,on_off FROM quiz WHERE question_paper = '"+data.question_paper+"' AND part = '"+data.part_number+"' AND topic_name = '"+data.topic_name+"'", function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json("failed")
@@ -578,7 +667,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 	]
 
 	// check whether the quiz is on or off
-	new_con.query("SELECT on_off FROM quiz WHERE question_paper = '"+req.params.question_paper+"' AND part = '"+req.params.part_no+"'", function (err, result, fields) {
+	new_con.query("SELECT on_off FROM quiz WHERE question_paper = '"+req.params.question_paper+"' AND part = '"+req.params.part_no+"' AND topic_name = '"+req.params.topic_name+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render('error')
@@ -589,7 +678,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 			res.render('error')
 			return
 		}
-		if (result[0].on_off == 'false'){
+		if (result[0].on_off == 'false' && req.params.mode == 'normal'){
 			// res.send("<h1>THIS QUIZ IS TEMPORARLY TURNED OFF. TRY AGAIN AFTER SOMETIME.")
 			res.render('error')
 			return

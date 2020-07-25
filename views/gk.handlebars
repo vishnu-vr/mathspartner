@@ -1,0 +1,87 @@
+<h1 id="heading" class="mt-4 text-center"></h1>
+<div class="mt-4 ml-4 mr-4">
+  <input class="form-control" placeholder="Search" onkeyup="filterFunction()" name="search_inp" id="search_inp" type="text">
+</div>
+<div id="topic_body" class="row">
+</div>
+
+<script>
+    // set the title
+    document.getElementById('title').innerText = "{{title}}"
+    
+    // set the heading
+    // setting this way because of &amp;
+    const heading_ = document.getElementById('heading')
+    heading_.innerHTML = "{{ heading }}"
+
+    // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active'
+
+    // seach box
+    // var drop = null
+    function filterFunction(){
+        // alert('asd')
+        var search_key = document.getElementById('search_inp').value.toUpperCase()
+        var topic_body = document.getElementById('topic_body')
+        // var dropdown_list = topic_body.getElementsByTagName('div')
+        // drop=topic_body
+        for (var i=0; i<topic_body.childElementCount; i++){
+            // console.log(topic_body.children[i].firstElementChild.firstElementChild.innerHTML)
+            var text_content = topic_body.children[i].firstElementChild.firstElementChild.innerHTML
+            if (text_content.toUpperCase().indexOf(search_key) > -1){
+                // console.log(dropdown_list[i].innerHTML)
+                topic_body.children[i].style.display = ''
+            }
+            else topic_body.children[i].style.display = 'none'
+        }
+    }
+
+    // get available topics
+    var topics = {{{json topics }}}
+
+    // console.log(topics)
+
+    // creating topic cards
+    const topic_body = document.getElementById('topic_body')
+    topic_body .innerHTML = ''
+    for (var i=0; i<topics.length; i++){
+      // card title - h5
+      var card_title = document.createElement('h5')
+      card_title.id = i
+      card_title.innerText = topics[i]
+      // link button
+      var card_link = document.createElement('button')
+      card_link.setAttribute('onclick','topic_selected('+ i +')')
+      card_link.type = 'button'
+      card_link.className = 'btn btn-secondary'
+      card_link.innerText = 'topic link'
+      // card-body - div
+      var card_body = document.createElement('div')
+      card_body.className = 'card-body'
+      // appending above items
+      card_body.appendChild(card_title)
+      card_body.appendChild(card_link)
+      // outter most div
+      var outter_card_div = document.createElement('div')
+      outter_card_div.className = 'card ml-4 mt-4'
+      outter_card_div.style = 'width: 18rem;'
+
+      outter_card_div.appendChild(card_body)
+
+      topic_body.appendChild(outter_card_div)
+    }
+
+    function topic_selected(topic_id) {
+        const topic_id_ = document.getElementById(topic_id)
+        console.log(topic_id_.innerText)
+        // alert('sads')
+        if ("{{ heading }}" == "TOPICS") {
+            window.location = '/gk/' + topic_id_.innerText
+        }
+        else if ("{{ main_parent }}") {
+            window.location = '/gk/' + "{{ heading }}" + topic_id_.innerText
+        }
+        else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_.innerText
+    }
+</script>
