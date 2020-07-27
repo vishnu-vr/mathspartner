@@ -62,7 +62,7 @@ app.use(express.json())
 // for handling url encoded data. ie html forms
 app.use(express.urlencoded({ extended:false }))
 // for session
-app.use(session({secret:"sadsad123qdw12das",resave:false,saveUninitialized:true}))
+app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
 // ############## MIDDLEWARES ###################
 
 // ########################### HTML RENDERING ###########################################
@@ -79,24 +79,47 @@ app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", 
 // logout
 app.get('/logout', (req,res) => {
 	req.session.logged_in = false
-	res.redirect('/login')
+	if (req.session.permission == 'mathspartner') res.redirect('/login')
+	else if (req.session.permission == 'gk') res.redirect('/')
+	
 })
 
 // login verification
 app.post('/user_authentication', (req,res) => {
 	console.log(req.body)
-	if (req.body.username == 'admin' && req.body.password == 'admin'){
-		req.session.logged_in = true
-		res.json("success")
-	}
-	else{
-		res.json("failed")
-	}
+	new_con.query("SELECT * FROM login where username = '"+req.body.username+"'", function (err, result, fields) {
+		if (err){
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// if no such user exits
+		if(result.length == 0){
+			res.json('failed')
+			console.log('no such user exits')
+			return
+		}
+		if (result[0].password == req.body.password && result[0].permission == req.body.permission){
+			req.session.logged_in = true
+			req.session.permission = result[0].permission
+			res.json("success")
+		}
+		else{
+			res.json("failed")
+		}
+	});
 })
 
 // gk
 app.get('/gk/:parent', (req,res) =>{
 	var parent = req.params.parent
+	// console.log(req.session.logged_in)
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
+
 	new_con.query("SELECT * FROM gk where parent = '"+parent+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
@@ -118,11 +141,11 @@ app.get('/gk/:parent', (req,res) =>{
 		}
 		if (parent == 'null') {
 			var heading = "TOPICS"
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true'})
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission})
 		}
 		else {
 			var heading = parent
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics})
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission})
 		}
 	});
 })
@@ -187,7 +210,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 app.get('/dashboard', (req,res) => {
 	// first check whether the user has already logged in or not
 	// console.log(req)
-	if (req.session.logged_in == null || req.session.logged_in == false){
+	if (req.session.logged_in == null || req.session.logged_in == false || req.session.permission != 'mathspartner'){
 		res.render('login', {title:"login", none:"none", heading:"LOGIN"})
 		return
 		// console.log("USER NOT LOGGED IN")

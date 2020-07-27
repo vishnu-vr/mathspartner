@@ -5,6 +5,32 @@
 <div id="topic_body" class="row">
 </div>
 
+<!-- Button trigger modal -->
+<button id='create_new' type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" hidden>
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Add New</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        some input boxes will appear here
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     // set the title
     document.getElementById('title').innerText = "{{title}}"
@@ -17,6 +43,19 @@
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
+
+    // editing rights
+    var editing_permission = "{{ editing_permission }}"
+
+    // logout button
+    if (editing_permission == 'true'){
+        document.getElementById('logout_button').style.display = ''
+    }
+    else document.getElementById('logout_button').style.display = 'none'
+
+    function logout(){
+        window.location.href = '/logout'
+    }
 
     // seach box
     // var drop = null
@@ -42,34 +81,53 @@
 
     // console.log(topics)
 
+    function create_new(){
+        {{!-- alert('yey') --}}
+        document.getElementById('create_new').click()
+    }
+
     // creating topic cards
     const topic_body = document.getElementById('topic_body')
-    topic_body .innerHTML = ''
+    function create_cards(topic){
+        {{!-- topic_body.innerHTML = '' --}}
+        // card title - h5
+        var card_title = document.createElement('h5')
+        card_title.id = i
+        if (topic == 'create_new') card_title.innerText = 'Create New'
+        else card_title.innerText = topic
+        // link button
+        var card_link = document.createElement('button')
+        if (topic == 'create_new') card_link.setAttribute('onclick','create_new()')
+        else card_link.setAttribute('onclick','topic_selected('+ i +')')
+        card_link.type = 'button'
+        if (topic == 'create_new') card_link.className = 'btn btn-warning'
+        else card_link.className = 'btn btn-secondary'
+        if (topic == 'create_new') card_link.innerText = 'add'
+        else card_link.innerText = 'topic link'
+        // card-body - div
+        var card_body = document.createElement('div')
+        card_body.className = 'card-body'
+        // appending above items
+        card_body.appendChild(card_title)
+        card_body.appendChild(card_link)
+        // outter most div
+        var outter_card_div = document.createElement('div')
+        outter_card_div.className = 'card ml-4 mt-4'
+        outter_card_div.style = 'width: 18rem;'
+
+        outter_card_div.appendChild(card_body)
+
+        topic_body.appendChild(outter_card_div)
+
+    }
+    
+    // if in editing mode
+    if (editing_permission == 'true'){
+        create_cards('create_new')
+    }
+
     for (var i=0; i<topics.length; i++){
-      // card title - h5
-      var card_title = document.createElement('h5')
-      card_title.id = i
-      card_title.innerText = topics[i]
-      // link button
-      var card_link = document.createElement('button')
-      card_link.setAttribute('onclick','topic_selected('+ i +')')
-      card_link.type = 'button'
-      card_link.className = 'btn btn-secondary'
-      card_link.innerText = 'topic link'
-      // card-body - div
-      var card_body = document.createElement('div')
-      card_body.className = 'card-body'
-      // appending above items
-      card_body.appendChild(card_title)
-      card_body.appendChild(card_link)
-      // outter most div
-      var outter_card_div = document.createElement('div')
-      outter_card_div.className = 'card ml-4 mt-4'
-      outter_card_div.style = 'width: 18rem;'
-
-      outter_card_div.appendChild(card_body)
-
-      topic_body.appendChild(outter_card_div)
+        create_cards(topics[i])
     }
 
     function topic_selected(topic_id) {

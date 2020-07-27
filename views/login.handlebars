@@ -28,6 +28,16 @@
                 <input type="checkbox" class="custom-control-input" id="customCheck1">
                 <label class="custom-control-label" for="customCheck1">Remember password</label>
               </div> --}}
+              <div class="dropdown text-center mt-4">
+                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Permission
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <a class="dropdown-item" href="#" onclick="permission('Mathspartner')">Mathspartner</a>
+                  <a class="dropdown-item" href="#" onclick="permission('GK')">GK</a>
+                  {{!-- <a class="dropdown-item" href="#">Something else here</a> --}}
+                </div>
+              </div>
               <button class="btn btn-lg btn-primary btn-block text-uppercase mt-4" type="button" onclick="login_in()">lOGIN</button>
               {{!-- <hr class="my-4">
               <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
@@ -45,14 +55,24 @@
 <script>
     document.getElementById('title').innerText = "{{title}}"
 
-    function login_in(){
-      var username = document.getElementById('inputEmail').value
-      var password = document.getElementById('inputPassword').value
+    var permission_button = document.getElementById('dropdownMenuButton')
+    function permission(selection_option){
+      permission_button.innerHTML = selection_option
+    }
 
-      postData('/user_authentication', { username,password })
+    function login_in(){
+      var username = document.getElementById('inputEmail').value.trim()
+      var password = document.getElementById('inputPassword').value.trim()
+      if (username == '' || password == '' || permission_button.innerHTML.trim() == 'Permission'){
+        alert('Enter all the details')
+        return
+      }
+      var creds = { username,password,permission:permission_button.innerHTML.trim().toLowerCase() }
+      postData('/user_authentication', creds)
         .then(data => {
           // console.log(data); // JSON data parsed by `data.json()` call
-          if (data == 'success') window.location.replace("/dashboard")
+          if (data == 'success' && creds.permission == 'mathspartner') window.location.replace("/dashboard")
+          else if (data == 'success' && creds.permission == 'gk') window.location.replace('/')
           else alert("login failed")
         });
     }

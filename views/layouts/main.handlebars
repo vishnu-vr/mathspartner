@@ -12,6 +12,9 @@
         <title id="title"></title>
     </head>
     <body>
+        <div id='logout_button' class="mt-2 mr-4 text-right" style="display:none;">
+            <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
+        </div>
         <div class="container mt-5">
             <div style="text-align:center;">
                 <div onclick="location.href = '/'">
@@ -22,7 +25,7 @@
                 <a id="quiz" class="flex-sm-fill text-sm-center nav-link" href="/quiz">Quiz</a>
                 <a id="classes" class="flex-sm-fill text-sm-center nav-link" href="/classes">Classes</a>
                 {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
-                {{!-- <a id="gk" class="flex-sm-fill text-sm-center nav-link" href="/gk/null">GK</a> --}}
+                <a id="gk" class="flex-sm-fill text-sm-center nav-link" href="/gk/null">GK</a>
                 <a id="user_ranks" class="flex-sm-fill text-sm-center nav-link" href="/user_ranks">Results</a>
                 {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
             </nav>
