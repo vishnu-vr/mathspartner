@@ -227,6 +227,19 @@
       questions_and_options.appendChild(question)
     }
 
+    // delete_topic
+    function delete_topic(topic_num) {
+      if (heading_.innerHTML.trim() == 'TOPICS') var topic_name_to_be_delete = {parent:'null', 'child':topic_num}
+      else var topic_name_to_be_delete = {parent: heading_.innerHTML.trim(), 'child':topic_num}
+      console.log(topic_name_to_be_delete)
+
+      postData('/gkdeletetopic', topic_name_to_be_delete)
+        .then(data => {
+          console.log(data); // JSON data parsed by `data.json()` call
+          location.reload();
+        });
+    }
+
     // seach box
     // var drop = null
     function filterFunction(){
@@ -280,6 +293,16 @@
       // appending above items
       card_body.appendChild(card_title)
       card_body.appendChild(card_link)
+
+      if (editing_permission == 'true' && topic != 'create_new'){
+        // delete_btn
+        var delete_btn = document.createElement('button')
+        delete_btn.className = 'btn btn-danger ml-5'
+        delete_btn.innerHTML = 'Delete'
+        delete_btn.setAttribute('onclick', "delete_topic('"+ topic +"')")
+        card_body.appendChild(delete_btn)
+      }
+
       // outter most div
       var outter_card_div = document.createElement('div')
       outter_card_div.className = 'card ml-4 mt-4'
@@ -493,13 +516,14 @@
           const inpFile = document.getElementById('inpFile')
           const endpoint = '/gkfileupload'
           const formData = new FormData()
-          {{!-- var filename = questions_and_options_dic[0].topic_name + '#' + 'part_' + questions_and_options_dic[0].part_number + '#' + questions_and_options_dic[0].question_paper --}}
+          if (heading_.innerHTML.trim() == 'TOPICS') var filename = topic_name.value.trim()
+          else var filename = heading_.innerHTML.trim() + '-' + topic_name.value.trim()
           // if pdf file exists
           if (inpFile.files[0]) {
               // loading spinner
               document.getElementById('loading').hidden = false
 
-              formData.append('inpFile',inpFile.files[0],topic_name.value.trim())
+              formData.append('inpFile',inpFile.files[0],filename)
               
               fetch(endpoint,{
                   method:"post",

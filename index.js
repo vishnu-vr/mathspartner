@@ -1045,6 +1045,82 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	});
 })
 
+// gkdeletetopic
+app.post('/gkdeletetopic', (req,res) =>{
+	console.log(req.body)
+	// res.json('success')
+	// return
+	var quiz_tables = []
+	var current_pdf = 0
+	new_con.query("DELETE FROM gk WHERE parent = '"+req.body.parent+"' AND child = '"+req.body.child+"'", function (err,result,fields) {
+		if (err) {
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// after deleting a single row delete everything under it
+		if (req.body.parent == 'null') var parent = req.body.child
+		else var parent = req.body.parent + '-' + req.body.child
+		// console.log(parent)
+		// before deleting every row entry, first find quizes under this topic
+		// and delete all the quiz tables
+		new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent+"%' AND child = 'null'", function (err,result,field) {
+			if (err){
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			quiz_tables = result
+			//console.log(result)
+			// res.json('success')
+			// return
+			// delete all the quiz tables if any
+			for (var i=0; i<result.length; i++){
+				var pdf_path = result[i].pdf_path
+				console.log(pdf_path)
+				var pdf_path = './public'+pdf_path
+				fs.unlink(pdf_path, (err) => {
+					if (err) {
+					console.error(err)
+					return
+					}
+				
+					console.log('file removed')
+				})
+				new_con.query("DROP TABLE `"+result[i].parent+"`", function (err,result,fields) {
+					if (err){
+						console.log(err)
+						res.json('failed')
+						return
+					}
+					// console.log(quiz_tables)
+					// along with dropping tables delete the pdf too
+					// deleting the file async
+					// var pdf_path = './public'+quiz_tables[current_pdf].pdf_path
+					// if (pdf_path){
+					// 	fs.unlink(pdf_path, (err) => {
+					// 		if (err) {
+					// 		console.error(err)
+					// 		return
+					// 		}
+						
+					// 		console.log('file removed')
+					// 	})
+					// }
+				})
+			}
+			new_con.query("DELETE FROM gk WHERE parent LIKE '"+parent+"%'", function (err,result,field) {
+				if (err){
+					console.log(err)
+					res.json('failed')
+					return
+				}
+				res.json('success')
+			})
+		})
+	});
+})
+
 // gkfileupload
 app.post('/gkfileupload', (req,res) => {
 	// console.log(req.files.inpFile)
