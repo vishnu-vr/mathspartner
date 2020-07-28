@@ -40,12 +40,94 @@
     <button data-toggle="modal" data-target="#exampleModal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
     </div>
     {{!-- quiz box --}}
+
+            {{!-- editing quiz --}}
+            <div id='edit_quiz' class="mt-4 text-left" hidden>
+
+                {{!-- topic name (name of the quiz) --}}
+                <div id='quiz_name' class="mt-4">
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Quiz Name</span>
+                    </div>
+                    <input id="quiz_name_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" onkeyup="uppercase('quiz_name_input')" readonly>
+                    </div>
+                </div>
+
+                {{!-- duration input box --}}
+                <div id='duration' class="mt-4">
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Duration</span>
+                    </div>
+                    <input id="duration_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                    </div>
+                </div>
+                {{!-- upload pdf explaination --}}
+                <div id='pdf_explaination' class="mt-4">
+                    <h6>Upload Explaination</h6>
+                    <input type="file" id='inpFile' />
+                    <div id='pdf_explaination_path'></div>
+                </div>
+                {{!-- turn on_off switch --}}
+                <div class="custom-control custom-switch mt-4">
+                    <input type="checkbox" class="custom-control-input" id="on_off_switch" checked>
+                    <label class="custom-control-label" for="on_off_switch">On / Off</label>
+                </div>
+                {{!-- questions and options --}}
+                <div id="questions_and_options">
+
+                </div>
+                {{!-- add more question button 'plus btn' --}}
+                <button id="add_more_questions_btn" type="button" class="btn btn-dark mt-4" onclick="add_more_questions()">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                        <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    </svg>
+                </button>
+                {{!-- submit button --}}
+                <br>
+                <button id="final_submit" type="button" class="btn btn-primary mt-4" onclick="final_submit()">Submit</button>
+            </div>
+
     </div>
+    
     {{!-- free column --}}
     <div class="col-md-">
          
     </div>
     {{!-- free column --}}
+
+</div>
+
+<button id='loading' type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadingexampleModal" hidden>
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="loadingexampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Please Wait...</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        {{!-- <button id='close_btn_spinner' type="button" class="btn btn-secondary" data-dismiss="modal" hidden>Close</button> --}}
+        {{!-- <button type="button" class="btn btn-primary" hidden>Save changes</button> --}}
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Button trigger modal -->
@@ -86,6 +168,172 @@
     // get the questions and answers
     var questions = {{{json questions }}}
 
+    // set the value as seconds * minutes * hours
+    var timeee = {{ time }}
+    {{!-- startTimer(timeee,timer) --}}
+
+    // pdf path
+    var pdf_path = "{{ pdf_path }}"
+
+    // editing rights
+    var editing_permission = "{{ editing_permission }}"
+    var edit_quiz = document.getElementById('edit_quiz')
+    // logout button
+    if (editing_permission == 'true'){
+      document.getElementById('logout_button').style.display = ''
+      edit_quiz.hidden = false
+    }
+    else {
+        document.getElementById('logout_button').style.display = 'none'
+        edit_quiz.hidden = true
+    }
+
+    function logout(){
+      window.location.href = '/logout'
+    }
+
+    // to add more question
+    const questions_and_options = document.getElementById('questions_and_options')
+    var question_count = 0
+    function add_more_questions(){
+      console.log("clicked me")
+      question_count++
+      // question and options body
+      const question = document.createElement('div')
+      question.id = 'question_' + question_count
+      // question wrapper div
+      const question_wrapper = document.createElement('div')
+      question_wrapper.className = 'form-group mt-4'
+      // label for question
+      const question_label = document.createElement('label')
+      question_label.setAttribute('for','exampleFormControlTextarea1')
+      question_label.innerHTML = 'Question ' + question_count
+      // question text area
+      const question_textarea = document.createElement('textarea')
+      question_textarea.className = 'form-control mt-2'
+      question_textarea.id = 'exampleFormControlTextarea1'
+      question_textarea.setAttribute('rows','3')
+      // appending label and text area
+      question_wrapper.appendChild(question_label)
+      // appending delete button
+      // <button type="button" class="btn btn-danger">Danger</button>
+      var delete_btn = document.createElement('button')
+      delete_btn.className = 'btn btn-danger ml-2'
+      delete_btn.type = 'button'
+      delete_btn.innerHTML = 'Delete'
+      delete_btn.setAttribute('onclick','delete_question("'+'question_' + question_count+'")')
+      question_wrapper.appendChild(delete_btn)
+      question_wrapper.appendChild(question_textarea)
+      // appending question_wrapper to main question div
+      question.appendChild(question_wrapper)
+
+      for (var i=0; i<4; i++){
+          // options
+          // main option div
+          const input_group = document.createElement('div') //input-group
+          input_group.className = 'input-group'
+          const input_group_prepend = document.createElement('div')
+          input_group_prepend.className = 'input-group-prepend'
+          const input_group_text = document.createElement('input-group-text')
+          input_group_text.className = 'input-group-text'
+          const question_radio = document.createElement('input')
+          question_radio.type = 'radio'
+          question_radio.name = 'radio_' + question_count
+          question_radio.setAttribute('aria-label','aria-label="Radio button for following text input"')
+          input_group_text.appendChild(question_radio)
+          input_group_prepend.appendChild(input_group_text)
+          input_group.appendChild(input_group_prepend)
+          const text_input_with_radio = document.createElement('input')
+          text_input_with_radio.type = 'text'
+          text_input_with_radio.className = 'form-control'
+          text_input_with_radio.setAttribute('aria-label','Text input with radio button')
+          input_group.appendChild(text_input_with_radio)
+
+          // appending options to main questio div
+          question.appendChild(input_group)
+      }
+      // appending everything to the screen
+      questions_and_options.appendChild(question)
+    }
+
+    function delete_question(question_num) {
+        console.log(question_num)
+        document.getElementById(question_num).innerHTML = ''
+        // console.log(document.getElementsByClassName(question_num))
+    }
+
+    var quiz_name_input = document.getElementById('quiz_name_input')
+    function display_fetched_questions(data) {
+        // topic name
+        var index = heading.split('-').length
+        quiz_name_input.value = heading.split('-')[index-1]//'asd'//
+
+        // enabling add more questions button
+        document.getElementById('add_more_questions_btn').hidden = false
+
+        // reset the question count
+        question_count = 0
+
+        // display on_off status
+        const on_off_switch = document.getElementById('on_off_switch')
+        if ("{{ on_off }}"  == 'true') on_off_switch.checked = true
+        else on_off_switch.checked = false
+
+        // display the pdf_explaination file
+        var pdf_explaination = document.getElementById('pdf_explaination_path')
+        // if pdf_path available
+        if (pdf_path != null && pdf_path != ""){
+            // to download complete explaination
+            var pdf_viewer = document.createElement('a')
+            pdf_viewer.href = pdf_path //'/pdf_uploads/test.pdf'
+            pdf_viewer.download = "solutions"
+            pdf_viewer.innerHTML = 'Download Complete Solution'
+            pdf_explaination.appendChild(pdf_viewer)
+        }
+
+        // enable duration
+        var duration = document.getElementById('duration')
+        duration.hidden = false
+        document.getElementById('duration_input').value = timeee/60//600/60//(data[0].duration)/60
+        
+        for (var i=0; i<data.length; i++){     
+
+            // insert a holder for the quiz
+            add_more_questions()
+            // insert content into the holders
+
+
+
+            var question_ = 'question_' + (i+1)
+            console.log(question)
+            var question = document.getElementById(question_)
+            
+
+            // add question
+            question.children[0].children[2].value = data[i].question
+
+            // adding options
+            question.children[1].children[1].value = data[i].options[0]
+            question.children[2].children[1].value = data[i].options[1]
+            question.children[3].children[1].value = data[i].options[2]
+            question.children[4].children[1].value = data[i].options[3]
+
+            // check the correct radio
+            var radio_for_correct_answer = 'radio_' + (i+1)
+            var radio_selected = document.getElementsByName(radio_for_correct_answer)
+            // var user_checked_radio = false
+            // var correct_choice = null
+            for (var k=0; k<4; k++){
+                // console.log(question.children[k+1].children[1].value)
+                if (question.children[k+1].children[1].value == data[i].correct) {
+                    radio_selected[k].checked = true
+                }
+            }
+        }
+    }
+
+    display_fetched_questions(questions)
+
     // start quiz button
     function start_quiz(){
         if (mode == 'test'){
@@ -101,7 +349,7 @@
         // make the jumbotron visible
         document.getElementById('jumbotron').hidden = false
         // start the timer
-        startTimer(timeee,timer)
+        if (editing_permission == 'false' || editing_permission == '') startTimer(timeee,timer)
     }
 
     // timer
@@ -127,9 +375,6 @@
             }
         }, 1000);
     }
-    // set the value as seconds * minutes * hours
-    var timeee = {{ time }}
-    {{!-- startTimer(timeee,timer) --}}
 
     // next and previous buttons
     const next_button = document.getElementById('next')
@@ -305,7 +550,7 @@
             modal_body.appendChild(ca)
         }
 
-        var pdf_path = "{{ pdf_path }}"
+        
         // if pdf_path available
         if (pdf_path != null && pdf_path != ""){
             // to download complete explaination
@@ -359,6 +604,187 @@
         document.getElementById('user_details').hidden = true
         start_quiz()
     }
+
+    // uppercase covertion for topic name input
+    function uppercase(input_box) {
+        var x = document.getElementById(input_box);
+        x.value = x.value.toUpperCase();
+    }
+
+    function final_submit() {
+      // the list of objects which will be sent to the back-end
+      var questions_and_options_dic = []
+
+      // console.log("hey")
+      // topic name
+      var topic_name = document.getElementById('quiz_name_input')
+      if (topic_name.value.trim() == '') {
+          alert("topic name is missing")
+          return
+      }
+      else console.log(topic_name.value)
+
+      // duration check
+      var duration_input = document.getElementById('duration_input')
+      if (duration_input.value == '') {
+          alert('Duration of the quiz is missing')
+          return
+      }
+      // checking whether user has entered some questions
+      if (question_count == 0) {
+          alert('add some questions first')
+          return
+      }
+      else{
+          // count the total number of skipped questions
+          // if its equal to the number of questions
+          // then don't send data to back-end
+          var skipped_question_count = 0
+          for (var i=1; i<=question_count; i++){
+              // alert("here")
+              var question_ = 'question_' + i
+              var question = document.getElementById(question_)
+
+              // if any question has been deleted then
+              // skip it and increment the skip count
+              if (question.innerHTML == '') {
+                  // alert("skipped")
+                  skipped_question_count++
+                  continue
+              }
+
+              // question boxes validation
+              if (question.children[0].children[2].value == '') {
+                  alert('question '+i+' is missing')
+                  return
+              }
+
+              // options validation
+              // var correct_option_check = 0
+              var options_list = []
+              for (var j=1; j<=4; j++){
+                  if (question.children[j].children[1].value == ''){
+                      alert('option '+j+' for question '+i+' is missing')
+                      return
+                  }
+                  // if option present
+                  options_list.push(question.children[j].children[1].value.trim())
+              }
+              // check for the correct choice radio check
+              var radio_for_correct_answer = 'radio_' + i
+              var radio_selected = document.getElementsByName(radio_for_correct_answer)
+              var user_checked_radio = false
+              var correct_choice = null
+              for (var k=0; k<4; k++){
+                  if (radio_selected[k].checked) {
+                      user_checked_radio = true
+                      correct_choice = question.children[k+1].children[1].value
+                      console.log(correct_choice)
+                  }
+              }
+              console.log(user_checked_radio)
+              if (!user_checked_radio){
+                  alert("choose a correct option for question "+i)
+                  // alert("just before function return")
+                  return
+              }
+              {{!-- // alert("outside the if")
+              // if questions, answers and correct option are all validated
+              // cross checking whether the new entered name or part number is present in
+              // the db or not (can't fully trust the user)
+              if (topics.includes(topic_name.value.trim())) {
+                  // topic_name_exists = true
+                  alert("You choose new topic name, but this quiz alreay exists")
+                  return
+              } --}}
+              
+              var dic_to_send = {'topic_name':topic_name.value.trim(),
+              //'part_number':part_number_input.value.toString(),
+              //'question_paper':question_paper_dropdown.innerHTML,
+              'question':question.children[0].children[2].value.trim(),
+              'options':options_list,
+              'correct':correct_choice.trim(),
+              'duration':duration_input.value,
+              //'topic_name_exists':topic_name_exists,
+              //'part_number_exists':part_number_exists
+              }
+
+              questions_and_options_dic.push(dic_to_send)
+
+              console.log(questions_and_options_dic)
+              // return
+
+          }
+      }
+
+      // check if atleast one question remains
+      // after pressing the delete button
+      if (skipped_question_count >= question_count) {
+          alert("add some questions first")
+          return
+      }
+
+      // adding a null value
+      // the path will be updated later
+      questions_and_options_dic[0]['pdf_path'] = ''
+
+      // the on/off toggle status
+      const on_off_switch = document.getElementById('on_off_switch')
+      questions_and_options_dic[0]['on_off'] = on_off_switch.checked
+
+      {{!-- // appending parent and child names
+      if (heading.innerHTML.trim().toUpperCase() == 'TOPICS') var parent = 'null'
+      else var parent = heading.innerHTML.trim().toUpperCase() --}}
+      questions_and_options_dic[0]['whole_quiz_name'] = heading.trim()
+      // questions_and_options_dic[0]['parent_child_details'].push({'parent':heading_.innerHTML.trim().toUpperCase(),'child':})
+
+      // if everything went well
+      {{!-- // sending data to back-end
+      if (editing_mode) var url = '/gk_edit_quiz'
+      else var url = '/gk_add_quiz' --}}
+
+      var url = '/gk_edit_quiz'
+
+      console.log(questions_and_options_dic)
+      {{!-- return --}}
+
+      postData(url, questions_and_options_dic)
+      .then(data => {
+          console.log(data); // JSON data parsed by `data.json()` call
+          // after thats done we if there is a pdf uploaded we send
+          // it to the back-end
+          // <input type="file" id='inpFile' />
+          const inpFile = document.getElementById('inpFile')
+          const endpoint = '/gkfileupload'
+          const formData = new FormData()
+          {{!-- var filename = questions_and_options_dic[0].topic_name + '#' + 'part_' + questions_and_options_dic[0].part_number + '#' + questions_and_options_dic[0].question_paper --}}
+          // if pdf file exists
+          if (inpFile.files[0]) {
+              // loading spinner
+              document.getElementById('loading').click()
+
+              formData.append('inpFile',inpFile.files[0],heading)
+              
+              fetch(endpoint,{
+                  method:"post",
+                  body:formData
+              }).then((data) => {
+                  console.log(data)
+                  location.reload();
+                  // add_quiz()
+              })
+          }
+          else {
+              console.log("pdf file is missing")
+              location.reload();
+              // add_quiz()
+          }
+
+          // if everything went fine refresh the page
+          // location.reload();
+      });
+    }
+
 
 </script>
 

@@ -78,10 +78,12 @@ app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", 
 
 // logout
 app.get('/logout', (req,res) => {
-	req.session.logged_in = false
-	if (req.session.permission == 'mathspartner') res.redirect('/login')
-	else if (req.session.permission == 'gk') res.redirect('/')
-	
+	if (req.session.logged_in != null){
+		req.session.logged_in = false
+		if (req.session.permission == 'mathspartner') res.redirect('/login')
+		else if (req.session.permission == 'gk') res.redirect('/gk/null')
+	}
+	else res.redirect('/')
 })
 
 // login verification
@@ -127,6 +129,25 @@ app.get('/gk/:parent', (req,res) =>{
 			return
 		}
 		console.log(result)
+		// if returned empty list
+		if (result.length == 0){
+			if (editing_permission){
+				var topics = []
+				if (parent == 'null') {
+					var heading = "TOPICS"
+					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission})
+				}
+				else {
+					var heading = parent
+					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission})
+				}
+				return
+			}
+			else{
+				res.render('error')
+				return
+			}
+		}
 		// if its the end of the link
 		// then its a quiz
 		if (result[0].child == 'null'){
@@ -135,6 +156,7 @@ app.get('/gk/:parent', (req,res) =>{
 			res.redirect(redirect_link)
 			return
 		}
+
 		var topics = []
 		for (var i=0; i<result.length; i++){
 			topics.push(result[i].child)
@@ -154,10 +176,22 @@ app.get('/gk/:parent', (req,res) =>{
 app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 	var quiz = req.params.quiz
 	console.log(quiz)
+
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
+
 	// check whether the quiz is on or off
 	new_con.query("SELECT * FROM gk WHERE parent = '"+quiz+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
+			res.render('error')
+			return
+		}
+		// if returned empty list
+		if (result.length == 0){
 			res.render('error')
 			return
 		}
@@ -166,12 +200,13 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 			res.render('error')
 			return
 		}
-		if (result[0].on_off == 'false' && req.params.mode == 'normal'){
+		if (result[0].on_off == 'false' && req.params.mode == 'normal' && editing_permission == false){
 			// res.send("<h1>THIS QUIZ IS TEMPORARLY TURNED OFF. TRY AGAIN AFTER SOMETIME.")
 			res.render('error')
 			return
 		}
 		// console.log('asd')
+		var on_off = result[0].on_off
 		var duration = result[0].duration
 		var pdf_path = result[0].pdf_path
 		let sql = "SELECT * FROM `"+quiz+"`"
@@ -200,10 +235,142 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 			if (req.params.mode == 'test') var mode = 'test'
 			else var mode = 'normal'
 
-			res.render('quiz_box', {title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode})
+			res.render('quiz_box', {title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode, on_off, editing_permission})
 		});
 
 	});
+})
+
+// gk_edit_quiz
+app.post('/gk_edit_quiz', (req,res) =>{
+	console.log(req.body)
+	if (req.session.logged_in == null || req.session.logged_in == false){
+		console.log('unautherized request')
+		res.json('not autherized')
+		return
+		// console.log("USER NOT LOGGED IN")
+	}
+	// res.json('success')
+	// return
+	new_con.query("TRUNCATE TABLE `"+req.body[0].whole_quiz_name+"`", function (err,result,fields) {
+		if (err) {
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// after emptying the table completely
+		// add the rows again
+		var data = req.body
+		for (var i=0; i<data.length; i++){
+			var sql = "INSERT INTO `"+req.body[0].whole_quiz_name+"` VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
+			new_con.query(sql, function (err, result) {
+			if (err) {
+				console.log(err)//throw err;
+				console.log("row " +(i+1)+" failed");
+			}
+			console.log("row " +(i+1)+" inserted");
+			});
+
+			// if (i == data.length - 1) res.json('success')
+		}
+
+		new_con.query("UPDATE gk SET on_off = '"+req.body[0].on_off+"' WHERE parent = '"+req.body[0].whole_quiz_name+"'", function (err,result,fields) {
+			if (err) {
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			new_con.query("UPDATE gk SET duration = '"+req.body[0].duration*60+"' WHERE parent = '"+req.body[0].whole_quiz_name+"'", function (err,result,fields) {
+				if (err) {
+					console.log(err)
+					res.json('failed')
+					return
+				}
+				res.json('success')
+			});
+		});
+	});
+	
+})
+
+// gk_add_quiz
+app.post('/gk_add_quiz', (req,res) =>{
+	console.log(req.body)
+	if (req.session.logged_in == null || req.session.logged_in == false){
+		console.log('unautherized request')
+		res.json('not autherized')
+		return
+		// console.log("USER NOT LOGGED IN")
+	}
+	// adding parent and child
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body[0].parent_child_details.parent+"', '"+req.body[0].parent_child_details.child+"', '', '', '');", function(err, result, fields) {
+		if (err){
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// adding parent+child and null (to indicate quiz)
+		if (req.body[0].parent_child_details.parent == 'null')  var new_parent = req.body[0].parent_child_details.child
+		else var new_parent = req.body[0].parent_child_details.parent + '-' + req.body[0].parent_child_details.child
+		var new_child = 'null'
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '"+req.body[0].on_off+"', '"+req.body[0].duration*60+"', '');", function (err, result, fields) {
+			if (err) {
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			// console.log("ASdasdasdasdadasdasdasd")
+			// adding quiz table
+			var table_name = new_parent.toString()
+			var sql = "CREATE TABLE `"+table_name+"` ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
+			var data = req.body
+			new_con.query(sql, function (err, result) {
+				if (err) {
+					console.log(err)//throw err;
+					res.json('failed')
+					return
+				}
+				console.log("Table created");
+				// then add the questions
+				for (var i=0; i<data.length; i++){
+					var sql = "INSERT INTO `"+table_name+"` VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
+					new_con.query(sql, function (err, result) {
+					if (err) {
+						console.log(err)//throw err;
+						console.log("row " +(i+1)+" failed");
+					}
+					console.log("row " +(i+1)+" inserted");
+					});
+				}
+				// return
+				res.json("success")
+			});
+		});
+	});
+})
+
+// gk_add_new_topic
+app.post('/gk_add_new_topic', (req,res) =>{
+	if (req.session.logged_in == null || req.session.logged_in == false){
+		console.log('unautherized request')
+		res.json('not autherized')
+		return
+		// console.log("USER NOT LOGGED IN")
+	}
+
+	console.log(req.body)
+	for (var i=0; i<req.body.length; i++){
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body[i].parent+"', '"+req.body[i].child+"', '', '', '');", function(err, result, fields) {
+			if (err){
+				console.log(err)
+				res.json('failed')
+				return
+			}
+		});
+		console.log(i)
+		if (i == req.body.length-1) res.json('success')
+	// res.json('success')
+	}
 })
 
 // dashboard
@@ -876,6 +1043,33 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 
 		res.render('topics', {title:"topics", nav_selected:"quiz", heading:heading, topics:topics, question_paper:true})
 	});
+})
+
+// gkfileupload
+app.post('/gkfileupload', (req,res) => {
+	// console.log(req.files.inpFile)
+	console.log('pdf received')
+	var file = req.files.inpFile
+	var name = file.name
+
+	var file_path = './public/pdf_uploads/'+name+'.pdf'
+	file.mv(file_path, (err)=>{
+		if (err) {
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		file_path = '/pdf_uploads/'+name+'.pdf'
+		new_con.query("UPDATE gk SET pdf_path = '"+file_path+"' WHERE parent = '"+name+"'", function (err, result, fields) {
+			if (err) {
+				console.log(err)//throw err;
+				res.json('failed')
+				return
+			}
+			res.send("success")
+		});
+	})
+	// res.json('success')
 })
 
 // fileupload
