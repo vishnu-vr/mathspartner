@@ -1045,6 +1045,13 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	});
 })
 
+// gkrenametopic
+app.post('/gkrenametopic', (req,res) =>{
+	console.log(req.body)
+	res.json('success')
+	return
+})
+
 // gkdeletetopic
 app.post('/gkdeletetopic', (req,res) =>{
 	console.log(req.body)
@@ -1093,20 +1100,7 @@ app.post('/gkdeletetopic', (req,res) =>{
 						res.json('failed')
 						return
 					}
-					// console.log(quiz_tables)
-					// along with dropping tables delete the pdf too
-					// deleting the file async
-					// var pdf_path = './public'+quiz_tables[current_pdf].pdf_path
-					// if (pdf_path){
-					// 	fs.unlink(pdf_path, (err) => {
-					// 		if (err) {
-					// 		console.error(err)
-					// 		return
-					// 		}
-						
-					// 		console.log('file removed')
-					// 	})
-					// }
+
 				})
 			}
 			new_con.query("DELETE FROM gk WHERE parent LIKE '"+parent+"%'", function (err,result,field) {

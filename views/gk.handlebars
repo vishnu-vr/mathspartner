@@ -104,6 +104,34 @@
   </div>
 </div>
 
+<!-- Button trigger modal -->
+<button id='rename_modal_btn'type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter_new" hidden>
+  Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter_new" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Rename Topic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <label for="new_topic_name_input">
+          <input id='new_topic_name_input' type="text" placeholder="enter new name" onkeyup="uppercase('new_topic_name_input')">
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="rename_topic()">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     // set the title
     document.getElementById('title').innerText = "{{title}}"
@@ -269,6 +297,33 @@
       document.getElementById('create_new').click()
     }
 
+    // rename_topic
+    var old_topic_name = ''
+    function show_rename_modal(topic_num){
+      var card_name = document.getElementById(topic_num)
+      old_topic_name = card_name.innerHTML.trim()
+      // alert(old_topic_name)
+      document.getElementById('rename_modal_btn').click()
+    }
+
+    function rename_topic() {
+      // popup modal
+      var new_topic_name = document.getElementById('new_topic_name_input').value.trim()
+      if (topics.includes(new_topic_name)) {
+        alert('name already exists')
+        return
+      }
+      {{!-- return --}}
+      if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
+      else var parent = heading_.innerHTML.trim()
+      // var data_to_send = {'parent':}
+      postData('/gkrenametopic', {"parent":parent, "old_child":old_topic_name, "new_child":new_topic_name})
+        .then(data => {
+          console.log(data); // JSON data parsed by `data.json()` call
+          location.reload();
+        });
+    }
+
     // creating topic cards
     const topic_body = document.getElementById('topic_body')
     function create_cards(topic){
@@ -277,7 +332,10 @@
       var card_title = document.createElement('h5')
       card_title.id = i
       if (topic == 'create_new') card_title.innerText = 'Create New'
-      else card_title.innerText = topic
+      else {
+        card_title.innerText = topic
+        card_title.setAttribute('ondblclick','show_rename_modal('+i+')')
+      }
       // link button
       var card_link = document.createElement('button')
       if (topic == 'create_new') card_link.setAttribute('onclick','create_new()')
@@ -319,6 +377,7 @@
       create_cards('create_new')
     }
 
+    topics.sort()
     for (var i=0; i<topics.length; i++){
       if (topics[i] == 'uc') continue
       create_cards(topics[i])
