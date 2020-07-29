@@ -157,10 +157,18 @@ app.get('/gk/:parent', (req,res) =>{
 			return
 		}
 
-		// if its end it might also be an audio clip
+		// if its the end it might also be an audio clip
 		// pdf_path is also used for audio clips
 		if (result[0].child == 'audio'){
 			res.redirect('/audio/'+req.params.parent+'/'+result[0].pdf_path)
+			return
+		}
+
+		// if its the end it might also be an audio clip
+		// pdf_path is also used for audio clips
+		if (result[0].child == 'youtube'){
+			var id = result[0].pdf_path.split('/')[result[0].pdf_path.split('/').length-1]
+			res.redirect('/youtube/'+req.params.parent+'/'+id)
 			return
 		}
 
@@ -168,6 +176,7 @@ app.get('/gk/:parent', (req,res) =>{
 		var row_type = []
 		for (var i=0; i<result.length; i++){
 			row_type.push(result[i].type)
+			if (row_type[i] == 'youtube') row_type[i] += '##'+result[i].pdf_path
 			topics.push(result[i].child)
 		}
 
@@ -199,6 +208,46 @@ app.get('/gk/:parent', (req,res) =>{
 			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type})
 		}
 	});
+})
+
+// gkaddyoutube
+app.post('/gkaddyoutube', (req,res) =>{
+	console.log(req.body)
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		// editing_permission = true
+		console.log('user logged in')
+	}
+	else{
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
+
+	var splitted = req.body.link.trim().split(' ')
+	splitted = splitted[3].split('"')
+	var id = splitted[1]
+
+	// adding parent and child
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '"+id+"', 'youtube');", function(err, result, fields) {
+		if (err){
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// adding parent+child and null (to indicate quiz)
+		if (req.body.parent == 'null')  var new_parent = req.body.child
+		else var new_parent = req.body.parent + '-' + req.body.child
+		var new_child = 'youtube'
+				
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"', 'youtube');", function (err, result, fields) {
+			if (err) {
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			res.json('success')
+		})
+	})
 })
 
 // gkaddaudio
@@ -1373,6 +1422,13 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 
 		res.render('classes', {title:"topics", nav_selected:"classes", heading:topic_name, topics:topics, parts:"true", links:links})
 	});
+})
+
+// simple youtube
+app.get('/youtube/:parent/:src', (req,res) =>{
+	// console.log(req.params.parent)
+	// console.log(req.params.src)
+	res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:req.params.parent, link:req.params.src})
 })
 
 // /youtube_videos/RATIO/part_1

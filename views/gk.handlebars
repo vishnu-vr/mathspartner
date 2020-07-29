@@ -24,6 +24,7 @@
         <button type="button" class="btn btn-primary mt-2 ml-2" onclick="new_topic()">New Topic ?</button>
         <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_quiz()">New Quiz ?</button>
         <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_audio()">New Audio ?</button>
+        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_youtube()">New YouTube ?</button>
         <div class="text-center mt-4" id='loading' hidden>
           <div class="spinner-border" role="status">
               <span class="sr-only">Loading...</span>
@@ -115,6 +116,27 @@
             <button type="button" class="btn btn-primary mt-2" onclick="new_audio_submit()">Submit</button>
         </div>
 
+        <div id='modal-add-youtube' class="mt-4 text-left" hidden>
+            {{!-- youtube name --}}
+            <div id='youtube_name' class="mt-4">
+                <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">YouTube Name</span>
+                </div>
+                <input id="youtube_name_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" onkeyup="uppercase('youtube_name_input')">
+                </div>
+                <div class="input-group input-group-sm mb-3 mt-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Youtube Embed link</span>
+                </div>
+                <input id="youtube_link_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                </div>
+
+            </div>
+            <button type="button" class="btn btn-primary mt-2" onclick="new_youtube_submit()">Submit</button>
+        </div>
+
+
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -159,10 +181,12 @@
     // set the heading
     // setting this way because of &amp;
     const heading_ = document.getElementById('heading')
+    const heading_of_page = "{{ heading }}"
     heading_.innerHTML = "{{ heading }}"
 
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
+    if ("{{ heading }}".split('-')[0] == 'YOUTUBE') nav_selected = document.getElementById('youtube')
     nav_selected.className += ' active'
 
     // editing rights
@@ -195,12 +219,14 @@
       modal_add_quiz.hidden = true
       modal_add_audio.hidden = true
       modal_add_topic.hidden = false
+      modal_add_youtube.hidden = true
     }
 
     // new_quiz
     function new_quiz(){
       {{!-- modal_body_content.innerHTML = '' --}}
       modal_add_quiz.hidden = false
+      modal_add_youtube.hidden = true
       modal_add_audio.hidden = true
       modal_add_topic.hidden = true
       editing_mode = false
@@ -211,6 +237,7 @@
       modal_add_quiz.hidden = true
       modal_add_topic.hidden = true
       modal_add_audio.hidden = false
+      modal_add_youtube.hidden = true
     }
 
     function delete_question(question_num) {
@@ -356,13 +383,52 @@
         });
     }
 
+    // new_youtube_submit
+    var youtube_name_input = document.getElementById('youtube_name_input')
+    var youtube_link_input = document.getElementById('youtube_link_input')
+    function new_youtube_submit(){
+      if (youtube_name_input.value.trim() == '' || youtube_link_input.value.trim() == ''){
+        alert('enter all the details')
+        return
+      }
+      if (topics.includes(youtube_name_input.value.trim())){
+        alert("Name already exists")
+        return
+      }
+      if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
+      else var parent = heading_.innerHTML.trim()
+      postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()})
+        .then(data => {
+          console.log(data); // JSON data parsed by `data.json()` call
+          if (data == 'success') location.reload();
+          else alert(data)
+        });
+    }
+
+    // new_youtube
+    var modal_add_youtube = document.getElementById('modal-add-youtube')
+    function new_youtube(){
+      modal_add_youtube.hidden = false
+      modal_add_quiz.hidden = true
+      modal_add_topic.hidden = true
+      modal_add_audio.hidden = true
+    }
+
     // creating topic cards
     const topic_body = document.getElementById('topic_body')
     function create_cards(topic,type){
       {{!-- topic_body.innerHTML = '' --}}
 
+      var yt = false
       if (type == 'audio') type = ' &#x1F3A7;'
       else if (type == 'quiz') type = ' &#x1F4D6;'
+      // youtube
+      else if (type.split('##').length > 1){
+        var yt_link = type.split('##')[1]
+        yt_link = yt_link.split('/')[yt_link.split('/').length-1]
+        type = ''
+        yt = true
+      }
 
       // card title - h5
       var card_title = document.createElement('h5')
@@ -402,6 +468,18 @@
       outter_card_div.className = 'card ml-4 mt-4'
       outter_card_div.style = 'width: 18rem;'
 
+      if (yt){
+        // card image (youtube thumbnail)
+        // <img class="card-img-top" src="..." alt="Card image cap">
+        var thumbnail = document.createElement('img')
+        thumbnail.class = 'card-img-top'
+        // var yt_id = yt_link//'J3U08kSx5KM'
+        thumbnail.src = 'https://i.ytimg.com/vi/'+yt_link+'/mqdefault.jpg'
+        thumbnail.alt = 'Card image cap'
+        // appending image
+        outter_card_div.appendChild(thumbnail)
+      }
+
       outter_card_div.appendChild(card_body)
 
       topic_body.appendChild(outter_card_div)
@@ -415,7 +493,7 @@
 
     // topics.sort()
     for (var i=0; i<topics.length; i++){
-      if (topics[i] == 'uc') continue
+      if (row_type[i] == 'forbidden') continue
       create_cards(topics[i],row_type[i])
     }
 
