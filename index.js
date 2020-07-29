@@ -135,11 +135,11 @@ app.get('/gk/:parent', (req,res) =>{
 				var topics = []
 				if (parent == 'null') {
 					var heading = "TOPICS"
-					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission})
+					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission, row_type:[]})
 				}
 				else {
 					var heading = parent
-					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission})
+					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type:[]})
 				}
 				return
 			}
@@ -161,19 +161,42 @@ app.get('/gk/:parent', (req,res) =>{
 		// pdf_path is also used for audio clips
 		if (result[0].child == 'audio'){
 			res.redirect('/audio/'+req.params.parent+'/'+result[0].pdf_path)
+			return
 		}
 
 		var topics = []
+		var row_type = []
 		for (var i=0; i<result.length; i++){
+			row_type.push(result[i].type)
 			topics.push(result[i].child)
 		}
+
+		// sorting the two lists according to topics
+		//1) combine the arrays:
+		var list = [];
+		for (var j = 0; j < topics.length; j++) 
+			list.push({'topic': topics[j], 'row_type': row_type[j]});
+
+		//2) sort:
+		list.sort(function(a, b) {
+			return ((a.topic < b.topic) ? -1 : ((a.topic == b.topic) ? 0 : 1));
+			//Sort could be modified to, for example, sort on the row_type 
+			// if the topic is the same.
+		});
+
+		//3) separate them back out:
+		for (var k = 0; k < list.length; k++) {
+			topics[k] = list[k].topic;
+			row_type[k] = list[k].row_type;
+		}
+
 		if (parent == 'null') {
 			var heading = "TOPICS"
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission})
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission, row_type})
 		}
 		else {
 			var heading = parent
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission})
+			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type})
 		}
 	});
 })
@@ -192,7 +215,7 @@ app.post('/gkaddaudio', (req,res) =>{
 	}
 
 	// adding parent and child
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '');", function(err, result, fields) {
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '', 'audio');", function(err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -203,7 +226,7 @@ app.post('/gkaddaudio', (req,res) =>{
 		else var new_parent = req.body.parent + '-' + req.body.child
 		var new_child = 'audio'
 		var id = req.body.link.split('/')[5]
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"');", function (err, result, fields) {
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"', 'audio');", function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
@@ -345,7 +368,7 @@ app.post('/gk_add_quiz', (req,res) =>{
 		// console.log("USER NOT LOGGED IN")
 	}
 	// adding parent and child
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body[0].parent_child_details.parent+"', '"+req.body[0].parent_child_details.child+"', '', '', '');", function(err, result, fields) {
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body[0].parent_child_details.parent+"', '"+req.body[0].parent_child_details.child+"', '', '', '', 'quiz');", function(err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -355,7 +378,7 @@ app.post('/gk_add_quiz', (req,res) =>{
 		if (req.body[0].parent_child_details.parent == 'null')  var new_parent = req.body[0].parent_child_details.child
 		else var new_parent = req.body[0].parent_child_details.parent + '-' + req.body[0].parent_child_details.child
 		var new_child = 'null'
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '"+req.body[0].on_off+"', '"+req.body[0].duration*60+"', '');", function (err, result, fields) {
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '"+req.body[0].on_off+"', '"+req.body[0].duration*60+"', '', 'quiz');", function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')

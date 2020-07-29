@@ -168,6 +168,9 @@
     // editing rights
     var editing_permission = "{{ editing_permission }}"
 
+    // row_type
+    var row_type = {{{json row_type}}}
+
     // logout button
     if (editing_permission == 'true'){
       document.getElementById('logout_button').style.display = ''
@@ -324,9 +327,9 @@
 
     // rename_topic
     var old_topic_name = ''
-    function show_rename_modal(topic_num){
-      var card_name = document.getElementById(topic_num)
-      old_topic_name = card_name.innerHTML.trim()
+    function show_rename_modal(card_name){
+      // var card_name = document.getElementById(topic_num)
+      old_topic_name = card_name.trim()
       // alert(old_topic_name)
       document.getElementById('rename_modal_btn').click()
     }
@@ -355,20 +358,24 @@
 
     // creating topic cards
     const topic_body = document.getElementById('topic_body')
-    function create_cards(topic){
+    function create_cards(topic,type){
       {{!-- topic_body.innerHTML = '' --}}
+
+      if (type == 'audio') type = ' &#x1F3A7;'
+      else if (type == 'quiz') type = ' &#x1F4D6;'
+
       // card title - h5
       var card_title = document.createElement('h5')
       card_title.id = i
-      if (topic == 'create_new') card_title.innerText = 'Create New'
+      if (topic == 'create_new') card_title.innerHTML = 'Create New'
       else {
-        card_title.innerText = topic
-        card_title.setAttribute('ondblclick','show_rename_modal('+i+')')
+        card_title.innerHTML = topic + type
+        card_title.setAttribute('ondblclick','show_rename_modal("'+topic+'")')
       }
       // link button
       var card_link = document.createElement('button')
       if (topic == 'create_new') card_link.setAttribute('onclick','create_new()')
-      else card_link.setAttribute('onclick','topic_selected('+ i +')')
+      else card_link.setAttribute('onclick','topic_selected("'+topic+'")')
       card_link.type = 'button'
       if (topic == 'create_new') card_link.className = 'btn btn-warning'
       else card_link.className = 'btn btn-secondary'
@@ -403,26 +410,26 @@
     
     // if in editing mode
     if (editing_permission == 'true'){
-      create_cards('create_new')
+      create_cards('create_new','')
     }
 
-    topics.sort()
+    // topics.sort()
     for (var i=0; i<topics.length; i++){
       if (topics[i] == 'uc') continue
-      create_cards(topics[i])
+      create_cards(topics[i],row_type[i])
     }
 
-    function topic_selected(topic_id) {
-      const topic_id_ = document.getElementById(topic_id)
-      console.log(topic_id_.innerText)
+    function topic_selected(topic_id_) {
+      // const topic_id_ = document.getElementById(topic_id)
+      console.log(topic_id_)
       // alert('sads')
       if ("{{ heading }}" == "TOPICS") {
-          window.location = '/gk/' + topic_id_.innerText
+          window.location = '/gk/' + topic_id_
       }
       else if ("{{ main_parent }}") {
-          window.location = '/gk/' + "{{ heading }}" + topic_id_.innerText
+          window.location = '/gk/' + "{{ heading }}" + topic_id_
       }
-      else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_.innerText
+      else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_
     }
 
     var audio_name_input = document.getElementById('audio_name_input')
@@ -439,7 +446,7 @@
 
       if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
       else var parent = heading_.innerHTML.trim()
-      var data_to_send = {'parent':parent, 'child':audio_name_input.value.trim()+'&#127911;', 'link':audio_link_input.value.trim()}
+      var data_to_send = {'parent':parent, 'child':audio_name_input.value.trim(), 'link':audio_link_input.value.trim()}
       postData('/gkaddaudio', data_to_send)
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
