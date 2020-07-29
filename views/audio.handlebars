@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="col-sm">
+    <h1 class="mt-4 text-center" id='audio_name'></h1>
+    <div class="mt-4 text-center">
+        <audio controls="controls" autoplay>
+            <source src="https://docs.google.com/uc?export=download&id={{ src }}">
+        </audio>
+    </div>
+  </div>
+</div>
+
+<script>
+    // set the title
+    document.getElementById('title').innerText = "{{title}}"
+    
+    // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active'
+
+    // audio name
+    document.getElementById('audio_name').innerHTML = "{{ audio_name }}"
+
+</script>

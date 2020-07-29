@@ -157,6 +157,12 @@ app.get('/gk/:parent', (req,res) =>{
 			return
 		}
 
+		// if its end it might also be an audio clip
+		// pdf_path is also used for audio clips
+		if (result[0].child == 'audio'){
+			res.redirect('/audio/'+req.params.parent+'/'+result[0].pdf_path)
+		}
+
 		var topics = []
 		for (var i=0; i<result.length; i++){
 			topics.push(result[i].child)
@@ -170,6 +176,42 @@ app.get('/gk/:parent', (req,res) =>{
 			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission})
 		}
 	});
+})
+
+// gkaddaudio
+app.post('/gkaddaudio', (req,res) =>{
+	console.log(req.body)
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		// editing_permission = true
+		console.log('user logged in')
+	}
+	else{
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
+
+	// adding parent and child
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '');", function(err, result, fields) {
+		if (err){
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// adding parent+child and null (to indicate quiz)
+		if (req.body.parent == 'null')  var new_parent = req.body.child
+		else var new_parent = req.body.parent + '-' + req.body.child
+		var new_child = 'audio'
+		var id = req.body.link.split('/')[5]
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"');", function (err, result, fields) {
+			if (err) {
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			res.json('success')
+		})
+	})
 })
 
 // gk quiz
@@ -979,6 +1021,12 @@ app.get('/user_ranks', (req,res) =>{
 	
 })
 
+// audio
+app.get('/audio/:parent/:id', (req,res) =>{
+	console.log(req.params.parent)
+	res.render('audio', {title:"audio", audio_name: req.params.parent,nav_selected:"gk", src:req.params.id})
+})
+
 // topics page
 app.get('/quiz', (req,res) => {
 	var dummy_topics = ['ratio','calendar','speed&time','clock','profit & loss','number system'
@@ -1080,6 +1128,7 @@ app.post('/gkrenametopic', (req,res) =>{
 			var new_name = result[i].parent.split('-')
 			new_name[index_to_be_replaced] = req.body.new_child
 			new_name = new_name.join('-')
+			console.log(old_name+' --> '+new_name)
 			new_con.query("UPDATE gk SET parent = '"+new_name+"' WHERE parent = '"+old_name+"'", function (err,result,field){
 				if (err) {
 					console.log(err)
@@ -1089,7 +1138,7 @@ app.post('/gkrenametopic', (req,res) =>{
 			})
 			// renaming tables
 			if (result[i].child == 'null'){
-				console.log(old_name+' --> '+new_name)
+				// console.log(old_name+' --> '+new_name)
 				new_con.query("ALTER TABLE `"+old_name+"` RENAME TO `"+new_name+"`", function(err,result,fields){
 					if (err){
 						console.log(err)
