@@ -309,6 +309,10 @@
     function rename_topic() {
       // popup modal
       var new_topic_name = document.getElementById('new_topic_name_input').value.trim()
+      if (new_topic_name == '') {
+        alert('enter a name first')
+        return
+      }
       if (topics.includes(new_topic_name)) {
         alert('name already exists')
         return

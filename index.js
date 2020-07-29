@@ -1048,8 +1048,67 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 // gkrenametopic
 app.post('/gkrenametopic', (req,res) =>{
 	console.log(req.body)
-	res.json('success')
-	return
+
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		// editing_permission = true
+		console.log('user logged in')
+	}
+	else{
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
+
+	if (req.body.parent == 'null') var parent_child_combo = req.body.old_child
+	else var parent_child_combo = req.body.parent+'-'+req.body.old_child
+	console.log(parent_child_combo)
+	var index_to_be_replaced = parent_child_combo.split('-').length - 1
+	// first get all the parent names starting with the "parent-child" combo
+	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"%'", function(err,result,fields){
+		if (err){
+			console.log(err)
+			res.json('failed')
+			return
+		}
+		// console.log(result)
+		// looking for quiz tables (ie rows having child null)
+		// var tables_to_be_renamed = []
+		for (var i=0; i<result.length; i++){
+			// tables_to_be_renamed.push(result[i].parent)
+			// renaming row entries
+			var old_name = result[i].parent
+			var new_name = result[i].parent.split('-')
+			new_name[index_to_be_replaced] = req.body.new_child
+			new_name = new_name.join('-')
+			new_con.query("UPDATE gk SET parent = '"+new_name+"' WHERE parent = '"+old_name+"'", function (err,result,field){
+				if (err) {
+					console.log(err)
+					res.json('failed')
+					return
+				}
+			})
+			// renaming tables
+			if (result[i].child == 'null'){
+				console.log(old_name+' --> '+new_name)
+				new_con.query("ALTER TABLE `"+old_name+"` RENAME TO `"+new_name+"`", function(err,result,fields){
+					if (err){
+						console.log(err)
+						res.json('failed')
+						return
+					}
+				})
+			}
+		}
+		// after all that rename the child
+		new_con.query("UPDATE gk SET child = '"+req.body.new_child+"' WHERE parent = '"+req.body.parent+"' AND child = '"+req.body.old_child+"'", function (err,result,fields){
+			if (err){
+				console.log(err)
+				res.json('failed')
+				return
+			}
+			res.json('success')
+		})
+	});
 })
 
 // gkdeletetopic
@@ -1057,6 +1116,18 @@ app.post('/gkdeletetopic', (req,res) =>{
 	console.log(req.body)
 	// res.json('success')
 	// return
+
+	// var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		// editing_permission = true
+		console.log('user logged in')
+	}
+	else{
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
+
 	var quiz_tables = []
 	var current_pdf = 0
 	new_con.query("DELETE FROM gk WHERE parent = '"+req.body.parent+"' AND child = '"+req.body.child+"'", function (err,result,fields) {
@@ -1121,6 +1192,16 @@ app.post('/gkfileupload', (req,res) => {
 	console.log('pdf received')
 	var file = req.files.inpFile
 	var name = file.name
+
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		// editing_permission = true
+		console.log('user logged in')
+	}
+	else{
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
 
 	var file_path = './public/pdf_uploads/'+name+'.pdf'
 	file.mv(file_path, (err)=>{
