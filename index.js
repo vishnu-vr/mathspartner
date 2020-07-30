@@ -70,7 +70,7 @@ app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
 // home
 app.get('/', (req,res) => {
 	// res.render('home', {title:"Maths Partner"})
-	res.redirect('/quiz')
+	res.redirect('/gk/null')
 })
 
 // login
@@ -80,7 +80,7 @@ app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", 
 app.get('/logout', (req,res) => {
 	if (req.session.logged_in != null){
 		req.session.logged_in = false
-		if (req.session.permission == 'mathspartner') res.redirect('/login')
+		if (req.session.permission == 'mathspartner') res.redirect('/gk/null')
 		else if (req.session.permission == 'gk') res.redirect('/gk/null')
 	}
 	else res.redirect('/')
@@ -1081,15 +1081,12 @@ app.post('/get_user_details', (req,res) =>{
 
 // rank_page
 app.get('/user_ranks', (req,res) =>{
-	// new_con.query('SELECT * from user_details ORDER BY score DESC', function (err,result) {
-	// 	if (err){
-	// 		console.log(err)
-	// 		res.json(null)
-	// 		return
-	// 	}
-		
-	// })
-	res.render('user_ranks',{title:"Rank", nav_selected:'user_ranks'})
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
+	res.render('user_ranks',{title:"Rank", nav_selected:'user_ranks', editing_permission})
 	
 })
 
@@ -1426,9 +1423,13 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 
 // simple youtube
 app.get('/youtube/:parent/:src', (req,res) =>{
-	// console.log(req.params.parent)
-	// console.log(req.params.src)
-	res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:req.params.parent, link:req.params.src})
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
+	// editing_permission
+	res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:req.params.parent, link:req.params.src, editing_permission})
 })
 
 // /youtube_videos/RATIO/part_1

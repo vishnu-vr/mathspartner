@@ -71,7 +71,7 @@
       postData('/user_authentication', creds)
         .then(data => {
           // console.log(data); // JSON data parsed by `data.json()` call
-          if (data == 'success' && creds.permission == 'mathspartner') window.location.replace("/dashboard")
+          if (data == 'success' && creds.permission == 'mathspartner') window.location.replace("/")
           else if (data == 'success' && creds.permission == 'gk') window.location.replace('/')
           else alert("login failed")
         });

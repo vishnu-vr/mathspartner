@@ -200,7 +200,9 @@
     // row_type
     var row_type = {{{json row_type}}}
 
-    // logout button
+
+    // implemented in main globally, that is why its commented out
+    {{!-- // logout button
     if (editing_permission == 'true'){
       document.getElementById('logout_button').style.display = ''
     }
@@ -208,7 +210,7 @@
 
     function logout(){
       window.location.href = '/logout'
-    }
+    } --}}
 
     // uppercase covertion for topic name input
     function uppercase(input_box) {
@@ -317,15 +319,18 @@
 
     // delete_topic
     function delete_topic(topic_num) {
-      if (heading_of_page.trim() == 'TOPICS') var topic_name_to_be_delete = {parent:'null', 'child':topic_num}
-      else var topic_name_to_be_delete = {parent: heading_of_page.trim(), 'child':topic_num}
-      console.log(topic_name_to_be_delete)
+      // ask for confirmation
+      if (confirm('Are you sure ?')) {
+        if (heading_of_page.trim() == 'TOPICS') var topic_name_to_be_delete = {parent:'null', 'child':topic_num}
+        else var topic_name_to_be_delete = {parent: heading_of_page.trim(), 'child':topic_num}
+        console.log(topic_name_to_be_delete)
 
-      postData('/gkdeletetopic', topic_name_to_be_delete)
-        .then(data => {
-          console.log(data); // JSON data parsed by `data.json()` call
-          location.reload();
-        });
+        postData('/gkdeletetopic', topic_name_to_be_delete)
+          .then(data => {
+            console.log(data); // JSON data parsed by `data.json()` call
+            location.reload();
+          });
+      }
     }
 
     // seach box

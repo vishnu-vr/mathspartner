@@ -22,10 +22,10 @@
                 </div>
             </div>
             <nav id="nav" style="display:{{none}} ;" class="nav nav-pills flex-column flex-sm-row mt-5 border rounded border-dark">
-                <a id="quiz" class="flex-sm-fill text-sm-center nav-link" href="/quiz">Quiz</a>
-                <a id="classes" class="flex-sm-fill text-sm-center nav-link" href="/classes">Classes</a>
+                {{!-- <a id="quiz" class="flex-sm-fill text-sm-center nav-link" href="/quiz">Quiz</a> --}}
+                {{!-- <a id="classes" class="flex-sm-fill text-sm-center nav-link" href="/classes">Classes</a> --}}
                 {{!-- <a id="about" class="flex-sm-fill text-sm-center nav-link" href="/about">About</a> --}}
-                <a id="gk" class="flex-sm-fill text-sm-center nav-link" href="/gk/null">GK</a>
+                <a id="gk" class="flex-sm-fill text-sm-center nav-link" href="/gk/null">Quiz</a>
                 <a id="youtube" class="flex-sm-fill text-sm-center nav-link" href="/gk/YOUTUBE">YouTube</a>
                 <a id="user_ranks" class="flex-sm-fill text-sm-center nav-link" href="/user_ranks">Results</a>
                 {{!-- <a class="flex-sm-fill text-sm-center nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a> --}}
@@ -56,3 +56,17 @@
     <!-- Footer -->
 </html>
 
+<script>
+    // editing rights
+    var logged_in = "{{ editing_permission }}"
+
+    // logout button
+    if (logged_in == 'true'){
+      document.getElementById('logout_button').style.display = ''
+    }
+    else document.getElementById('logout_button').style.display = 'none'
+
+    function logout(){
+      window.location.href = '/logout'
+    }
+</script>

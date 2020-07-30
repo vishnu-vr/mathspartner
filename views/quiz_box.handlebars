@@ -178,13 +178,14 @@
     // editing rights
     var editing_permission = "{{ editing_permission }}"
     var edit_quiz = document.getElementById('edit_quiz')
-    // logout button
+    
+    // edit quiz
     if (editing_permission == 'true'){
-      document.getElementById('logout_button').style.display = ''
+      // document.getElementById('logout_button').style.display = ''
       edit_quiz.hidden = false
     }
     else {
-        document.getElementById('logout_button').style.display = 'none'
+        // document.getElementById('logout_button').style.display = 'none'
         edit_quiz.hidden = true
     }
 
