@@ -186,7 +186,12 @@
 
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
-    if ("{{ heading }}".split('-')[0] == 'YOUTUBE') nav_selected = document.getElementById('youtube')
+    if ("{{ heading }}".split('-')[0] == 'YOUTUBE') {
+      nav_selected = document.getElementById('youtube')
+      var splitted_heading_ = "{{ heading }}".split('-')
+      splitted_heading_.shift()
+      heading_.innerHTML = splitted_heading_.join('-') || 'TOPICS'
+    }
     nav_selected.className += ' active'
 
     // editing rights
@@ -312,8 +317,8 @@
 
     // delete_topic
     function delete_topic(topic_num) {
-      if (heading_.innerHTML.trim() == 'TOPICS') var topic_name_to_be_delete = {parent:'null', 'child':topic_num}
-      else var topic_name_to_be_delete = {parent: heading_.innerHTML.trim(), 'child':topic_num}
+      if (heading_of_page.trim() == 'TOPICS') var topic_name_to_be_delete = {parent:'null', 'child':topic_num}
+      else var topic_name_to_be_delete = {parent: heading_of_page.trim(), 'child':topic_num}
       console.log(topic_name_to_be_delete)
 
       postData('/gkdeletetopic', topic_name_to_be_delete)
@@ -373,8 +378,8 @@
         return
       }
       {{!-- return --}}
-      if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
-      else var parent = heading_.innerHTML.trim()
+      if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
+      else var parent = heading_of_page.trim()
       // var data_to_send = {'parent':}
       postData('/gkrenametopic', {"parent":parent, "old_child":old_topic_name, "new_child":new_topic_name})
         .then(data => {
@@ -395,8 +400,8 @@
         alert("Name already exists")
         return
       }
-      if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
-      else var parent = heading_.innerHTML.trim()
+      if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
+      else var parent = heading_of_page.trim()
       postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()})
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
@@ -522,8 +527,8 @@
         return
       }
 
-      if (heading_.innerHTML.trim() == 'TOPICS') var parent = 'null'
-      else var parent = heading_.innerHTML.trim()
+      if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
+      else var parent = heading_of_page.trim()
       var data_to_send = {'parent':parent, 'child':audio_name_input.value.trim(), 'link':audio_link_input.value.trim()}
       postData('/gkaddaudio', data_to_send)
         .then(data => {
@@ -549,14 +554,14 @@
       // if everything went well
       var dic_to_send = []
       // this is the root
-      if (heading_.innerHTML.trim().toLowerCase() == 'topics'){
+      if (heading_of_page.trim().toLowerCase() == 'topics'){
         dic_to_send.push({'parent':'null', 'child':topic_name_input.value.trim().toUpperCase()})
         // dic_to_send.push({'parent':topic_name_input.value.trim().toUpperCase(), 'child':'uc'})
       }
       // if not the root
       else {
-        dic_to_send.push({'parent':heading_.innerHTML.trim().toUpperCase(), 'child':topic_name_input.value.trim().toUpperCase()})
-        // dic_to_send.push({'parent':heading_.innerHTML.trim().toUpperCase()+'-'+topic_name_input.value.trim().toUpperCase(), 'child':'uc'})
+        dic_to_send.push({'parent':heading_of_page.trim().toUpperCase(), 'child':topic_name_input.value.trim().toUpperCase()})
+        // dic_to_send.push({'parent':heading_of_page.trim().toUpperCase()+'-'+topic_name_input.value.trim().toUpperCase(), 'child':'uc'})
       }
       console.log(dic_to_send)
       postData('/gk_add_new_topic', dic_to_send)
@@ -691,10 +696,10 @@
       questions_and_options_dic[0]['on_off'] = on_off_switch.checked
 
       // appending parent and child names
-      if (heading_.innerHTML.trim().toUpperCase() == 'TOPICS') var parent = 'null'
-      else var parent = heading_.innerHTML.trim().toUpperCase()
+      if (heading_of_page.trim().toUpperCase() == 'TOPICS') var parent = 'null'
+      else var parent = heading_of_page.trim().toUpperCase()
       questions_and_options_dic[0]['parent_child_details'] = {'parent':parent,'child':topic_name.value.trim()}
-      // questions_and_options_dic[0]['parent_child_details'].push({'parent':heading_.innerHTML.trim().toUpperCase(),'child':})
+      // questions_and_options_dic[0]['parent_child_details'].push({'parent':heading_of_page.trim().toUpperCase(),'child':})
 
       // if everything went well
       // sending data to back-end
@@ -713,8 +718,8 @@
           const inpFile = document.getElementById('inpFile')
           const endpoint = '/gkfileupload'
           const formData = new FormData()
-          if (heading_.innerHTML.trim() == 'TOPICS') var filename = topic_name.value.trim()
-          else var filename = heading_.innerHTML.trim() + '-' + topic_name.value.trim()
+          if (heading_of_page.trim() == 'TOPICS') var filename = topic_name.value.trim()
+          else var filename = heading_of_page.trim() + '-' + topic_name.value.trim()
           // if pdf file exists
           if (inpFile.files[0]) {
               // loading spinner

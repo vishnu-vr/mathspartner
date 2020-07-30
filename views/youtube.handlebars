@@ -16,6 +16,12 @@
 
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
+    if ("{{ heading }}".split('-')[0] == 'YOUTUBE') {
+      nav_selected = document.getElementById('youtube')
+      var splitted_heading_ = "{{ heading }}".split('-')
+      splitted_heading_.shift()
+      heading_.innerHTML = splitted_heading_.join('-') || 'TOPICS'
+    }
     nav_selected.className += ' active'
 
 </script>

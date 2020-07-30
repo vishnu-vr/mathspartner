@@ -1448,7 +1448,8 @@ app.get('/youtube_videos/:topic_name/:part_number', (req,res) => {
 			res.send("<h1>Video Doesn't exist</h1>")
 			return
 		}
-		res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:heading, link:result[0].link})
+		var src = result[0].link.split('/')[result[0].link.split('/').length-1]
+		res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:heading, link:src})
 	});
 })
 
