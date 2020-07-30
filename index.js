@@ -125,7 +125,7 @@ app.get('/gk/:parent', (req,res) =>{
 	new_con.query("SELECT * FROM gk where parent = '"+parent+"'", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		console.log(result)
@@ -500,7 +500,7 @@ app.get('/dashboard', (req,res) => {
 	new_con.query("SELECT DISTINCT topic_name FROM quiz", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		// console.log(result[0].topic_name);
@@ -512,7 +512,7 @@ app.get('/dashboard', (req,res) => {
 		new_con.query("SELECT DISTINCT topic_name FROM youtube", function (err, result) {
 			if (err) {
 				console.log(err)//throw err;
-				res.render("<h1>something went wrong</h1>")
+				res.send("<h1>something went wrong</h1>")
 				return
 			}
 			// console.log("asdasdasdas")
@@ -1018,7 +1018,7 @@ app.get('/quiz_box/:topic_name/:part_no/:question_paper/:mode', (req,res) => {
 			new_con.query(sql, function (err, result, fields) {
 				if (err) {
 					console.log(err)//throw err;
-					res.render("<h1>something went wrong</h1>")
+					res.send("<h1>something went wrong</h1>")
 					return
 				}
 				// console.log(result[0].duration);
@@ -1104,7 +1104,7 @@ app.get('/quiz', (req,res) => {
 	new_con.query("SELECT DISTINCT topic_name FROM quiz", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		// console.log(result[0].topic_name);
@@ -1125,7 +1125,7 @@ app.get('/parts/:topic_name', (req,res) => {
 	new_con.query(sql, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		// console.log(result[0].parts);
@@ -1149,7 +1149,7 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 	new_con.query(sql, function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		// console.log(result);
@@ -1382,7 +1382,7 @@ app.get('/classes', (req,res) => {
 	new_con.query("SELECT DISTINCT topic_name FROM youtube ORDER BY topic_name", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		console.log(result);
@@ -1402,7 +1402,7 @@ app.get('/parts_yt/:topic_name', (req,res) => {
 	new_con.query("SELECT part,link FROM youtube WHERE topic_name = '"+topic_name+"' ORDER BY part", function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
-			res.render("<h1>something went wrong</h1>")
+			res.send("<h1>something went wrong</h1>")
 			return
 		}
 		console.log(result);
