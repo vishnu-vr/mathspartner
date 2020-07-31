@@ -365,6 +365,8 @@
     // rename_topic
     var old_topic_name = ''
     function show_rename_modal(card_name){
+      // if user is not autherized return
+      if (editing_permission == 'false') return
       // var card_name = document.getElementById(topic_num)
       old_topic_name = card_name.trim()
       // alert(old_topic_name)

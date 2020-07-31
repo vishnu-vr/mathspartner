@@ -1475,7 +1475,7 @@ var dic = {name:'vishnu',age:'21'}
 // api tests
 // get
 app.get('/api', (req,res) => {
-	res.json(dic)
+	res.send("<h1>something went wrong</h1>")
 })
 // post with param in url
 app.post('/api/', (req,res) => {
