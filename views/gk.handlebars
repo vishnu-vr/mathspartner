@@ -717,6 +717,11 @@
       console.log(questions_and_options_dic)
       {{!-- return --}}
 
+      // loading spinner
+      document.getElementById('loading').hidden = false
+      // disabling final submit
+      document.getElementById('final_submit').disabled = true
+
       postData(url, questions_and_options_dic)
       .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
@@ -730,8 +735,6 @@
           else var filename = heading_of_page.trim() + '-' + topic_name.value.trim()
           // if pdf file exists
           if (inpFile.files[0]) {
-              // loading spinner
-              document.getElementById('loading').hidden = false
 
               formData.append('inpFile',inpFile.files[0],filename)
               
