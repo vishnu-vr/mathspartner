@@ -13,14 +13,13 @@ var new_con = mysql.createPool({
 // console.log("Database Connected!");
 // });
 
-var pdf_path = 'public/pdf_uploads/vishnupart_1question_paper_1.pdf'
-fs.unlink(pdf_path, (err) => {
-    if (err) {
-      console.error(err)
-      return
-    }
-  
-    console.log('file removed')
+new_con.query("SELECT * FROM gk WHERE parent = 'vishnu'", function(err,result,fields){
+  if (err){
+    console.log(err)
+    return
+  }
+  if (result.length == 0) console.log('empty')
+  console.log(result)
 })
 
 // console.log("asd")

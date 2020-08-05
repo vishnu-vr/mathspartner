@@ -1163,7 +1163,8 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 })
 
 // gkrenametopic
-app.post('/gkrenametopic', (req,res) =>{
+// { parent: 'null', old_child: 'A', new_child: 'B' }
+app.post('/gkrenametopic', async (req,res) =>{
 	console.log(req.body)
 
 	if (req.session.logged_in != null && req.session.logged_in == true){
@@ -1180,21 +1181,47 @@ app.post('/gkrenametopic', (req,res) =>{
 	else var parent_child_combo = req.body.parent+'-'+req.body.old_child
 	console.log(parent_child_combo)
 	var index_to_be_replaced = parent_child_combo.split('-').length - 1
-	// first get all the parent names starting with the "parent-child" combo
-	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"%'", function(err,result,fields){
+
+	// first find all the parents with exactly == req.body.old_child in the table
+	// if req.body.parent == 'null'
+	var result_ = []
+	if (req.body.parent == 'null'){
+		// result_ = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
+		try	{	
+			var result = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
+			result = result[0]
+			// saving all the result to result_
+			for (var i=0; i<result.length; i++){
+				result_.push(result[i])
+			}
+		}
+		catch (err) {
+			console.log(err)//throw err;
+			res.json('failed')
+			return
+		}
+			
+	}
+	// then we find all the parents starting with parent_child_combo along with '-' symbol
+	// so that sql doesn't return AA when looking for just A
+	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"-%'", function(err,result,fields){
 		if (err){
 			console.log(err)
 			res.json('failed')
 			return
 		}
 		// console.log(result)
+		// saving results to results_
+		for (var i=0; i<result.length; i++){
+			result_.push(result[i])
+		}
 		// looking for quiz tables (ie rows having child null)
 		// var tables_to_be_renamed = []
-		for (var i=0; i<result.length; i++){
-			// tables_to_be_renamed.push(result[i].parent)
+		for (var i=0; i<result_.length; i++){
+			// tables_to_be_renamed.push(result_[i].parent)
 			// renaming row entries
-			var old_name = result[i].parent
-			var new_name = result[i].parent.split('-')
+			var old_name = result_[i].parent
+			var new_name = result_[i].parent.split('-')
 			new_name[index_to_be_replaced] = req.body.new_child
 			new_name = new_name.join('-')
 			console.log(old_name+' --> '+new_name)
@@ -1205,8 +1232,8 @@ app.post('/gkrenametopic', (req,res) =>{
 					return
 				}
 			})
-			// renaming tables
-			if (result[i].child == 'null'){
+			// renaming quiz tables
+			if (result_[i].child == 'null'){
 				// console.log(old_name+' --> '+new_name)
 				new_con.query("ALTER TABLE `"+old_name+"` RENAME TO `"+new_name+"`", function(err,result,fields){
 					if (err){
