@@ -13,13 +13,16 @@ var new_con = mysql.createPool({
 // console.log("Database Connected!");
 // });
 
-new_con.query("SELECT * FROM gk WHERE parent = 'vishnu'", function(err,result,fields){
+new_con.query("SELECT * FROM gk WHERE parent like 'A-%' or parent = 'A'", function(err,result,fields){
   if (err){
     console.log(err)
     return
   }
-  if (result.length == 0) console.log('empty')
-  console.log(result)
+  // console.log(result)
+  for (var i=0; i< result.length; i++){
+    if (result[i].child == 'null') console.log(result[i])
+  }
+  
 })
 
 // console.log("asd")

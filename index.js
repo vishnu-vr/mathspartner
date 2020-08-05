@@ -1287,18 +1287,22 @@ app.post('/gkdeletetopic', (req,res) =>{
 		// console.log(parent)
 		// before deleting every row entry, first find quizes under this topic
 		// and delete all the quiz tables
-		new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent+"%' AND child = 'null'", function (err,result,field) {
+		new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent+"-%' OR parent = '"+parent+"'", function (err,result,field) {
 			if (err){
 				console.log(err)
 				res.json('failed')
 				return
 			}
-			quiz_tables = result
-			//console.log(result)
-			// res.json('success')
+			// console.log(result)
 			// return
+
 			// delete all the quiz tables if any
 			for (var i=0; i<result.length; i++){
+				// console.log(result[i])
+
+				// we only need quiz tables
+				if (result[i].child != 'null') continue
+
 				var pdf_path = result[i].pdf_path
 				console.log(pdf_path)
 				var pdf_path = './public'+pdf_path
@@ -1319,7 +1323,8 @@ app.post('/gkdeletetopic', (req,res) =>{
 
 				})
 			}
-			new_con.query("DELETE FROM gk WHERE parent LIKE '"+parent+"%'", function (err,result,field) {
+
+			new_con.query("DELETE FROM gk WHERE parent LIKE '"+parent+"-%' OR parent = '"+parent+"'", function (err,result,field) {
 				if (err){
 					console.log(err)
 					res.json('failed')
