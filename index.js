@@ -1489,7 +1489,7 @@ app.post('/apierror', (req,res) => {
 })
 
 // author info
-app.post('/author', (req,res) => {
+app.get('/author', (req,res) => {
 	res.json({'name':'vishnu',"github repo":'https://github.com/vishnu-vr/mathspartner'})
 })
 
