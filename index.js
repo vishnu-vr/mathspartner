@@ -1488,6 +1488,10 @@ app.post('/apierror', (req,res) => {
 	res.status(400).json({error:`boom an error. Hope you like it`})
 })
 
+// author info
+app.post('/author', (req,res) => {
+	res.json({'name':'vishnu',"github repo":'https://github.com/vishnu-vr/mathspartner'})
+})
 
 // ######################################################################
 
