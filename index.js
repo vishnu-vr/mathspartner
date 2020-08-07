@@ -1527,7 +1527,7 @@ app.get('/author', (req,res) => {
 
 // amazon ec2 micro
 app.get('/amazon', (req,res) => {
-	res.redirect('http://ec2-18-221-233-238.us-east-2.compute.amazonaws.com')
+	res.redirect(creds.amazon)
 })
 
 // ######################################################################
