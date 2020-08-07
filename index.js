@@ -1525,6 +1525,11 @@ app.get('/author', (req,res) => {
 	res.json({'name':'vishnu',"github repo":'https://github.com/vishnu-vr/mathspartner'})
 })
 
+// amazon ec2 micro
+app.get('/amazon', (req,res) => {
+	res.redirect('http://ec2-18-221-233-238.us-east-2.compute.amazonaws.com')
+})
+
 // ######################################################################
 
 const PORT = process.env.PORT || 5000
