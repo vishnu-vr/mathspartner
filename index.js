@@ -1163,10 +1163,11 @@ app.get('/question_paper/:topic_name/:part_no', (req,res) => {
 })
 
 // gkrenametopic
-// { parent: 'null', old_child: 'A', new_child: 'B' }
+// eg 1 { parent: 'null', old_child: 'A', new_child: 'B' }
+// eg 2 { parent: 'AA', old_child: 'INSIDE AA', new_child: 'INSIDE A' }
 app.post('/gkrenametopic', async (req,res) =>{
 	console.log(req.body)
-
+	
 	if (req.session.logged_in != null && req.session.logged_in == true){
 		// editing_permission = true
 		console.log('user logged in')
@@ -1179,32 +1180,33 @@ app.post('/gkrenametopic', async (req,res) =>{
 
 	if (req.body.parent == 'null') var parent_child_combo = req.body.old_child
 	else var parent_child_combo = req.body.parent+'-'+req.body.old_child
+	// parent_child_combo = AA-INSIDE AA
 	console.log(parent_child_combo)
 	var index_to_be_replaced = parent_child_combo.split('-').length - 1
 
 	// first find all the parents with exactly == req.body.old_child in the table
 	// if req.body.parent == 'null'
 	var result_ = []
-	if (req.body.parent == 'null'){
-		// result_ = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
-		try	{	
-			var result = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
-			result = result[0]
-			// saving all the result to result_
-			for (var i=0; i<result.length; i++){
-				result_.push(result[i])
-			}
-		}
-		catch (err) {
-			console.log(err)//throw err;
-			res.json('failed')
-			return
-		}
+	// if (req.body.parent == 'null'){
+	// 	// result_ = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
+	// 	try	{	
+	// 		var result = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
+	// 		result = result[0]
+	// 		// saving all the result to result_
+	// 		for (var i=0; i<result.length; i++){
+	// 			result_.push(result[i])
+	// 		}
+	// 	}
+	// 	catch (err) {
+	// 		console.log(err)//throw err;
+	// 		res.json('failed')
+	// 		return
+	// 	}
 			
-	}
+	// }
 	// then we find all the parents starting with parent_child_combo along with '-' symbol
 	// so that sql doesn't return AA when looking for just A
-	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"-%'", function(err,result,fields){
+	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"-%' OR parent = '"+parent_child_combo+"'", function(err,result,fields){
 		if (err){
 			console.log(err)
 			res.json('failed')
