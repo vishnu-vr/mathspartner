@@ -219,6 +219,13 @@
         x.value = x.value.toUpperCase();
     }
 
+    // check for '-' in new names or renames
+    function hyphen_present(name){
+      // if '-' is present then return true
+      if (name.includes('-')) return true
+      else return false
+    }
+
     var modal_add_quiz = document.getElementById('modal-add-quiz')
     var modal_add_topic = document.getElementById('modal-add-topic')
     // new_topic
@@ -381,6 +388,11 @@
         alert('enter a name first')
         return
       }
+      // checking for hyphens
+      if (hyphen_present(new_topic_name)){
+        alert('Sorry hyphens("-") are not allowed in names')
+        return
+      }
       if (topics.includes(new_topic_name)) {
         alert('name already exists')
         return
@@ -402,6 +414,11 @@
     function new_youtube_submit(){
       if (youtube_name_input.value.trim() == '' || youtube_link_input.value.trim() == ''){
         alert('enter all the details')
+        return
+      }
+      // checking for hyphens
+      if (hyphen_present(youtube_name_input.value.trim())){
+        alert('Sorry hyphens("-") are not allowed in names')
         return
       }
       if (topics.includes(youtube_name_input.value.trim())){
@@ -530,6 +547,11 @@
         alert('enter a valid input')
         return
       }
+      // checking for hyphens
+      if (hyphen_present(audio_name_input.value.trim())){
+        alert('Sorry hyphens("-") are not allowed in names')
+        return
+      }
       if (topics.includes(audio_name_input.value.trim())){
         alert('name already exists')
         return
@@ -552,6 +574,11 @@
       // alert(topic_name_input.value)
       if (topic_name_input.value.trim() == '') {
         alert('enter a topic name')
+        return
+      }
+      // checking for hyphens
+      if (hyphen_present(topic_name_input.value.trim())){
+        alert('Sorry hyphens("-") are not allowed in names')
         return
       }
       // check whether name already exists in this section
@@ -594,6 +621,12 @@
           return
       }
       else console.log(topic_name.value)
+
+      // checking for hyphens
+      if (hyphen_present(topic_name.value.trim())){
+        alert('Sorry hyphens("-") are not allowed in names')
+        return
+      }
 
       // duration check
       var duration_input = document.getElementById('duration_input')
