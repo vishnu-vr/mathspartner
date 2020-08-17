@@ -3,7 +3,8 @@ const exphbs = require('express-handlebars')
 const path = require('path')
 const help = require('./helper_functions')
 var creds = require('./creds')
-const mysql = require('mysql2/promise');//require('mysql');
+// const mysql = require('mysql2/promise');//require('mysql');
+const mysql = require('mysql2');
 const { table, Console } = require('console')
 const { json } = require('express')
 const session = require('express-session')
@@ -89,7 +90,7 @@ app.get('/logout', (req,res) => {
 // login verification
 app.post('/user_authentication', (req,res) => {
 	console.log(req.body)
-	new_con.query("SELECT * FROM login where username = '"+req.body.username+"'", function (err, result, fields) {
+	new_con.query("SELECT * FROM login where username = ?",[req.body.username] , function (err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -122,7 +123,7 @@ app.get('/gk/:parent', (req,res) =>{
 		console.log('user logged in')
 	}
 
-	new_con.query("SELECT * FROM gk where parent = '"+parent+"'", function (err, result, fields) {
+	new_con.query("SELECT * FROM gk where parent = ?",[parent] , function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.send("<h1>something went wrong</h1>")
@@ -228,7 +229,7 @@ app.post('/gkaddyoutube', (req,res) =>{
 	var id = splitted[1]
 
 	// adding parent and child
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '"+id+"', 'youtube');", function(err, result, fields) {
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', ?, 'youtube');", [req.body.parent, req.body.child, id], function(err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -239,7 +240,7 @@ app.post('/gkaddyoutube', (req,res) =>{
 		else var new_parent = req.body.parent + '-' + req.body.child
 		var new_child = 'youtube'
 				
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"', 'youtube');", function (err, result, fields) {
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', ?, 'youtube');", [new_parent, new_child, id], function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
@@ -264,7 +265,7 @@ app.post('/gkaddaudio', (req,res) =>{
 	}
 
 	// adding parent and child
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body.parent+"', '"+req.body.child+"', '', '', '', 'audio');", function(err, result, fields) {
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', '', 'audio');", [req.body.parent, req.body.child], function(err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -275,7 +276,7 @@ app.post('/gkaddaudio', (req,res) =>{
 		else var new_parent = req.body.parent + '-' + req.body.child
 		var new_child = 'audio'
 		var id = req.body.link.split('/')[5]
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '', '', '"+id+"', 'audio');", function (err, result, fields) {
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', ?, 'audio');", [new_parent, new_child, id], function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
@@ -289,6 +290,7 @@ app.post('/gkaddaudio', (req,res) =>{
 // gk quiz
 app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 	var quiz = req.params.quiz
+	quiz = quiz.toUpperCase()
 	console.log(quiz)
 
 	var editing_permission = false
@@ -298,7 +300,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 	}
 
 	// check whether the quiz is on or off
-	new_con.query("SELECT * FROM gk WHERE parent = '"+quiz+"'", function (err, result, fields) {
+	new_con.query("SELECT * FROM gk WHERE parent = ?", [quiz], function (err, result, fields) {
 		if (err) {
 			console.log(err)//throw err;
 			res.render('error')
@@ -319,13 +321,12 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 			res.render('error')
 			return
 		}
-		// console.log('asd')
+		console.log('asd')
 		var on_off = result[0].on_off
 		var duration = result[0].duration
 		var pdf_path = result[0].pdf_path
-		let sql = "SELECT * FROM `"+quiz+"`"
-		console.log(sql)
-		new_con.query(sql, function (err, result, fields) {
+
+		new_con.query("SELECT * FROM ??", [quiz], function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.render('error')
@@ -366,7 +367,7 @@ app.post('/gk_edit_quiz', (req,res) =>{
 	}
 	// res.json('success')
 	// return
-	new_con.query("TRUNCATE TABLE `"+req.body[0].whole_quiz_name+"`", function (err,result,fields) {
+	new_con.query("TRUNCATE TABLE ??", [req.body[0].whole_quiz_name], function (err,result,fields) {
 		if (err) {
 			console.log(err)
 			res.json('failed')
@@ -376,8 +377,8 @@ app.post('/gk_edit_quiz', (req,res) =>{
 		// add the rows again
 		var data = req.body
 		for (var i=0; i<data.length; i++){
-			var sql = "INSERT INTO `"+req.body[0].whole_quiz_name+"` VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
-			new_con.query(sql, function (err, result) {
+			var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?)";
+			new_con.query(sql, [req.body[0].whole_quiz_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct], function (err, result) {
 			if (err) {
 				console.log(err)//throw err;
 				console.log("row " +(i+1)+" failed");
@@ -387,14 +388,16 @@ app.post('/gk_edit_quiz', (req,res) =>{
 
 			// if (i == data.length - 1) res.json('success')
 		}
-
-		new_con.query("UPDATE gk SET on_off = '"+req.body[0].on_off+"' WHERE parent = '"+req.body[0].whole_quiz_name+"'", function (err,result,fields) {
+		// console.log(req.body[0])
+		if (req.body[0].on_off) var on_off = 'true'
+		else var on_off = 'false'
+		new_con.query("UPDATE gk SET on_off = ? WHERE parent = ?", [on_off, req.body[0].whole_quiz_name], function (err,result,fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
 				return
 			}
-			new_con.query("UPDATE gk SET duration = '"+req.body[0].duration*60+"' WHERE parent = '"+req.body[0].whole_quiz_name+"'", function (err,result,fields) {
+			new_con.query("UPDATE gk SET duration = ? WHERE parent = ?", [req.body[0].duration*60, req.body[0].whole_quiz_name], function (err,result,fields) {
 				if (err) {
 					console.log(err)
 					res.json('failed')
@@ -417,7 +420,7 @@ app.post('/gk_add_quiz', (req,res) =>{
 		// console.log("USER NOT LOGGED IN")
 	}
 	// adding parent and child
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+req.body[0].parent_child_details.parent+"', '"+req.body[0].parent_child_details.child+"', '', '', '', 'quiz');", function(err, result, fields) {
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', '', 'quiz');", [req.body[0].parent_child_details.parent, req.body[0].parent_child_details.child], function(err, result, fields) {
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -426,8 +429,12 @@ app.post('/gk_add_quiz', (req,res) =>{
 		// adding parent+child and null (to indicate quiz)
 		if (req.body[0].parent_child_details.parent == 'null')  var new_parent = req.body[0].parent_child_details.child
 		else var new_parent = req.body[0].parent_child_details.parent + '-' + req.body[0].parent_child_details.child
+		
 		var new_child = 'null'
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, '"+new_parent+"', '"+new_child+"', '"+req.body[0].on_off+"', '"+req.body[0].duration*60+"', '', 'quiz');", function (err, result, fields) {
+
+		if (req.body[0].on_off) var on_off = 'true'
+		else var on_off = 'false'
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, ?, ?, '', 'quiz');", [new_parent, new_child, on_off, req.body[0].duration*60], function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
@@ -436,9 +443,9 @@ app.post('/gk_add_quiz', (req,res) =>{
 			// console.log("ASdasdasdasdadasdasdasd")
 			// adding quiz table
 			var table_name = new_parent.toString()
-			var sql = "CREATE TABLE `"+table_name+"` ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
+			var sql = "CREATE TABLE ?? ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
 			var data = req.body
-			new_con.query(sql, function (err, result) {
+			new_con.query(sql, [table_name], function (err, result) {
 				if (err) {
 					console.log(err)//throw err;
 					res.json('failed')
@@ -447,8 +454,8 @@ app.post('/gk_add_quiz', (req,res) =>{
 				console.log("Table created");
 				// then add the questions
 				for (var i=0; i<data.length; i++){
-					var sql = "INSERT INTO `"+table_name+"` VALUES ("+(i+1)+", '"+data[i].question+"', '"+data[i].options[0]+"', '"+data[i].options[1]+"', '"+data[i].options[2]+"', '"+data[i].options[3]+"', '"+data[i].correct+"')";
-					new_con.query(sql, function (err, result) {
+					var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?)";
+					new_con.query(sql, [table_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct], function (err, result) {
 					if (err) {
 						console.log(err)//throw err;
 						console.log("row " +(i+1)+" failed");
@@ -474,7 +481,7 @@ app.post('/gk_add_new_topic', (req,res) =>{
 
 	console.log(req.body)
 	for (var i=0; i<req.body.length; i++){
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, '"+req.body[i].parent+"', '"+req.body[i].child+"', '', '', '');", function(err, result, fields) {
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`) VALUES (NULL, ?, ?, '', '', '');", [req.body[i].parent, req.body[i].child], function(err, result, fields) {
 			if (err){
 				console.log(err)
 				res.json('failed')
@@ -491,7 +498,8 @@ app.post('/gk_add_new_topic', (req,res) =>{
 app.post('/save_user_results', (req,res) => {
 	console.log(req.body)
 	const data = req.body
-	new_con.query("INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`, `time_taken`) VALUES (NULL, '"+data.name+"', '"+parseFloat(data.score)+"', '"+data.correct+"', '"+data.wrong+"', '"+data.na+"', '"+data.date+"', '"+data.quiz_name+"', '"+data.time_taken+"')", function (err, result) {
+	var sql = "INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`, `time_taken`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"
+	new_con.query(sql, [data.name, parseFloat(data.score), data.correct, data.wrong, data.na, data.date, data.quiz_name, data.time_taken], function (err, result) {
 		if (err) {
 			console.log(err)
 			res.json("failed")
@@ -505,7 +513,7 @@ app.post('/save_user_results', (req,res) => {
 // get_user_details
 app.post('/get_user_details', (req,res) =>{
 	const date_chosen = req.body.date_chosen
-	new_con.query("SELECT * FROM `user_details` WHERE `date` = '"+date_chosen+"' ORDER BY score DESC,time_taken ASC", function (err,result) {
+	new_con.query("SELECT * FROM `user_details` WHERE `date` = ? ORDER BY score DESC,time_taken ASC", [date_chosen], function (err,result) {
 		if (err){
 			console.log(err)
 			res.json(null)
@@ -572,26 +580,9 @@ app.post('/gkrenametopic', async (req,res) =>{
 	// first find all the parents with exactly == req.body.old_child in the table
 	// if req.body.parent == 'null'
 	var result_ = []
-	// if (req.body.parent == 'null'){
-	// 	// result_ = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
-	// 	try	{	
-	// 		var result = await new_con.query("SELECT * FROM gk WHERE parent = '"+req.body.old_child+"'")
-	// 		result = result[0]
-	// 		// saving all the result to result_
-	// 		for (var i=0; i<result.length; i++){
-	// 			result_.push(result[i])
-	// 		}
-	// 	}
-	// 	catch (err) {
-	// 		console.log(err)//throw err;
-	// 		res.json('failed')
-	// 		return
-	// 	}
-			
-	// }
 	// then we find all the parents starting with parent_child_combo along with '-' symbol
 	// so that sql doesn't return AA when looking for just A
-	new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent_child_combo+"-%' OR parent = '"+parent_child_combo+"'", function(err,result,fields){
+	new_con.query("SELECT * FROM gk WHERE parent LIKE ? OR parent = ?", [parent_child_combo+'-%', parent_child_combo], function(err,result,fields){
 		if (err){
 			console.log(err)
 			res.json('failed')
@@ -612,7 +603,7 @@ app.post('/gkrenametopic', async (req,res) =>{
 			new_name[index_to_be_replaced] = req.body.new_child
 			new_name = new_name.join('-')
 			console.log(old_name+' --> '+new_name)
-			new_con.query("UPDATE gk SET parent = '"+new_name+"' WHERE parent = '"+old_name+"'", function (err,result,field){
+			new_con.query("UPDATE gk SET parent = ? WHERE parent = ?", [new_name, old_name], function (err,result,field){
 				if (err) {
 					console.log(err)
 					res.json('failed')
@@ -622,7 +613,7 @@ app.post('/gkrenametopic', async (req,res) =>{
 			// renaming quiz tables
 			if (result_[i].child == 'null'){
 				// console.log(old_name+' --> '+new_name)
-				new_con.query("ALTER TABLE `"+old_name+"` RENAME TO `"+new_name+"`", function(err,result,fields){
+				new_con.query("ALTER TABLE ?? RENAME TO ??", [old_name, new_name], function(err,result,fields){
 					if (err){
 						console.log(err)
 						res.json('failed')
@@ -632,7 +623,7 @@ app.post('/gkrenametopic', async (req,res) =>{
 			}
 		}
 		// after all that rename the child
-		new_con.query("UPDATE gk SET child = '"+req.body.new_child+"' WHERE parent = '"+req.body.parent+"' AND child = '"+req.body.old_child+"'", function (err,result,fields){
+		new_con.query("UPDATE gk SET child = ? WHERE parent = ? AND child = ?", [req.body.new_child, req.body.parent, req.body.old_child], function (err,result,fields){
 			if (err){
 				console.log(err)
 				res.json('failed')
@@ -662,7 +653,7 @@ app.post('/gkdeletetopic', (req,res) =>{
 
 	var quiz_tables = []
 	var current_pdf = 0
-	new_con.query("DELETE FROM gk WHERE parent = '"+req.body.parent+"' AND child = '"+req.body.child+"'", function (err,result,fields) {
+	new_con.query("DELETE FROM gk WHERE parent = ? AND child = ?", [req.body.parent, req.body.child], function (err,result,fields) {
 		if (err) {
 			console.log(err)
 			res.json('failed')
@@ -674,7 +665,7 @@ app.post('/gkdeletetopic', (req,res) =>{
 		// console.log(parent)
 		// before deleting every row entry, first find quizes under this topic
 		// and delete all the quiz tables
-		new_con.query("SELECT * FROM gk WHERE parent LIKE '"+parent+"-%' OR parent = '"+parent+"'", function (err,result,field) {
+		new_con.query("SELECT * FROM gk WHERE parent LIKE ? OR parent = ?", [parent+'-%', parent], function (err,result,field) {
 			if (err){
 				console.log(err)
 				res.json('failed')
@@ -701,7 +692,7 @@ app.post('/gkdeletetopic', (req,res) =>{
 				
 					console.log('file removed')
 				})
-				new_con.query("DROP TABLE `"+result[i].parent+"`", function (err,result,fields) {
+				new_con.query("DROP TABLE ??", [result[i].parent], function (err,result,fields) {
 					if (err){
 						console.log(err)
 						res.json('failed')
@@ -711,7 +702,7 @@ app.post('/gkdeletetopic', (req,res) =>{
 				})
 			}
 
-			new_con.query("DELETE FROM gk WHERE parent LIKE '"+parent+"-%' OR parent = '"+parent+"'", function (err,result,field) {
+			new_con.query("DELETE FROM gk WHERE parent LIKE ? OR parent = ?", [parent+'-%', parent], function (err,result,field) {
 				if (err){
 					console.log(err)
 					res.json('failed')
@@ -748,7 +739,7 @@ app.post('/gkfileupload', (req,res) => {
 			return
 		}
 		file_path = '/pdf_uploads/'+name+'.pdf'
-		new_con.query("UPDATE gk SET pdf_path = '"+file_path+"' WHERE parent = '"+name+"'", function (err, result, fields) {
+		new_con.query("UPDATE gk SET pdf_path = ? WHERE parent = ?", [file_path, name], function (err, result, fields) {
 			if (err) {
 				console.log(err)//throw err;
 				res.json('failed')
