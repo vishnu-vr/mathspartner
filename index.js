@@ -551,8 +551,13 @@ app.get('/user_ranks', (req,res) =>{
 
 // audio
 app.get('/audio/:parent/:id', (req,res) =>{
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
 	console.log(req.params.parent)
-	res.render('audio', {title:"audio", audio_name: req.params.parent,nav_selected:"gk", src:req.params.id})
+	res.render('audio', {title:"audio", audio_name: req.params.parent,nav_selected:"gk", src:req.params.id, editing_permission})
 })
 
 // gkrenametopic
