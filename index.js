@@ -1526,7 +1526,7 @@ app.post('/testbody' ,(req,res) => {
 // 	res.send("<h1>hello world!!</h1>")
 // })
 
-var dic = {name:'vishnu',age:'21'}
+var dic = {name:'vishnu',age:'21',year:'2020'}
 
 // api tests
 // get
