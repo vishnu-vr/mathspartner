@@ -10,6 +10,7 @@ const { json } = require('express')
 const session = require('express-session')
 const fileupload = require('express-fileupload')
 const fs = require('fs');
+const { spawn } = require("child_process");
 
 var util = require('util');
 var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
@@ -766,6 +767,31 @@ app.get('/youtube/:parent/:src', (req,res) =>{
 	// editing_permission
 	res.render('youtube',{title:"YouTube", nav_selected:"classes", heading:req.params.parent, link:req.params.src, editing_permission})
 })
+
+app.post('/github_update/the_secret_key', function(req, res) {
+	console.log('update_received')
+	// console.log(req.body)
+	const ls = spawn("python3", ["update.py"]);
+	
+	ls.stdout.on("data", data => {
+		console.log(`stdout: ${data}`);
+	});
+  
+	ls.stderr.on("data", data => {
+		console.log(`stderr: ${data}`);
+	});
+  
+	ls.on('error', (error) => {
+		console.log(`error: ${error.message}`);
+	});
+  
+	ls.on("close", code => {
+		console.log(`child process exited with code ${code}`);
+	});
+  
+	res.json({'status':'updated'})
+  
+  });
 
 // // dashboard
 // app.get('/dashboard', (req,res) => {
