@@ -1531,7 +1531,7 @@ var dic = {name:'vishnu',age:'21'}
 // api tests
 // get
 app.get('/api', (req,res) => {
-	res.send("<h1>something went wrong</h1>")
+	res.json(dic)
 })
 // post with param in url
 app.post('/api/', (req,res) => {
@@ -1550,8 +1550,8 @@ app.get('/author', (req,res) => {
 })
 
 // amazon ec2 micro
-app.get('/amazon', (req,res) => {
-	res.redirect(creds.amazon)
+app.get('/phpmyadmin_login', (req,res) => {
+	res.redirect("http://18.221.233.238/phpmyadmin/")
 })
 
 // ######################################################################
