@@ -69,10 +69,16 @@ app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
 
 // ########################### HTML RENDERING ###########################################
 
-// home
+// landing_page
 app.get('/', (req,res) => {
 	// res.render('home', {title:"Maths Partner"})
 	res.redirect('/gk/null')
+})
+
+// home
+app.get('/home', (req,res) => {
+	res.render('home', {title:"Maths Partner"})
+	// res.redirect('/gk/null')
 })
 
 // login

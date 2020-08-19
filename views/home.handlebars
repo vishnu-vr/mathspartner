@@ -1,10 +1,20 @@
+<link rel="stylesheet" href="/css/animtation_from_material_design.css">
+
 <div class="row">
-  <div class="col-sm">
-    <h1 class="mt-4 text-center">HOME</h1>
+  <div class="col-sm text-center">
+    {{!-- <h1 class="mt-4 text-center">HOME</h1> --}}
+
+    <h4 class="mt-4 animated fadeInUp text-primary" id="animated-text">Welcome To Maths Partner</h4>
+
   </div>
 </div>
 
 <script>
+    // set the title
     document.getElementById('title').innerText = "{{title}}"
-</script>
+    
+    {{!-- // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active' --}}
 
+</script>
