@@ -12,14 +12,14 @@
 
         <title id="title"></title>
     </head>
-    <body>
+    <body id='body'>
         <div id='logout_button' class="mt-2 mr-4 text-right" style="display:none;">
             <button type="button" class="btn btn-danger" onclick="logout()">Logout</button>
         </div>
         <div class="container mt-5">
             <div style="text-align:center;">
                 <div onclick="location.href = '/'">
-                    <p class="text-monospace" style="color: #007bff;">MATHS PARTNER</p>
+                    <p id='mp_name' class="text-monospace" style="color: #007bff;">MATHS PARTNER</p>
                 </div>
             </div>
             <nav id="nav" style="display:{{none}} ;" class="nav nav-pills flex-column flex-sm-row mt-5 border rounded border-dark">
@@ -41,7 +41,7 @@
     <footer class="page-footer font-small blue mt-4">
 
     <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">© 2020 Copyright:
+    <div id='copy_right_tag' class="footer-copyright text-center py-3" style='color:black;'>© 2020 Copyright:
         <a href="http://mathspartner.com/"> mathspartner.com</a>
         {{!-- <button type="button" class="btn btn-dark">Dark</button> --}}
         {{!-- login button --}}
@@ -69,5 +69,11 @@
 
     function logout(){
       window.location.href = '/logout'
+    }
+
+    if ('{{page}}') {
+        document.getElementById('copy_right_tag').style.color = 'black'
+        document.getElementById('mp_name').style.color = 'black'
+        
     }
 </script>

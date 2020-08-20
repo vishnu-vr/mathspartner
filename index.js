@@ -69,15 +69,20 @@ app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
 
 // ########################### HTML RENDERING ###########################################
 
-// landing_page
-app.get('/', (req,res) => {
-	// res.render('home', {title:"Maths Partner"})
-	res.redirect('/gk/null')
-})
+// // landing_page
+// app.get('/', (req,res) => {
+// 	// res.render('home', {title:"Maths Partner"})
+// 	res.redirect('/gk/null')
+// })
 
 // home
-app.get('/home', (req,res) => {
-	res.render('home', {title:"Maths Partner"})
+app.get('/', (req,res) => {
+	var editing_permission = false
+	if (req.session.logged_in != null && req.session.logged_in == true){
+		editing_permission = true
+		console.log('user logged in')
+	}
+	res.render('home', {title:"Maths Partner", editing_permission, page:'home'})
 	// res.redirect('/gk/null')
 })
 

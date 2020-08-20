@@ -1,20 +1,115 @@
 <link rel="stylesheet" href="/css/animtation_from_material_design.css">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hi+Melody&display=swap" rel="stylesheet">
+
+{{!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/css/mdb.min.css" rel="stylesheet"> --}}
 
 <div class="row">
   <div class="col-sm text-center">
     {{!-- <h1 class="mt-4 text-center">HOME</h1> --}}
+{{!-- background-image: url('/images/317867956.jpg'); --}}
+    <div id='cut_out_div' class='mt-4 pb-4 mb-4' style="border-style: groove;">
+      
+      <h1 class="mt-4 pt-4 animated fadeInUp text-primary google_fonts" id="animated-text">Welcome To Maths Partner</h1>
 
-    <h4 class="mt-4 animated fadeInUp text-primary" id="animated-text">Welcome To Maths Partner</h4>
+      <div class="row mt-4">
+
+        {{!-- first column --}}
+        <div class="col-sm mt-4 text-center d-flex justify-content-center" onclick="clicked('quiz')">
+
+          <div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+            {{!-- <div class="card-header">Header</div> --}}
+            <img src="/images/math.jpg" class="card-img-top" alt="...">
+            <div class="card-body text-white">
+              <h5 class="card-title">Quiz</h5>
+              <p class="card-text">Want to test your PSC Knowledge? Take a quiz.</p>
+            </div>
+          </div>
+
+        </div>
+        {{!-- //first column --}}
+
+        {{!-- second column --}}
+        <div class="col-sm mt-4 text-center d-flex justify-content-center" onclick="clicked('youtube')">
+
+          <div class="card border-dark mb-3" style="max-width: 18rem;">
+            {{!-- <div class="card-header">Header</div> --}}
+            <img src="/images/classes.png" class="card-img-top" alt="...">
+            <div class="card-body text-dark">
+              <h5 class="card-title">Classes</h5>
+              <p class="card-text">Want to learn something new? Watch some classes.</p>
+            </div>
+          </div>
+
+        </div>
+        {{!-- //second column --}}
+
+      </div>
+
+
+    </div>
 
   </div>
 </div>
+
 
 <script>
     // set the title
     document.getElementById('title').innerText = "{{title}}"
     
+    // set background color
+    {{!-- document.getElementById('body').style.backgroundColor = 'currentColor' --}}
+    document.getElementById('body').className = 'body_bg'
+    document.getElementById('cut_out_div').className = 'mt-4 pb-4 mb-4 bg_cut_out_div'
+    
+
     {{!-- // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active' --}}
 
+    function clicked(card){
+      if (card == 'quiz') window.location.href = '/gk/null'
+      else if (card == 'youtube') window.location.href = '/gk/YOUTUBE'
+    }
+
 </script>
+
+<style>
+  .body_bg{
+    background-color:#fefefe;
+    {{!-- background-image: url('/images/geom.jpg'); --}}
+    {{!-- background-image: url('https://mirafra.com/wp-content/uploads/2016/10/Light-Grey-Background-Hd-5-1024x640.jpg'); --}}
+    {{!-- background-repeat: no-repeat;
+    background-size: 100%; --}}
+    background-size: contain;
+    {{!-- background-size: cover; --}}
+  }
+
+  .bg_cut_out_div{
+    background-image: url('/images/geom.jpg');
+    background-size: contain;
+    {{!-- background-color: black; --}}
+    {{!-- background-color: #f7f7f7; --}}
+    {{!-- background-image: url('https://previews.123rf.com/images/poganka06/poganka061703/poganka06170300007/73467511-geometry-shapes-round-stamp-symbol-isometric-outline-black-obgects-linear-math-icon-isolated-on-whit.jpg'); --}}
+  }
+
+  a{
+    color: black !important;
+  }
+
+  .google_fonts{
+    color: black !important;
+    font-size: xxx-large;
+    font-family: 'Hi Melody', cursive;
+    {{!-- font-family: 'Patrick Hand', cursive; --}}
+    {{!-- font-family: 'Sacramento', cursive; --}}
+    {{!-- font-family: 'Pacifico', cursive; --}}
+    {{!-- font-family: 'Indie Flower', cursive; --}}
+    font-weight: bold;
+    {{!-- font-family: 'Dancing Script', cursive; --}}
+  }
+</style>
