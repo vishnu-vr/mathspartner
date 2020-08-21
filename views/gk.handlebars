@@ -21,6 +21,14 @@
         </button>
       </div>
       <div class="modal-body text-center">
+
+        <div class="text-center mb-3" id='loading' hidden>
+          <h3>Please Wait</h3>
+          <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
         <button type="button" class="btn btn-primary mt-2 ml-2" onclick="new_topic()">New Topic ?</button>
         <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_quiz()">New Quiz ?</button>
         <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_audio()">New Audio ?</button>
@@ -73,14 +81,6 @@
             {{!-- submit button --}}
             <br>
             <button id="final_submit" type="button" class="btn btn-primary mt-4" onclick="final_submit()">Submit</button>
-            
-            <div class="text-center mt-4" id='loading' hidden>
-              <h3>Please Wait</h3>
-              <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-              </div>
-            </div>
-
 
         </div>
 
@@ -94,7 +94,7 @@
                 <input id="topic_name_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" onkeyup="uppercase('topic_name_input')">
                 </div>
             </div>
-            <button type="button" class="btn btn-primary mt-2" onclick="new_topic_submit()">Submit</button>
+            <button type="button" id='new_topic_submit' class="btn btn-primary mt-2" onclick="new_topic_submit()">Submit</button>
         </div>
 
         <div id='modal-add-audio' class="mt-4 text-left" hidden>
@@ -114,7 +114,7 @@
                 </div>
 
             </div>
-            <button type="button" class="btn btn-primary mt-2" onclick="new_audio_submit()">Submit</button>
+            <button type="button" id='new_audio_submit' class="btn btn-primary mt-2" onclick="new_audio_submit()">Submit</button>
         </div>
 
         <div id='modal-add-youtube' class="mt-4 text-left" hidden>
@@ -134,7 +134,7 @@
                 </div>
 
             </div>
-            <button type="button" class="btn btn-primary mt-2" onclick="new_youtube_submit()">Submit</button>
+            <button type="button" id='new_youtube_submit' class="btn btn-primary mt-2" onclick="new_youtube_submit()">Submit</button>
         </div>
 
 
@@ -427,6 +427,9 @@
       }
       if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
       else var parent = heading_of_page.trim()
+
+      disable_btn_and_loading_spinner('new_youtube_submit')
+      
       postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()})
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
@@ -560,6 +563,9 @@
       if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
       else var parent = heading_of_page.trim()
       var data_to_send = {'parent':parent, 'child':audio_name_input.value.trim(), 'link':audio_link_input.value.trim()}
+
+      disable_btn_and_loading_spinner('new_audio_submit')
+
       postData('/gkaddaudio', data_to_send)
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
@@ -567,6 +573,14 @@
           else alert(data)
         });
 
+    }
+
+    // disabling the button and loading spinner
+    function disable_btn_and_loading_spinner(submit_btn){
+      // loading spinner
+      document.getElementById('loading').hidden = false
+      // disabling final submit
+      document.getElementById(submit_btn).disabled = true
     }
 
     var topic_name_input = document.getElementById('topic_name_input')
@@ -598,6 +612,9 @@
         dic_to_send.push({'parent':heading_of_page.trim().toUpperCase(), 'child':topic_name_input.value.trim().toUpperCase()})
         // dic_to_send.push({'parent':heading_of_page.trim().toUpperCase()+'-'+topic_name_input.value.trim().toUpperCase(), 'child':'uc'})
       }
+
+      disable_btn_and_loading_spinner('new_topic_submit')
+
       console.log(dic_to_send)
       postData('/gk_add_new_topic', dic_to_send)
         .then(data => {
@@ -750,10 +767,12 @@
       console.log(questions_and_options_dic)
       {{!-- return --}}
 
-      // loading spinner
+      {{!-- // loading spinner
       document.getElementById('loading').hidden = false
       // disabling final submit
-      document.getElementById('final_submit').disabled = true
+      document.getElementById('final_submit').disabled = true --}}
+
+      disable_btn_and_loading_spinner('final_submit')
 
       postData(url, questions_and_options_dic)
       .then(data => {
