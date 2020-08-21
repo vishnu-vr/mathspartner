@@ -239,6 +239,10 @@ app.post('/gkaddyoutube', (req,res) =>{
 	var splitted = req.body.link.trim().split(' ')
 	splitted = splitted[3].split('"')
 	var id = splitted[1]
+	// checking whether the link contains '?' question mark
+	// ie if the link is taken from a playlist
+	id = id.split('?')
+	id = id[0]
 
 	// adding parent and child
 	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, '', '', ?, 'youtube');", [req.body.parent, req.body.child, id], function(err, result, fields) {
