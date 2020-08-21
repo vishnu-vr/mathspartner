@@ -44,6 +44,16 @@
             {{!-- editing quiz --}}
             <div id='edit_quiz' class="mt-4 text-left" hidden>
 
+                {{!-- test link --}}
+                <div id='test_link' class="mt-4">
+                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-sm">Test Link</span>
+                    </div>
+                    <input id="test_link_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" readonly>
+                    </div>
+                </div>
+
                 {{!-- topic name (name of the quiz) --}}
                 <div id='quiz_name' class="mt-4">
                     <div class="input-group input-group-sm mb-3">
@@ -192,6 +202,15 @@
     function logout(){
       window.location.href = '/logout'
     }
+
+    function copy_test_link(){
+        var link = location.href.split('/')
+        link[link.length-1] = 'test'
+        var test_link_inp = document.getElementById('test_link_input')
+        test_link_inp.value = link.join('/')
+    }
+
+    copy_test_link()
 
     // to add more question
     const questions_and_options = document.getElementById('questions_and_options')
