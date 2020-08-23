@@ -647,12 +647,22 @@
         return
       }
 
+      dic_to_send = {'child':online_class_name_input.value.trim().toUpperCase(),
+                      'date':online_class_date_input.value,
+                      'time':online_class_time_input.value}
+
+      // if this is the root
+      if (heading_of_page.trim().toLowerCase() == 'topics'){
+        dic_to_send['parent'] = 'null'
+      }
+      // if not the root
+      else {
+        dic_to_send['parent'] = heading_of_page.trim().toUpperCase()
+      }
+
       disable_btn_and_loading_spinner('new_online_class_submit')
       
-      postData('/new_online_class', {'parent':heading_of_page.trim().toUpperCase(),
-                                     'child':online_class_name_input.value.trim().toUpperCase(),
-                                     'date':online_class_date_input.value,
-                                     'time':online_class_time_input.value})
+      postData('/new_online_class', dic_to_send)
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload();
