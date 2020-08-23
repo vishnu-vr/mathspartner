@@ -29,10 +29,11 @@
           </div>
         </div>
 
-        <button type="button" class="btn btn-primary mt-2 ml-2" onclick="new_topic()">New Topic ?</button>
-        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_quiz()">New Quiz ?</button>
-        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_audio()">New Audio ?</button>
-        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="new_youtube()">New YouTube ?</button>
+        <button type="button" class="btn btn-primary mt-2 ml-2" onclick="show_hide_modals('modal-add-topic')">New Topic ?</button>
+        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="show_hide_modals('modal-add-quiz')">New Quiz ?</button>
+        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="show_hide_modals('modal-add-audio')">New Audio ?</button>
+        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="show_hide_modals('modal-add-youtube')">New YouTube ?</button>
+        <button type="button" class="btn btn-primary ml-2 mt-2" onclick="show_hide_modals('modal-add-online-class')">New Online Class ?</button>
 
         <div id='modal-add-quiz' class="mt-4 text-left" hidden>
 
@@ -137,6 +138,32 @@
             <button type="button" id='new_youtube_submit' class="btn btn-primary mt-2" onclick="new_youtube_submit()">Submit</button>
         </div>
 
+        <div id='modal-add-online-class' class="mt-4 text-left" hidden>
+            {{!-- online_class name --}}
+            <div id='online_class_name' class="mt-4">
+                <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Topic Name</span>
+                </div>
+                <input id="online_class_name_input" type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" onkeyup="uppercase('online_class_name_input')">
+                </div>
+                <div class="input-group input-group-sm mb-3 mt-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Date</span>
+                </div>
+                <input id="online_class_date_input" type="date" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                </div>
+                <div class="input-group input-group-sm mb-3 mt-4">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">Time</span>
+                </div>
+                <input id="online_class_time_input" type="time" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                </div>
+
+            </div>
+            <button type="button" id='new_online_class_submit' class="btn btn-primary mt-2" onclick="new_online_class_submit()">Submit</button>
+        </div>
+
 
       </div>
       <div class="modal-footer">
@@ -226,33 +253,17 @@
       else return false
     }
 
-    var modal_add_quiz = document.getElementById('modal-add-quiz')
-    var modal_add_topic = document.getElementById('modal-add-topic')
-    // new_topic
-    function new_topic(){
-      {{!-- modal_body_content.innerHTML = '' --}}
-      modal_add_quiz.hidden = true
-      modal_add_audio.hidden = true
-      modal_add_topic.hidden = false
-      modal_add_youtube.hidden = true
-    }
+    var list_of_modals = ['modal-add-quiz',
+                          'modal-add-topic',
+                          'modal-add-audio',
+                          'modal-add-youtube',
+                          'modal-add-online-class']
 
-    // new_quiz
-    function new_quiz(){
-      {{!-- modal_body_content.innerHTML = '' --}}
-      modal_add_quiz.hidden = false
-      modal_add_youtube.hidden = true
-      modal_add_audio.hidden = true
-      modal_add_topic.hidden = true
-      editing_mode = false
-    }
-
-    var modal_add_audio = document.getElementById('modal-add-audio')
-    function new_audio(){
-      modal_add_quiz.hidden = true
-      modal_add_topic.hidden = true
-      modal_add_audio.hidden = false
-      modal_add_youtube.hidden = true
+    function show_hide_modals(modal){
+      for (var i=0; i<list_of_modals.length; i++){
+        document.getElementById(list_of_modals[i]).hidden = true
+      }
+      document.getElementById(modal).hidden = false
     }
 
     function delete_question(question_num) {
@@ -437,54 +448,74 @@
           else alert(data)
         });
     }
-
-    // new_youtube
-    var modal_add_youtube = document.getElementById('modal-add-youtube')
-    function new_youtube(){
-      modal_add_youtube.hidden = false
-      modal_add_quiz.hidden = true
-      modal_add_topic.hidden = true
-      modal_add_audio.hidden = true
-    }
-
+    
     // creating topic cards
     const topic_body = document.getElementById('topic_body')
     function create_cards(topic,type){
       {{!-- topic_body.innerHTML = '' --}}
 
       var yt = false
+      var online_class = false
       if (type == 'audio') type = ' &#x1F3A7;'
       else if (type == 'quiz') type = ' &#x1F4D6;'
       // youtube
-      else if (type.split('##').length > 1){
+      else if (type.split('##').length > 1 && type.includes('youtube')){
         var yt_link = type.split('##')[1]
         yt_link = yt_link.split('/')[yt_link.split('/').length-1]
         type = ''
         yt = true
       }
+      else if (type.split('##').length > 1 && type.includes('online_class')) {
+        var date = type.split('##')[1]
+        var time = type.split('##')[2]
+        type = ''
+        online_class = true
+        // alert(date)
+      }
 
       // card title - h5
       var card_title = document.createElement('h5')
       card_title.id = i
-      if (topic == 'create_new') card_title.innerHTML = 'Create New'
+      // link button
+      var card_link = document.createElement('button')
+      card_link.type = 'button'
+      if (topic == 'create_new') {
+        card_title.innerHTML = 'Create New'
+        card_link.setAttribute('onclick','create_new()')
+        card_link.className = 'btn btn-warning'
+        card_link.innerText = 'add'
+      }
       else {
         card_title.innerHTML = topic + type
         card_title.setAttribute('ondblclick','show_rename_modal("'+topic+'")')
+        
+        card_link.className = 'btn btn-secondary'
+        if (online_class) {
+          card_link.innerText = 'register'
+          card_link.setAttribute('onclick','register("'+topic+'")')
+        }
+        else {
+          card_link.innerText = 'topic link'
+          card_link.setAttribute('onclick','topic_selected("'+topic+'")')
+        }
       }
-      // link button
-      var card_link = document.createElement('button')
-      if (topic == 'create_new') card_link.setAttribute('onclick','create_new()')
-      else card_link.setAttribute('onclick','topic_selected("'+topic+'")')
-      card_link.type = 'button'
-      if (topic == 'create_new') card_link.className = 'btn btn-warning'
-      else card_link.className = 'btn btn-secondary'
-      if (topic == 'create_new') card_link.innerText = 'add'
-      else card_link.innerText = 'topic link'
+
       // card-body - div
       var card_body = document.createElement('div')
       card_body.className = 'card-body'
       // appending above items
       card_body.appendChild(card_title)
+      // show date if it online class
+      if (online_class){
+        // date
+        var date_ = document.createElement('h5')
+        date_.innerHTML = 'Date : ' + date
+        card_body.appendChild(date_)
+        // time
+        var time_ = document.createElement('h5')
+        time_.innerHTML = 'Time : ' + time
+        card_body.appendChild(time_)
+      }
       card_body.appendChild(card_link)
 
       if (editing_permission == 'true' && topic != 'create_new'){
@@ -543,6 +574,10 @@
       else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_
     }
 
+    function register(class_name){
+      window.location = '/register/' + class_name
+    }
+
     var audio_name_input = document.getElementById('audio_name_input')
     var audio_link_input = document.getElementById('audio_link_input')
     function new_audio_submit(){
@@ -581,6 +616,49 @@
       document.getElementById('loading').hidden = false
       // disabling final submit
       document.getElementById(submit_btn).disabled = true
+    }
+
+    var online_class_name_input = document.getElementById('online_class_name_input')
+    var online_class_date_input = document.getElementById('online_class_date_input')
+    var online_class_time_input = document.getElementById('online_class_time_input')
+    function new_online_class_submit(){
+      if (online_class_name_input.value.trim() == ''){
+        alert('enter a topic name')
+        return
+      }
+      // date
+      if (online_class_date_input.value.trim() == ''){
+        alert('enter a date')
+        return
+      }
+      // time
+      if (online_class_time_input.value.trim() == ''){
+        alert('enter a time')
+        return
+      }
+      // checking for hyphens
+      if (hyphen_present(online_class_name_input.value.trim())){
+        alert('Sorry hyphens("-") are not allowed in names')
+        return
+      }
+      // check whether name already exists in this section
+      if (topics.includes(online_class_name_input.value.trim().toUpperCase())){
+        alert('name already exist in this section')
+        return
+      }
+
+      disable_btn_and_loading_spinner('new_online_class_submit')
+      
+      postData('/new_online_class', {'parent':heading_of_page.trim().toUpperCase(),
+                                     'child':online_class_name_input.value.trim().toUpperCase(),
+                                     'date':online_class_date_input.value,
+                                     'time':online_class_time_input.value})
+        .then(data => {
+          console.log(data); // JSON data parsed by `data.json()` call
+          if (data == 'success') location.reload();
+          else alert(data)
+        });
+
     }
 
     var topic_name_input = document.getElementById('topic_name_input')

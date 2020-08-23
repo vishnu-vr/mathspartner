@@ -5,8 +5,8 @@ const help = require('./helper_functions')
 var creds = require('./creds')
 // const mysql = require('mysql2/promise');//require('mysql');
 const mysql = require('mysql2');
-const { table, Console } = require('console')
-const { json } = require('express')
+// const { table, Console } = require('console')
+// const { json } = require('express')
 const session = require('express-session')
 const fileupload = require('express-fileupload')
 const fs = require('fs');
@@ -125,6 +125,34 @@ app.post('/user_authentication', (req,res) => {
 	});
 })
 
+// register_class payment
+app.post('/register_class', (req,res) =>{
+	console.log(req.body)
+	if (req.body.email.includes('@') == false || req.body.email.includes('.com') == false){
+		res.json('invalid email id')
+		return
+	}
+	res.json('success')
+})
+
+// register
+app.get('/register/:class_name', (req,res) =>{
+	var class_name = req.params.class_name.toUpperCase()
+	new_con.query('SELECT * FROM gk WHERE parent = ? AND child = ?', ['ONLINE CLASS',class_name], function(err, result, fields){
+		if (err){
+			res.render('error')
+			return
+		}
+		if (result.length == 0){
+			res.render('error')
+			return
+		}
+		else res.render('register_class',{title:'Register', class_name})
+		console.log(result)
+	})
+	
+})
+
 // gk
 app.get('/gk/:parent', (req,res) =>{
 	var parent = req.params.parent
@@ -190,6 +218,7 @@ app.get('/gk/:parent', (req,res) =>{
 		for (var i=0; i<result.length; i++){
 			row_type.push(result[i].type)
 			if (row_type[i] == 'youtube') row_type[i] += '##'+result[i].pdf_path
+			if (row_type[i] == 'online_class') row_type[i] += '##'+result[i].date
 			topics.push(result[i].child)
 		}
 
@@ -221,6 +250,18 @@ app.get('/gk/:parent', (req,res) =>{
 			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type})
 		}
 	});
+})
+
+// new_online_class_submit
+app.post('/new_online_class', (req,res) => {
+	console.log(req.body)
+	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `type`, `date`) VALUES (NULL, ?, ?, ?, ?);", [req.body.parent, req.body.child, 'online_class', req.body.date+'##'+req.body.time], function(err, result, fields){
+		if (err){
+			console.log(err)
+			return
+		}
+		res.json('success')
+	})
 })
 
 // gkaddyoutube

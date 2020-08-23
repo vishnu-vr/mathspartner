@@ -1,0 +1,89 @@
+<div class="row">
+  <div class="col-sm">
+    <h1 class="mt-4 text-center">Register</h1>
+
+    <div class="container">
+    <div class="row mt-4">
+        <div class="col-sm">
+        </div>
+        <div class="col-xl">
+        
+        {{!-- class name --}}
+        <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Topic</span>
+        </div>
+        <input type="text" class="form-control" placeholder="{{class_name}}" aria-label="class_name" aria-describedby="basic-addon1" readonly>
+        </div>
+
+        {{!-- student name --}}
+        <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Name</span>
+        </div>
+        <input id='student_name' type="text" class="form-control" placeholder="student name" aria-label="student name" aria-describedby="basic-addon1">
+        </div>
+
+        {{!-- student email id --}}
+        <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Email Id</span>
+        </div>
+        <input id='student_email' type="text" class="form-control" placeholder="student email" aria-label="student email" aria-describedby="basic-addon1">
+        </div>
+
+        {{!-- confirm student email id --}}
+        <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">Confirm Email Id</span>
+        </div>
+        <input id='confirm_email' type="text" class="form-control" placeholder="confirm student email" aria-label="confirm student email" aria-describedby="basic-addon1">
+        </div>
+
+        {{!-- Register --}}
+        <div class="text-center">
+            <button type="button" class="btn btn-primary" onclick="register()">Register</button>
+        </div>
+
+        </div>
+        <div class="col-sm">
+        </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+    // set the title
+    document.getElementById('title').innerText = "{{title}}"
+
+    var student_name = document.getElementById('student_name')
+    var email = document.getElementById('student_email')
+    var confirm_email = document.getElementById('confirm_email')
+    function register(){
+        // alert(name.value)
+        if (student_name.value == '' || email.value == '' || confirm_email.value == ''){
+            alert('enter all the details')
+            return
+        }
+        if (email.value != confirm_email.value){
+            alert("email and confirmation doesn't match")
+            return
+        }
+        if (email.value.includes('@') == false || email.value.includes('.com') == false){
+            alert("email id is not valid")
+            return
+        }
+        postData('/register_class', { 'student_name':student_name.value,'email':email.value })
+        .then(data => {
+            if (data == 'success') location.reload()
+            else alert(data); // JSON data parsed by `data.json()` call
+        });
+    }
+
+    {{!-- // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active' --}}
+
+</script>
