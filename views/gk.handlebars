@@ -518,12 +518,19 @@
         card_body.appendChild(time_)
       }
       card_body.appendChild(card_link)
+
+      // outter most div
+      var outter_card_div = document.createElement('div')
+      outter_card_div.className = 'card ml-4 mt-4'
+      outter_card_div.style = 'width: 18rem;'
+
       // onclick on entire div only when viewed in user mode
       // we don't want to click on online class as there is already
       // a register button
       if (editing_permission == 'false' && online_class == false) {
         card_link.hidden = true
-        card_body.setAttribute('onclick','topic_selected("'+topic+'")')
+        // card_body.setAttribute('onclick','topic_selected("'+topic+'")')
+        outter_card_div.setAttribute('onclick','topic_selected("'+topic+'")')
       }
 
       if (editing_permission == 'true' && topic != 'create_new'){
@@ -534,11 +541,6 @@
         delete_btn.setAttribute('onclick', "delete_topic('"+ topic +"')")
         card_body.appendChild(delete_btn)
       }
-
-      // outter most div
-      var outter_card_div = document.createElement('div')
-      outter_card_div.className = 'card ml-4 mt-4'
-      outter_card_div.style = 'width: 18rem;'
 
       if (yt){
         // card image (youtube thumbnail)
