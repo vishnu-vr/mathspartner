@@ -26,7 +26,12 @@
     <div class="jumbotron mt-4 text-center" id='jumbotron' hidden>
     {{!-- <h1 class="display-4">Hello, world!</h1> --}}
     {{!-- question --}}
-    <p class="text-right" id="timer">timer here</p>
+    {{!-- <h4>Question Number</h4> --}}
+    <div style="overflow: hidden;" class="mb-3">
+        <p style="float: left;">Question Number :&nbsp;&nbsp;</p>
+        <p style="float: left;" id="question_number">question number here</p>
+        <p style="float: right;" id="timer">timer here</p>
+    </div>
     <p class="lead h3" style="font-size: x-large !important; font-weight:bolder !important;" id="question">question comes here ?</p>
     <hr class="my-4">
     {{!-- list of answers --}}
@@ -408,6 +413,11 @@
     // which is 0 initially
     var current_question_num = null
     function insert_question_and_options(question_num) {
+
+        // inserting the current question number
+        document.getElementById('question_number').innerHTML = ''
+        document.getElementById('question_number').innerHTML = current_question_num+1 +'/'+questions.length
+
         // if the question is first one then
         // disable the previous button and
         // vise-versa
