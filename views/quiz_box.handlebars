@@ -42,7 +42,7 @@
     <button id="previous" class="btn btn-primary btn-lg mt-4" onclick="previous()" role="button">Previous</button>
     <button id="next" class="btn btn-primary btn-lg mt-4" onclick="next()" role="button">Next</button>
     <br>
-    <button data-toggle="modal" data-target="#exampleModal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
+    <button data-toggle="modal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="submit()" role="button">Submit</button>
     </div>
     {{!-- quiz box --}}
 
@@ -146,9 +146,9 @@
 </div>
 
 <!-- Button trigger modal -->
-{{!-- <button id="modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+<button id="button_to_show_modal" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" hidden>
   Launch demo modal
-</button> --}}
+</button>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -524,6 +524,18 @@
 
     var score = 0
     function submit() {
+        // assuring
+        if (confirm('Are you sure ?')){
+            console.log("booyah")
+        }
+        else{
+            return
+        }
+
+        document.getElementById('button_to_show_modal').click()
+
+        // alert("reached here")
+
         // clearing the time interval
         clearInterval(time_interval);
 
