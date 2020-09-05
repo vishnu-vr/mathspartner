@@ -49,7 +49,15 @@
 <script>
     // socket event notifications
     var socket = io()
-    socket.on('new_data', chosen_date)
+    socket.on('new_data', () => {
+        var date_chosen = document.getElementById('date')
+        if (date_chosen.value == "") {
+            console.log('date field empty')
+            return
+        }
+        console.log('refreshing results')
+        chosen_date()
+    })
 
     // set the title
     document.getElementById('title').innerText = "{{title}}"
