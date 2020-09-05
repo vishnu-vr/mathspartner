@@ -37,6 +37,8 @@ const new_con = mysql.createPool({
 // });
 
 const app = express()
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 // initializing handlebar template engine
 app.engine('handlebars', exphbs({defaultLayout: 'main',
@@ -563,6 +565,8 @@ app.post('/save_user_results', (req,res) => {
 			return
 		}
 		res.json("success")
+		// sending an event message to rank page
+		io.emit('new_data', {'message':'hit_refresh'})
 	});
 	
 })
@@ -1614,7 +1618,7 @@ app.get('/phpmyadmin_login', (req,res) => {
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT, () => console.log(`Server up on port ${PORT}`))
+http.listen(PORT, () => console.log(`Server up on port ${PORT}`))
 
 
 

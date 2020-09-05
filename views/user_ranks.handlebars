@@ -45,7 +45,12 @@
   </div>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+    // socket event notifications
+    var socket = io()
+    socket.on('new_data', chosen_date)
+
     // set the title
     document.getElementById('title').innerText = "{{title}}"
     
