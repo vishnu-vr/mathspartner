@@ -262,7 +262,7 @@
         var status_div = document.getElementById('status_of_questions')
         status_div.innerHTML = ''
         var h5 = document.createElement('h5')
-        h5.innerHTML = '<p style="color:green;">Green represents answers questions</p><p style="color:#343a40;">Grey represents not answered questions.</p>'
+        h5.innerHTML = '<p style="color:green;">Green represents answered questions.</p><p style="color:#343a40;">Grey represents not answered questions.</p>'
         status_div.appendChild(h5)
 
         for (var i=0; i<questions.length; i++){
