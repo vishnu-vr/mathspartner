@@ -24,36 +24,51 @@
     </div>
     {{!-- quiz box --}}
     <div class="jumbotron mt-4 text-center" id='jumbotron' hidden>
-    {{!-- <h1 class="display-4">Hello, world!</h1> --}}
-    {{!-- question --}}
-    {{!-- <h4>Question Number</h4> --}}
-    <div style="overflow: hidden;" class="mb-3">
-        <p style="float: left;">Question Number :&nbsp;&nbsp;</p>
-        <p style="float: left;" id="question_number">question number here</p>
-        <p style="float: right;" id="timer">timer here</p>
-    </div>
+        {{!-- <h1 class="display-4">Hello, world!</h1> --}}
+        {{!-- question --}}
+        {{!-- <h4>Question Number</h4> --}}
+        
+        {{!-- status button (ie exclamation mark)  --}}
+        <div style="overflow:hidden;">
+            <button onclick="show_status()" class="btn btn-dark float-right"><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg></button>
+        </div>
 
-    <div id="are_you_sure_msg" hidden>
-        <h3>Are You Sure You Want To Submit ?</h3>
-        <button class="btn btn-success mt-4" onclick="submit()">Yes</button>
-        <button class="btn btn-secondary mt-4" onclick="check_for_assurance('hide')">No</button>
-    </div>
+        <div style="overflow: hidden;" class="mb-3 mt-3">
+            <p style="float: left;">Question Number :&nbsp;&nbsp;</p>
+            <p style="float: left;" id="question_number">question number here</p>
+            <p style="float: right;" id="timer">timer here</p>
+        </div>
 
-    <p class="lead h3" style="font-size: x-large !important; font-weight:bolder !important;" id="question">question comes here ?</p>
-    <hr class="my-4">
-    {{!-- list of answers --}}
-    <ul class="list-group" id="answers_list">
-        {{!-- <li class="list-group-item">Cras justo odio</li> --}}
-    </ul>
-    {{!-- list of answers --}}
-    <button id="previous" class="btn btn-primary btn-lg mt-4" onclick="previous()" role="button">Previous</button>
-    <button id="next" class="btn btn-primary btn-lg mt-4" onclick="next()" role="button">Next</button>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <button data-toggle="modal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="check_for_assurance('show')" role="button">Submit</button>
+        <div id='question_and_answerlist'>
+
+            <div id="are_you_sure_msg" hidden>
+                <h3>Are You Sure You Want To Submit ?</h3>
+                <button class="btn btn-success mt-4" onclick="submit()">Yes</button>
+                <button class="btn btn-secondary mt-4" onclick="check_for_assurance('hide')">No</button>
+            </div>
+
+            <p class="lead h3" style="font-size: x-large !important; font-weight:bolder !important;" id="question">question comes here ?</p>
+            <hr class="my-4" id='horizontal_line'>
+            {{!-- list of answers --}}
+            <ul class="list-group" id="answers_list">
+                {{!-- <li class="list-group-item">Cras justo odio</li> --}}
+            </ul>
+            {{!-- list of answers --}}
+            <button id="previous" class="btn btn-primary btn-lg mt-4" onclick="previous()" role="button">Previous</button>
+            <button id="next" class="btn btn-primary btn-lg mt-4" onclick="next()" role="button">Next</button>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <button data-toggle="modal" id="submit" class="btn btn-danger btn-lg mt-4" onclick="check_for_assurance('show')" role="button">Submit</button>
+        
+        </div>
+
+        <div id='status_of_questions' class="container-fluid" hidden>
+            <h3>hey hey</h3>
+        </div>
+    
     </div>
     {{!-- quiz box --}}
 
@@ -228,11 +243,69 @@
 
     copy_test_link()
 
+    // show status
+    // this variable acts as a toggle
+    var initial_state_of_status = false
+    function show_status(){
+        document.getElementById('question_and_answerlist').hidden = !initial_state_of_status
+        document.getElementById('status_of_questions').hidden = initial_state_of_status
+        // only generate status when button clicked
+        // to show the status and NOT when the button is
+        // clicked to go back to questions
+        if (!initial_state_of_status) generate_status()
+        initial_state_of_status = !initial_state_of_status
+    }
+
+    // to generate a list of numbers which indicate
+    // the status of each question
+    function generate_status(){
+        var status_div = document.getElementById('status_of_questions')
+        status_div.innerHTML = ''
+        var h5 = document.createElement('h5')
+        h5.innerHTML = '<p style="color:green;">Green represents answers questions</p><p style="color:#343a40;">Grey represents not answered questions.</p>'
+        status_div.appendChild(h5)
+
+        for (var i=0; i<questions.length; i++){
+
+            var button = document.createElement('button')
+            button.className = 'btn mt-1 ml-1 mr-1 mb-1'
+
+            button.setAttribute('onclick','take_me_to_question('+i+')')
+
+            if (user_selected_options[i] != null){
+                button.className += ' btn-success'
+            }
+            else{
+                button.className += ' btn-dark'
+            }
+
+            button.style.width = "width: 65px!important;"
+
+            var h4 = document.createElement('h4')
+
+            h4.innerHTML = (i+1)
+
+            button.appendChild(h4)
+
+            status_div.appendChild(button)
+
+        }
+
+        // status_div.innerHTML = user_selected_options
+    }
+
+    function take_me_to_question(question_number){
+        // alert(question_number)
+        current_question_num = question_number
+        insert_question_and_options(current_question_num)
+        show_status()
+    }
+
     // to add more question
     const questions_and_options = document.getElementById('questions_and_options')
     var question_count = 0
     function add_more_questions(){
-      console.log("clicked me")
+      // console.log("clicked me")
       question_count++
       // question and options body
       const question = document.createElement('div')
@@ -542,6 +615,7 @@
             document.getElementById('next').hidden = true
             document.getElementById('previous').hidden = true
             document.getElementById('submit').hidden = true
+            document.getElementById('horizontal_line').hidden = true
         }
         else if (option == 'hide'){
             document.getElementById('are_you_sure_msg').hidden = true
@@ -550,6 +624,7 @@
             document.getElementById('next').hidden = false
             document.getElementById('previous').hidden = false
             document.getElementById('submit').hidden = false
+            document.getElementById('horizontal_line').hidden = false
         }
     }
 
