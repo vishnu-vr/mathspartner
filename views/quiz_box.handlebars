@@ -209,6 +209,8 @@
     // get the questions and answers
     var questions = {{{json questions }}}
 
+    var grouped_questions = {{{json grouped_questions }}}
+
     // set the value as seconds * minutes * hours
     var timeee = {{ time }}
     {{!-- startTimer(timeee,timer) --}}
@@ -497,7 +499,9 @@
         }
     }
 
-    display_fetched_questions(questions)
+
+    // displaying questions for editing
+    if (editing_permission) display_fetched_questions(questions)
 
     // start quiz button
     function start_quiz(){
@@ -716,7 +720,7 @@
         const modal_body = document.getElementById('modal-body')
         modal_body.innerHTML = ""
         var score_p = document.createElement('p')
-        score_p.innerText = "SCORE : " + score.toFixed(2);
+        score_p.innerText = "TOTAL SCORE : " + score.toFixed(2);
         modal_body.appendChild(score_p)
         // after appending score show details
         score_p = document.createElement('p')

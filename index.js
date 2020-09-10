@@ -402,14 +402,48 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 				questions.push({question:result[i].question, options:options, correct:result[i].correct, section:result[i].section})
 			}
 			// console.log(questions)
-			help.shuffle(questions)
-			for (var i=0; i<questions.length; i++) help.shuffle(questions[i].options)
+
+			// shuffling the questions
+			// help.shuffle(questions)
+
+			var grouped_questions = {}
+			for (var i=0; i<questions.length; i++) {
+				// shuffling the options
+				help.shuffle(questions[i].options)
+
+				// regrouping the questions with respective to different sections
+				// if the section exists in the dic then push it to the list
+				if (questions[i].section in grouped_questions){
+					grouped_questions[questions[i].section].push(questions[i])
+				}
+				// else create a new key and empty list as the corresponding value
+				// and then push it
+				else {
+					grouped_questions[questions[i].section] = []
+					grouped_questions[questions[i].section].push(questions[i])
+				}
+			}
+
+			// emptying the questions list
+			questions = []
+			// Object.values(grouped_questions) - this gets the values as a list
+			// from a dictionary
+			for (i=0; i<Object.values(grouped_questions).length; i++) {
+				// taking list of questions from a section
+				// and shuffling them
+				help.shuffle(Object.values(grouped_questions)[i])
+				// taking each question from the list of questions
+				// and appending them to questions list
+				for (var j=0; j<Object.values(grouped_questions)[i].length; j++){
+					questions.push(Object.values(grouped_questions)[i][j])
+				}
+			}
 
 			// checking the mode
 			if (req.params.mode == 'test') var mode = 'test'
 			else var mode = 'normal'
 
-			res.render('quiz_box', {title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode, on_off, editing_permission})
+			res.render('quiz_box', {grouped_questions:grouped_questions, title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode, on_off, editing_permission})
 		});
 
 	});
@@ -717,8 +751,6 @@ app.post('/gkdeletetopic', (req,res) =>{
 		return
 	}
 
-	var quiz_tables = []
-	var current_pdf = 0
 	new_con.query("DELETE FROM gk WHERE parent = ? AND child = ?", [req.body.parent, req.body.child], function (err,result,fields) {
 		if (err) {
 			console.log(err)
