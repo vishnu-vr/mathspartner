@@ -474,6 +474,9 @@
             // add question
             question.children[0].children[2].value = data[i].question
 
+            // adding section name
+            question.children[1].children[1].value = data[i].section //'section name'
+
             // adding options
             question.children[2].children[1].value = data[i].options[0]
             question.children[3].children[1].value = data[i].options[1]
@@ -888,7 +891,7 @@
                   // alert("just before function return")
                   return
               }
-              // alert("outside the if")
+              {{!-- // alert("outside the if")
               // if questions, answers and correct option are all validated
               // cross checking whether the new entered name or part number is present in
               // the db or not (can't fully trust the user)
@@ -896,7 +899,7 @@
                   // topic_name_exists = true
                   alert("You choose new topic name, but this quiz alreay exists")
                   return
-              }
+              } --}}
               
               var dic_to_send = {'topic_name':topic_name.value.trim(),
               //'part_number':part_number_input.value.toString(),
@@ -947,7 +950,7 @@
       var url = '/gk_edit_quiz'
 
       console.log(questions_and_options_dic)
-      return
+      {{!-- return --}}
 
       postData(url, questions_and_options_dic)
       .then(data => {

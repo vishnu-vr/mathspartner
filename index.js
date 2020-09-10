@@ -399,7 +399,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 				options.push(result[i].option_2)
 				options.push(result[i].option_3)
 				options.push(result[i].option_4)
-				questions.push({question:result[i].question, options:options,correct:result[i].correct})
+				questions.push({question:result[i].question, options:options, correct:result[i].correct, section:result[i].section})
 			}
 			// console.log(questions)
 			help.shuffle(questions)
@@ -436,8 +436,8 @@ app.post('/gk_edit_quiz', (req,res) =>{
 		// add the rows again
 		var data = req.body
 		for (var i=0; i<data.length; i++){
-			var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?)";
-			new_con.query(sql, [req.body[0].whole_quiz_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct], function (err, result) {
+			var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?, ?)";
+			new_con.query(sql, [req.body[0].whole_quiz_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct, data[i].section], function (err, result) {
 			if (err) {
 				console.log(err)//throw err;
 				console.log("row " +(i+1)+" failed");
@@ -502,7 +502,7 @@ app.post('/gk_add_quiz', (req,res) =>{
 			// console.log("ASdasdasdasdadasdasdasd")
 			// adding quiz table
 			var table_name = new_parent.toString()
-			var sql = "CREATE TABLE ?? ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
+			var sql = "CREATE TABLE ?? ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , `section` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
 			var data = req.body
 			new_con.query(sql, [table_name], function (err, result) {
 				if (err) {
@@ -513,8 +513,8 @@ app.post('/gk_add_quiz', (req,res) =>{
 				console.log("Table created");
 				// then add the questions
 				for (var i=0; i<data.length; i++){
-					var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?)";
-					new_con.query(sql, [table_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct], function (err, result) {
+					var sql = "INSERT INTO ?? VALUES ("+(i+1)+", ?, ?, ?, ?, ?, ?, ?)";
+					new_con.query(sql, [table_name, data[i].question, data[i].options[0], data[i].options[1], data[i].options[2], data[i].options[3], data[i].correct, data[i].section], function (err, result) {
 					if (err) {
 						console.log(err)//throw err;
 						console.log("row " +(i+1)+" failed");
