@@ -689,6 +689,7 @@
     }
 
     var score = 0
+    var g=null
     function submit() {
 
         document.getElementById('button_to_show_modal').click()
@@ -702,19 +703,46 @@
         var number_of_correct_answers = 0
         var number_of_wrong_answers = 0
         var number_of_NA = 0
+
+        var section_wise_result = {}
         for (var i=0; i<questions.length; i++){
+            // if a new section is found then initialize an
+            // empty dictionary to store values
+            if (questions[i].section in section_wise_result == false){
+                section_wise_result[questions[i].section] = {}
+
+                // result related to individual section
+                section_wise_result[questions[i].section].score = 0
+                section_wise_result[questions[i].section].number_of_correct_answers = 0
+                section_wise_result[questions[i].section].number_of_wrong_answers = 0
+                section_wise_result[questions[i].section].number_of_NA = 0
+            }
+
             if (user_selected_options[i] != null && 
             questions[i].correct == user_selected_options[i].selected_option_innerText) {
+                // global result
                 score++
                 number_of_correct_answers++
+                // section result
+                section_wise_result[questions[i].section].score++
+                section_wise_result[questions[i].section].number_of_correct_answers++
             }
             else if (user_selected_options[i] != null && 
             questions[i].correct != user_selected_options[i].selected_option_innerText){
+                // global result
                 score -= 0.33
                 number_of_wrong_answers++
+                // section result
+                section_wise_result[questions[i].section].score -= 0.33
+                section_wise_result[questions[i].section].number_of_wrong_answers++
             }
             // un-attempted questions
-            if (user_selected_options[i] == null) number_of_NA++
+            if (user_selected_options[i] == null) {
+                // global result
+                number_of_NA++
+                // section result
+                section_wise_result[questions[i].section].number_of_NA++
+            }
         }
         // alert(score)
         const modal_body = document.getElementById('modal-body')
@@ -724,17 +752,49 @@
         modal_body.appendChild(score_p)
         // after appending score show details
         score_p = document.createElement('p')
-        score_p.innerText = "CORRECT ANSWERS : " + number_of_correct_answers
+        score_p.innerText = "TOTAL CORRECT ANSWERS : " + number_of_correct_answers
         modal_body.appendChild(score_p)
         score_p = document.createElement('p')
-        score_p.innerText = "WRONG ANSWERS : " + number_of_wrong_answers
+        score_p.innerText = "TOTAL WRONG ANSWERS : " + number_of_wrong_answers
         modal_body.appendChild(score_p)
         score_p = document.createElement('p')
-        score_p.innerText = "NA : " + number_of_NA
+        score_p.innerText = "TOTAL NA : " + number_of_NA
         modal_body.appendChild(score_p)
         modal_body.appendChild(document.createElement('hr'))
 
+        // displaying individual section's results
+        g=section_wise_result
+        if (Object.keys(section_wise_result).length > 1){
+            for (i=0; i<Object.keys(section_wise_result).length; i++){
+                var section_name = document.createElement('h5')
+                section_name.style.fontStyle = 'italic'
+                section_name.className = 'mb-3'
+                section_name.innerHTML = 'Section : ' + Object.keys(section_wise_result)[i]
+                // console.log("Asd")
+                modal_body.appendChild(section_name)
+                score_p = document.createElement('p')
+                score_p.innerText = "SCORE : " + Object.values(section_wise_result)[i].score.toFixed(2);
+                modal_body.appendChild(score_p)
+                // after appending score show details
+                score_p = document.createElement('p')
+                score_p.innerText = "CORRECT ANSWERS : " + Object.values(section_wise_result)[i].number_of_correct_answers
+                modal_body.appendChild(score_p)
+                score_p = document.createElement('p')
+                score_p.innerText = "WRONG ANSWERS : " + Object.values(section_wise_result)[i].number_of_wrong_answers
+                modal_body.appendChild(score_p)
+                score_p = document.createElement('p')
+                score_p.innerText = "NA : " + Object.values(section_wise_result)[i].number_of_NA
+                modal_body.appendChild(score_p)
+                modal_body.appendChild(document.createElement('hr'))
+            }
+        }
+
+
         // display all the correct answers
+        var correct_answers = document.createElement('p')
+        correct_answers.className = 'mt-2 mb-2 text-center'
+        correct_answers.innerHTML = 'ANSWERS'
+        modal_body.appendChild(correct_answers)
         for (var i=0; i<questions.length; i++){
             var q = document.createElement('p')
             q.innerText = 'Q'+ (i+1) + ')  ' +questions[i].question
