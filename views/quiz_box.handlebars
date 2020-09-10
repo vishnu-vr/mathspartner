@@ -301,10 +301,29 @@
         show_status()
     }
 
+    // set_previous_section
+    function set_previous_section(q_count){
+      var section_id = 'section_' + q_count + '_input_box'
+      var section_box = document.getElementById(section_id)
+      if (section_box.value.trim() == '') previous_section = null
+      else previous_section = section_box.value.trim()
+    }
+
     // to add more question
     const questions_and_options = document.getElementById('questions_and_options')
     var question_count = 0
-    function add_more_questions(){
+    var previous_section = null
+    function add_more_questions(just_an_empty_holder = false){
+      // checking whether user has set a previous_section value
+      // checking will only take place upon second question onwards
+      if (!just_an_empty_holder){
+        if (question_count > 0){
+            if (previous_section == null) {
+            alert('Please add a section name')
+            return
+            }
+        }
+      }
       // console.log("clicked me")
       question_count++
       // question and options body
@@ -333,8 +352,42 @@
       delete_btn.setAttribute('onclick','delete_question("'+'question_' + question_count+'")')
       question_wrapper.appendChild(delete_btn)
       question_wrapper.appendChild(question_textarea)
+
+      // section option
+      var section_name_div = document.createElement('div')
+      section_name_div.className = "input-group mb-3"
+      var section_name_div_inner_div = document.createElement('div')
+      section_name_div_inner_div.className = "input-group-prepend"
+      var inner_span = document.createElement('span')
+      inner_span.innerHTML = 'Section Name'
+      var section_id = 'section_' + question_count
+      inner_span.id = section_id
+      inner_span.className = 'input-group-text'
+      // appending span to inner div
+      section_name_div_inner_div.appendChild(inner_span)
+      // appending inner div to outer div
+      section_name_div.appendChild(section_name_div_inner_div)
+      // section input box
+      var section_name_input_box = document.createElement('input')
+      section_name_input_box.type = 'text'
+      section_name_input_box.id = section_id + '_input_box'
+      section_name_input_box.className = 'form-control'
+      section_name_input_box.setAttribute('aria-describedby',section_id)
+      section_name_input_box.setAttribute('onchange','set_previous_section('+question_count+')')
+
+      // checking for previously written section names
+      if (previous_section != null){
+        section_name_input_box.value = previous_section
+      }
+
+      // appending input box to outer div
+      section_name_div.appendChild(section_name_input_box)
+
       // appending question_wrapper to main question div
       question.appendChild(question_wrapper)
+
+      // appending section div to question div
+      question.appendChild(section_name_div)
 
       for (var i=0; i<4; i++){
           // options
@@ -408,7 +461,7 @@
         for (var i=0; i<data.length; i++){     
 
             // insert a holder for the quiz
-            add_more_questions()
+            add_more_questions(just_an_empty_holder = true)
             // insert content into the holders
 
 
@@ -422,10 +475,10 @@
             question.children[0].children[2].value = data[i].question
 
             // adding options
-            question.children[1].children[1].value = data[i].options[0]
-            question.children[2].children[1].value = data[i].options[1]
-            question.children[3].children[1].value = data[i].options[2]
-            question.children[4].children[1].value = data[i].options[3]
+            question.children[2].children[1].value = data[i].options[0]
+            question.children[3].children[1].value = data[i].options[1]
+            question.children[4].children[1].value = data[i].options[2]
+            question.children[5].children[1].value = data[i].options[3]
 
             // check the correct radio
             var radio_for_correct_answer = 'radio_' + (i+1)
@@ -434,7 +487,7 @@
             // var correct_choice = null
             for (var k=0; k<4; k++){
                 // console.log(question.children[k+1].children[1].value)
-                if (question.children[k+1].children[1].value == data[i].correct) {
+                if (question.children[k+2].children[1].value == data[i].correct) {
                     radio_selected[k].checked = true
                 }
             }
@@ -795,8 +848,14 @@
               }
 
               // question boxes validation
-              if (question.children[0].children[2].value == '') {
+              if (question.children[0].children[2].value.trim() == '') {
                   alert('question '+i+' is missing')
+                  return
+              }
+
+              // section name validation
+              if (question.children[1].children[1].value.trim() == '') {
+                  alert('section name for question ' +i+ ' is missing')
                   return
               }
 
@@ -804,32 +863,32 @@
               // var correct_option_check = 0
               var options_list = []
               for (var j=1; j<=4; j++){
-                  if (question.children[j].children[1].value == ''){
+                  if (question.children[j+1].children[1].value == ''){
                       alert('option '+j+' for question '+i+' is missing')
                       return
                   }
                   // if option present
-                  options_list.push(question.children[j].children[1].value.trim())
+                  options_list.push(question.children[j+1].children[1].value.trim())
               }
               // check for the correct choice radio check
               var radio_for_correct_answer = 'radio_' + i
               var radio_selected = document.getElementsByName(radio_for_correct_answer)
               var user_checked_radio = false
               var correct_choice = null
-              for (var k=0; k<4; k++){
-                  if (radio_selected[k].checked) {
+              for (var k=1; k<=4; k++){
+                  if (radio_selected[k-1].checked) {
                       user_checked_radio = true
                       correct_choice = question.children[k+1].children[1].value
-                      // console.log(correct_choice)
+                      console.log(correct_choice)
                   }
               }
-              // console.log(user_checked_radio)
+              console.log(user_checked_radio)
               if (!user_checked_radio){
                   alert("choose a correct option for question "+i)
                   // alert("just before function return")
                   return
               }
-              {{!-- // alert("outside the if")
+              // alert("outside the if")
               // if questions, answers and correct option are all validated
               // cross checking whether the new entered name or part number is present in
               // the db or not (can't fully trust the user)
@@ -837,12 +896,13 @@
                   // topic_name_exists = true
                   alert("You choose new topic name, but this quiz alreay exists")
                   return
-              } --}}
+              }
               
               var dic_to_send = {'topic_name':topic_name.value.trim(),
               //'part_number':part_number_input.value.toString(),
               //'question_paper':question_paper_dropdown.innerHTML,
               'question':question.children[0].children[2].value.trim(),
+              'section':question.children[1].children[1].value.trim(),
               'options':options_list,
               'correct':correct_choice.trim(),
               'duration':duration_input.value,
@@ -886,8 +946,8 @@
 
       var url = '/gk_edit_quiz'
 
-      // console.log(questions_and_options_dic)
-      {{!-- return --}}
+      console.log(questions_and_options_dic)
+      return
 
       postData(url, questions_and_options_dic)
       .then(data => {
