@@ -268,8 +268,10 @@
       document.getElementById(modal).hidden = false
     }
 
+    var number_of_times_questions_deleted = 0
     function delete_question(question_num) {
         console.log(question_num)
+        number_of_times_questions_deleted++
         document.getElementById(question_num).innerHTML = ''
         // console.log(document.getElementsByClassName(question_num))
     }
@@ -290,7 +292,12 @@
       // checking whether user has set a previous_section value
       // checking will only take place upon second question onwards
       if (!just_an_empty_holder){
-        if (question_count > 0){
+        // (question_count-number_of_times_questions_deleted) -- this part is for
+        // following senario. If the user has added 'n' questions and then deleted
+        // them along with deleting the value of section name variable then upon
+        // clicking "(+)" button to add new question it will show an alert() saying 
+        // "Please add a section name". This check prevents that.
+        if (question_count > 0 && (question_count-number_of_times_questions_deleted)!=0){
             if (previous_section == null) {
             alert('Please add a section name')
             return
