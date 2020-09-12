@@ -507,6 +507,8 @@
     if (editing_permission) display_fetched_questions(questions)
 
     // start quiz button
+    // time when quiz started
+    var quiz_start_time = null
     function start_quiz(){
         if (mode == 'test'){
             // check whether the user has provided their name
@@ -521,7 +523,13 @@
         // make the jumbotron visible
         document.getElementById('jumbotron').hidden = false
         // start the timer
-        if (editing_permission == 'false' || editing_permission == '') startTimer(timeee,timer)
+        if (editing_permission == 'false' || editing_permission == '') {
+            if (resume_session) startTimer(time_left,timer)
+            else startTimer(timeee,timer)
+        }
+
+        // getting the time when quiz starts
+        quiz_start_time = new Date().getTime() / 1000;
     }
 
     // timer
@@ -539,6 +547,20 @@
 
             display.textContent = minutes + ":" + seconds;
             current_time = timer
+
+            // saving user selection to browser local storage
+            // this will be handy incase the user accidentally
+            // closes the window
+            var local_store_save = JSON.stringify({
+                "quiz_name":document.getElementById('heading').innerHTML,
+                "user_name":document.getElementById('name_of_user').value,
+                "time_remaining":current_time,
+                "quiz_start_time":quiz_start_time,
+                "user_selected_options":user_selected_options,
+                "questions":questions
+            })
+            localStorage.setItem(heading, local_store_save);
+
             // console.log(current_time)
             if (--timer < 0) {
                 timer = duration;
@@ -694,6 +716,9 @@
     var score = 0
     var g=null
     function submit() {
+
+        // clear local storage
+        localStorage.removeItem(heading);
 
         document.getElementById('button_to_show_modal').click()
 
@@ -867,6 +892,33 @@
     if (mode != 'test'){
         document.getElementById('user_details').hidden = true
         start_quiz()
+    }
+    else {
+        // restoring old sessions, ie if any
+        // retreiving local storage objects
+        var resume_session = false
+        var retrievedObject = localStorage.getItem(heading);
+        retrievedObject = JSON.parse(retrievedObject)
+        if (retrievedObject != null && retrievedObject.quiz_name == heading) {
+            const cur_date = new Date().getTime() / 1000;
+            var time_left = retrievedObject.time_remaining - (cur_date - retrievedObject.quiz_start_time)
+            console.log("time left : "+time_left)
+            if (time_left > 5){
+                if (confirm("You have some time remaining. Do you want to resume previous session ?")) {
+                    resume_session = true
+                    // restoring old user name
+                    document.getElementById('name_of_user').value = retrievedObject.user_name
+                    // restoring old question order
+                    questions = retrievedObject.questions
+                    // restoring old user selected options
+                    user_selected_options = retrievedObject.user_selected_options
+                    // inserting the previous first question
+                    insert_question_and_options(0)
+                    // starting quiz
+                    start_quiz()
+                }
+            }
+        }
     }
 
     // uppercase covertion for topic name input
