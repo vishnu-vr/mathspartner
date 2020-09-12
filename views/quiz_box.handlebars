@@ -618,7 +618,7 @@
             option.id = option_id
             // option.onclick = "option_selected()"
             option.setAttribute('onclick','option_selected('+option_id+')')
-            option.innerText = questions[question_num].options[i]
+            option.innerHTML = questions[question_num].options[i]
             answers_list.appendChild(option)  
         }
 
@@ -656,10 +656,10 @@
         selected_option.style.color = "black"
         
         // saving user selection
-        const selected_option_innerText = selected_option.innerText
-        user_selected_options[current_question_num] = {selected_option_innerText,option_id}
+        const selected_option_innerHTML = selected_option.innerHTML
+        user_selected_options[current_question_num] = {selected_option_innerHTML,option_id}
         // console.log("current question : "+current_question_num)
-        // console.log("selected option : "+selected_option.innerText)
+        // console.log("selected option : "+selected_option.innerHTML)
     }
 
     // next button
@@ -747,7 +747,7 @@
             }
 
             if (user_selected_options[i] != null && 
-            questions[i].correct == user_selected_options[i].selected_option_innerText) {
+            questions[i].correct == user_selected_options[i].selected_option_innerHTML) {
                 // global result
                 score++
                 number_of_correct_answers++
@@ -756,7 +756,7 @@
                 section_wise_result[questions[i].section].number_of_correct_answers++
             }
             else if (user_selected_options[i] != null && 
-            questions[i].correct != user_selected_options[i].selected_option_innerText){
+            questions[i].correct != user_selected_options[i].selected_option_innerHTML){
                 // global result
                 score -= 0.33
                 number_of_wrong_answers++
@@ -829,11 +829,11 @@
             modal_body.appendChild(q)
             var ca = document.createElement('p')
             
-            if (user_selected_options[i] != null && questions[i].correct == user_selected_options[i].selected_option_innerText){
-                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerText + " " + correct
+            if (user_selected_options[i] != null && questions[i].correct == user_selected_options[i].selected_option_innerHTML){
+                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerHTML + " " + correct
             }
-            else if (user_selected_options[i] != null && questions[i].correct != user_selected_options[i].selected_option_innerText){
-                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerText + " " + wrong + "&nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
+            else if (user_selected_options[i] != null && questions[i].correct != user_selected_options[i].selected_option_innerHTML){
+                ca.innerHTML = 'Ans'+ ')  ' + user_selected_options[i].selected_option_innerHTML + " " + wrong + "&nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
             }
             else ca.innerHTML = 'Ans'+ ')  ' + " NA &nbsp;&nbsp;&nbsp;" + questions[i].correct + " " + correct
             modal_body.appendChild(ca)
