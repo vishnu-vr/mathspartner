@@ -55,6 +55,8 @@
 <script>
     document.getElementById('title').innerText = "{{title}}"
 
+    const current_url = "{{{current_url}}}"
+
     var permission_button = document.getElementById('dropdownMenuButton')
     function permission(selection_option){
       permission_button.innerHTML = selection_option
@@ -71,8 +73,8 @@
       postData('/user_authentication', creds)
         .then(data => {
           // console.log(data); // JSON data parsed by `data.json()` call
-          if (data == 'success' && creds.permission == 'mathspartner') window.location.replace("/")
-          else if (data == 'success' && creds.permission == 'gk') window.location.replace('/')
+          if (data == 'success' && creds.permission == 'mathspartner') window.location.replace(current_url)
+          else if (data == 'success' && creds.permission == 'gk') window.location.replace(current_url)
           else alert("login failed")
         });
     }

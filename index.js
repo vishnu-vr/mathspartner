@@ -89,14 +89,18 @@ app.get('/', (req,res) => {
 })
 
 // login
-app.get('/login', (req,res) => res.render('login', {title:"login", none:"none", heading:"LOGIN"}))
+app.get('/login', (req,res) => {
+	// console.log(req.query.url)
+	res.render('login', {title:"login", none:"none", heading:"LOGIN", current_url:req.query.url})
+})
 
 // logout
 app.get('/logout', (req,res) => {
 	if (req.session.logged_in != null){
 		req.session.logged_in = false
-		if (req.session.permission == 'mathspartner') res.redirect('/gk/null')
-		else if (req.session.permission == 'gk') res.redirect('/gk/null')
+		// if (req.session.permission == 'mathspartner') res.redirect('/gk/null')
+		// else if (req.session.permission == 'gk') res.redirect('/gk/null')
+		res.redirect(req.query.url)
 	}
 	else res.redirect('/')
 })
