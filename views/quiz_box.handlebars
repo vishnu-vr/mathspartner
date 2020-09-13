@@ -213,7 +213,6 @@
 
     // set the value as seconds * minutes * hours
     var timeee = {{ time }}
-    {{!-- startTimer(timeee,timer) --}}
 
     // pdf path
     var pdf_path = "{{ pdf_path }}"
@@ -529,8 +528,26 @@
                     startTimer(timeee,timer)
                     // getting the time when quiz starts
                     quiz_start_time = new Date().getTime() / 1000;
+
+                    // save user session
+                    if (mode == 'test') save_user_session()
                 }
         }
+    }
+
+    function save_user_session() {
+        // saving user selection to browser local storage
+        // this will be handy incase the user accidentally
+        // closes the window
+        var local_store_save = JSON.stringify({
+            "quiz_name":heading,
+            "user_name":document.getElementById('name_of_user').value,
+            // "time_remaining":current_time,
+            "quiz_start_time":quiz_start_time,
+            "user_selected_options":user_selected_options,
+            "questions":questions
+        })
+        localStorage.setItem(heading, local_store_save);
     }
 
     // timer
@@ -548,19 +565,6 @@
 
             display.textContent = minutes + ":" + seconds;
             current_time = timer
-
-            // saving user selection to browser local storage
-            // this will be handy incase the user accidentally
-            // closes the window
-            var local_store_save = JSON.stringify({
-                "quiz_name":heading,
-                "user_name":document.getElementById('name_of_user').value,
-                // "time_remaining":current_time,
-                "quiz_start_time":quiz_start_time,
-                "user_selected_options":user_selected_options,
-                "questions":questions
-            })
-            localStorage.setItem(heading, local_store_save);
 
             // console.log(current_time)
             if (--timer < 0) {
@@ -661,6 +665,9 @@
         user_selected_options[current_question_num] = {selected_option_innerHTML,option_id}
         // console.log("current question : "+current_question_num)
         // console.log("selected option : "+selected_option.innerHTML)
+
+        // save user session
+        if (mode == 'test') save_user_session()
     }
 
     // next button
@@ -888,12 +895,13 @@
         }
     }
 
-    // if test mode
+    // if not test mode
     const mode = "{{mode}}"
     if (mode != 'test'){
         document.getElementById('user_details').hidden = true
         start_quiz()
     }
+    // else if mode == 'test'
     else {
         // restoring old sessions, ie if any
         // retreiving local storage objects
