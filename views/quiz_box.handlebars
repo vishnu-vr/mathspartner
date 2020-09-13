@@ -547,7 +547,7 @@
             "user_selected_options":user_selected_options,
             "questions":questions
         })
-        localStorage.setItem(heading, local_store_save);
+        localStorage.setItem("quiz_data", local_store_save);
     }
 
     // timer
@@ -726,7 +726,7 @@
     function submit() {
 
         // clear local storage
-        localStorage.removeItem(heading);
+        localStorage.removeItem("quiz_data");
 
         document.getElementById('button_to_show_modal').click()
 
@@ -906,7 +906,7 @@
         // restoring old sessions, ie if any
         // retreiving local storage objects
         var resume_session = false
-        var retrievedObject = localStorage.getItem(heading);
+        var retrievedObject = localStorage.getItem("quiz_data");
         retrievedObject = JSON.parse(retrievedObject)
         if (retrievedObject != null && retrievedObject.quiz_name == heading) {
             const cur_date = new Date().getTime() / 1000;
