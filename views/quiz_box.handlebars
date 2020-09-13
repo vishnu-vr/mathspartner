@@ -525,11 +525,12 @@
         // start the timer
         if (editing_permission == 'false' || editing_permission == '') {
             if (resume_session) startTimer(time_left,timer)
-            else startTimer(timeee,timer)
+            else {
+                    startTimer(timeee,timer)
+                    // getting the time when quiz starts
+                    quiz_start_time = new Date().getTime() / 1000;
+                }
         }
-
-        // getting the time when quiz starts
-        quiz_start_time = new Date().getTime() / 1000;
     }
 
     // timer
@@ -552,9 +553,9 @@
             // this will be handy incase the user accidentally
             // closes the window
             var local_store_save = JSON.stringify({
-                "quiz_name":document.getElementById('heading').innerHTML,
+                "quiz_name":heading,
                 "user_name":document.getElementById('name_of_user').value,
-                "time_remaining":current_time,
+                // "time_remaining":current_time,
                 "quiz_start_time":quiz_start_time,
                 "user_selected_options":user_selected_options,
                 "questions":questions
@@ -901,15 +902,19 @@
         retrievedObject = JSON.parse(retrievedObject)
         if (retrievedObject != null && retrievedObject.quiz_name == heading) {
             const cur_date = new Date().getTime() / 1000;
-            var time_left = retrievedObject.time_remaining - (cur_date - retrievedObject.quiz_start_time)
+            // this is the wasted time --> (cur_date - retrievedObject.quiz_start_time)
+            // total duration - wasted time gives time remaining
+            var time_left = timeee - (cur_date - retrievedObject.quiz_start_time)
             console.log("time left : "+time_left)
-            if (time_left > 5){
+            if (time_left > 0){
                 if (confirm("You have some time remaining. Do you want to resume previous session ?")) {
                     resume_session = true
                     // restoring old user name
                     document.getElementById('name_of_user').value = retrievedObject.user_name
                     // restoring old question order
                     questions = retrievedObject.questions
+                    // restoring quiz start time
+                    quiz_start_time = retrievedObject.quiz_start_time
                     // restoring old user selected options
                     user_selected_options = retrievedObject.user_selected_options
                     // inserting the previous first question
