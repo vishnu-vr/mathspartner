@@ -251,7 +251,7 @@
     // check for '-' in new names or renames
     function hyphen_present(name){
       // if '-' is present then return true
-      if (name.includes('-')) return true
+      if (name.includes('-') || name.includes('.')) return true
       else return false
     }
 
@@ -463,7 +463,7 @@
       }
       // checking for hyphens
       if (hyphen_present(new_topic_name)){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
       if (topics.includes(new_topic_name)) {
@@ -491,7 +491,7 @@
       }
       // checking for hyphens
       if (hyphen_present(youtube_name_input.value.trim())){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
       if (topics.includes(youtube_name_input.value.trim())){
@@ -657,7 +657,7 @@
       }
       // checking for hyphens
       if (hyphen_present(audio_name_input.value.trim())){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
       if (topics.includes(audio_name_input.value.trim())){
@@ -708,7 +708,7 @@
       }
       // checking for hyphens
       if (hyphen_present(online_class_name_input.value.trim())){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
       // check whether name already exists in this section
@@ -750,7 +750,7 @@
       }
       // checking for hyphens
       if (hyphen_present(topic_name_input.value.trim())){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
       // check whether name already exists in this section
@@ -799,7 +799,7 @@
 
       // checking for hyphens
       if (hyphen_present(topic_name.value.trim())){
-        alert('Sorry hyphens("-") are not allowed in names')
+        alert('Sorry hyphens("-") or periods(".") are not allowed in names')
         return
       }
 
