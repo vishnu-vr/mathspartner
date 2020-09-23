@@ -722,8 +722,16 @@
     }
 
     
-    var g=null
+    // var g=null
+    var already_submitted = false
     function submit() {
+        // if NOT already submitted
+        if (already_submitted) {
+            alert("Please wait")
+            return;
+        }
+
+        already_submitted = true
 
         // clear local storage
         localStorage.removeItem("quiz_data");
@@ -801,7 +809,7 @@
         modal_body.appendChild(document.createElement('hr'))
 
         // displaying individual section's results
-        g=section_wise_result
+        // g=section_wise_result
         if (Object.keys(section_wise_result).length > 1){
             for (i=0; i<Object.keys(section_wise_result).length; i++){
                 var section_name = document.createElement('h5')
