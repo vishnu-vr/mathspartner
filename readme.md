@@ -1,4 +1,4 @@
-#maths-partner webapp under construction
+#maths-partner webapp (https://mathspartner.com)
 ##tools used
 1.node.js
 2.express.js
