@@ -917,7 +917,7 @@ app.post('/user_details_from_quiz_name', (req,res) => {
 })
 
 app.post('/delete_user_result', (req,res) => {
-	const id = req.body.row_id;
+	const id = parseInt(req.body.row_id);
 	console.log(id);
 	new_con.query("DELETE FROM `user_details` WHERE `user_details`.`id` = ?", [id], function(err,result,fields){
 		if (err){
