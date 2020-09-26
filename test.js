@@ -10,6 +10,15 @@ var new_con = mysql.createPool({
   });
   
 
+// will delete a particular row
+new_con.query("DELETE FROM `user_details` WHERE `user_details`.`id` = ?", [10], function(err,result,fields){
+	if (err){
+	  console.log(err)
+	  return
+	}
+	console.log(result);
+})
+
 // // will return list of unique quiz names
 // new_con.query("SELECT DISTINCT `quiz_name` FROM `user_details`", function(err,result,fields){
 //   if (err){

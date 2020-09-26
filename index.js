@@ -916,6 +916,19 @@ app.post('/user_details_from_quiz_name', (req,res) => {
 	})
 })
 
+app.post('/delete_user_result', (req,res) => {
+	const id = req.body.row_id;
+	console.log(id);
+	new_con.query("DELETE FROM `user_details` WHERE `user_details`.`id` = ?", [id], function(err,result,fields){
+		if (err){
+		  console.log(err)
+		  return
+		}
+		console.log(result);
+		res.json("success");
+	})
+})
+
 // // dashboard
 // app.get('/dashboard', (req,res) => {
 // 	// first check whether the user has already logged in or not
