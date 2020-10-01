@@ -103,7 +103,8 @@ app.get('/logout', (req,res) => {
 		req.session.logged_in = false
 		// if (req.session.permission == 'mathspartner') res.redirect('/gk/null')
 		// else if (req.session.permission == 'gk') res.redirect('/gk/null')
-		res.redirect(req.query.url)
+		const redirect_url = req.originalUrl.split("=")
+		res.redirect(redirect_url[1])
 	}
 	else res.redirect('/')
 })
