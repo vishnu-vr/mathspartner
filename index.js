@@ -91,7 +91,10 @@ app.get('/', (req,res) => {
 // login
 app.get('/login', (req,res) => {
 	// console.log(req.query.url)
-	res.render('login', {title:"login", none:"none", heading:"LOGIN", current_url:req.query.url})
+	// console.log(req.originalUrl)
+	const redirect_url = req.originalUrl.split("=")
+	// console.log(redirect_url[1])
+	res.render('login', {title:"login", none:"none", heading:"LOGIN", current_url:redirect_url[1]})
 })
 
 // logout
