@@ -354,6 +354,7 @@
       section_name_input_box.className = 'form-control'
       section_name_input_box.setAttribute('aria-describedby',section_id)
       section_name_input_box.setAttribute('onchange','set_previous_section('+question_count+')')
+      section_name_input_box.setAttribute('onkeyup','uppercase("'+section_name_input_box.id+'")')
 
       // checking for previously written section names
       if (previous_section != null){

@@ -384,7 +384,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 			res.render('error')
 			return
 		}
-		console.log('asd')
+		// console.log('asd')
 		var on_off = result[0].on_off
 		var duration = result[0].duration
 		var pdf_path = result[0].pdf_path
