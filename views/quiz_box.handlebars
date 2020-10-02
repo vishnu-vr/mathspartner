@@ -512,7 +512,7 @@
         if (mode == 'test'){
             // check whether the user has provided their name
             const name_of_user = document.getElementById('name_of_user')
-            if (name_of_user.value == ''){
+            if (name_of_user.value.trim() == ''){
                 alert('Please provide your name')
                 return
             }
