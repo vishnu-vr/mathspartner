@@ -163,9 +163,37 @@ app.get('/register/:class_name', (req,res) =>{
 	
 })
 
+// gkanswers
+app.get('/gkanswers/:parent', (req,res) => {
+	const parent = req.params.parent;
+	new_con.query("SELECT show_answers FROM gk where parent = ?",[parent] , function (err, result, fields){
+		if (err){
+			console.log(err)//throw err;
+			res.send("<h1>something went wrong</h1>")
+			return
+		}
+		if (result[0].show_answers == "true"){
+			new_con.query("SELECT * FROM ??",[parent] , function (err, result, fields){
+				if (err){
+					console.log(err)//throw err;
+					res.send("<h1>something went wrong</h1>")
+					return
+				}
+				res.render('answers',{title:"answers" ,nav_selected:"answers", result});
+			})
+		}
+		else res.render('error')
+	})
+	// res.render('answers',{title:"answers" ,nav_selected:"answers"});
+	
+})
+
 // gk
 app.get('/gk/:parent', (req,res) =>{
 	var parent = req.params.parent
+	const page = req.query.page || null
+	const nav_selected = page || "gk"
+	console.log(page)
 	// console.log(req.session.logged_in)
 	var editing_permission = false
 	if (req.session.logged_in != null && req.session.logged_in == true){
@@ -186,11 +214,11 @@ app.get('/gk/:parent', (req,res) =>{
 				var topics = []
 				if (parent == 'null') {
 					var heading = "TOPICS"
-					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission, row_type:[]})
+					res.render('gk', {title:"topics", nav_selected:nav_selected, heading:heading, topics:topics, main_parent:'true', editing_permission, row_type:[], page})
 				}
 				else {
 					var heading = parent
-					res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type:[]})
+					res.render('gk', {title:"topics", nav_selected:nav_selected, heading:heading, topics:topics, editing_permission, row_type:[], page})
 				}
 				return
 			}
@@ -202,6 +230,13 @@ app.get('/gk/:parent', (req,res) =>{
 		// if its the end of the link
 		// then its a quiz
 		if (result[0].child == 'null'){
+			// if this is null and page == "answers"
+			// then redirect to answers page
+			if (page && page == "answers"){
+				res.redirect('/gkanswers/'+parent)
+				return
+			}
+
 			// res.send([parent,result[0].duration,result[0].on_off])
 			var redirect_link = '/gkquiz/'+parent+'/normal'
 			res.redirect(redirect_link)
@@ -253,11 +288,11 @@ app.get('/gk/:parent', (req,res) =>{
 
 		if (parent == 'null') {
 			var heading = "TOPICS"
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, main_parent:'true', editing_permission, row_type})
+			res.render('gk', {title:"topics", nav_selected:nav_selected, heading:heading, topics:topics, main_parent:'true', editing_permission, row_type, page})
 		}
 		else {
 			var heading = parent
-			res.render('gk', {title:"topics", nav_selected:"gk", heading:heading, topics:topics, editing_permission, row_type})
+			res.render('gk', {title:"topics", nav_selected:nav_selected, heading:heading, topics:topics, editing_permission, row_type, page})
 		}
 	});
 })

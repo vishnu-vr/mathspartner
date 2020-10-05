@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-sm">
+    <h1 class="mt-4 text-center">Answers</h1>
+    <div class="mt-4 ml-3 mr-3 border pt-4 pb-4 pl-4 pr-4" id='answers_holder'>
+        <h3>question</h3>
+        <h4>answer</h4>
+
+        <h3>question</h3>
+        <h4>answer</h4>
+
+        <h3>question</h3>
+        <h4>answer</h4>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    // set the title
+    document.getElementById('title').innerText = "{{title}}"
+    
+    // set the active link dynamically
+    var nav_selected = document.getElementById('{{ nav_selected }}')
+    nav_selected.className += ' active'
+
+    const answers = {{{json result }}}
+
+    function display_answers(answers){
+        var question, answer;
+        const answer_holder = document.getElementById('answers_holder')
+        var space_between = document.createElement('div')
+        space_between.className = 'mt-2 mb-2 ml-2 mr-2'
+        answer_holder.innerHTML = '';
+        for (var i=0; i<answers.length; i++){
+            // question
+            question = document.createElement('h4')
+            question.innerHTML = 'Q' + (i+1) + ') ' + answers[i].question
+
+            // answer
+            answer = document.createElement('h4')
+            answer.className = 'mb-4'
+            answer.innerHTML = 'A' + ') ' + answers[i].correct
+
+            // appending
+            answer_holder.appendChild(question);
+            answer_holder.appendChild(answer);
+            answer_holder.appendChild(space_between);
+        }
+    }
+
+    display_answers(answers);    
+
+</script>

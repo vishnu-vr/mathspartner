@@ -222,8 +222,11 @@
     }
     nav_selected.className += ' active'
 
+    // page variable, either answers or null (which represents quiz)
+    const page = "{{ page }}" || null
+
     // editing rights
-    var editing_permission = "{{ editing_permission }}"
+    const editing_permission = "{{ editing_permission }}"
 
     // row_type
     var row_type = {{{json row_type}}}
@@ -636,13 +639,18 @@
       // const topic_id_ = document.getElementById(topic_id)
       console.log(topic_id_)
       // alert('sads')
+
+      // checking whether its "answer" page or "quiz" page
+      var query = ""
+      if (page && page == "answers") query = "?page=answers"
+
       if ("{{ heading }}" == "TOPICS") {
-          window.location = '/gk/' + topic_id_
+          window.location = '/gk/' + topic_id_ + query
       }
       else if ("{{ main_parent }}") {
-          window.location = '/gk/' + "{{ heading }}" + topic_id_
+          window.location = '/gk/' + "{{ heading }}" + topic_id_ + query
       }
-      else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_
+      else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_ + query
     }
 
     function register(class_name){
