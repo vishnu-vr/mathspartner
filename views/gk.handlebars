@@ -67,6 +67,12 @@
                 <input type="checkbox" class="custom-control-input" id="on_off_switch" checked>
                 <label class="custom-control-label" for="on_off_switch">On / Off</label>
             </div>
+            {{!-- show answers on_off switch --}}
+            <div class="custom-control custom-switch mt-4">
+                {{!-- <p>Show Answers</p> --}}
+                <input type="checkbox" class="custom-control-input" id="show_answers_switch" checked>
+                <label class="custom-control-label" for="show_answers_switch">Show Answers</label>
+            </div>
             {{!-- questions and options --}}
             <div id="questions_and_options">
 
@@ -926,6 +932,10 @@
       // the on/off toggle status
       const on_off_switch = document.getElementById('on_off_switch')
       questions_and_options_dic[0]['on_off'] = on_off_switch.checked
+
+      // the show_answers toggle status
+      const show_answers_switch = document.getElementById('show_answers_switch')
+      questions_and_options_dic[0]['show_answers_switch'] = show_answers_switch.checked
 
       // appending parent and child names
       if (heading_of_page.trim().toUpperCase() == 'TOPICS') var parent = 'null'

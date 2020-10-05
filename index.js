@@ -425,6 +425,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 		}
 		// console.log('asd')
 		var on_off = result[0].on_off
+		var show_answers = result[0].show_answers
 		var duration = result[0].duration
 		var pdf_path = result[0].pdf_path
 
@@ -486,7 +487,7 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 			if (req.params.mode == 'test') var mode = 'test'
 			else var mode = 'normal'
 
-			res.render('quiz_box', {grouped_questions:grouped_questions, title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode, on_off, editing_permission})
+			res.render('quiz_box', {grouped_questions:grouped_questions, title:"quiz_box", nav_selected:"gk", heading:quiz, questions:questions, time:duration, pdf_path:pdf_path, mode:mode, on_off, show_answers, editing_permission})
 		});
 
 	});
@@ -527,6 +528,17 @@ app.post('/gk_edit_quiz', (req,res) =>{
 		// console.log(req.body[0])
 		if (req.body[0].on_off) var on_off = 'true'
 		else var on_off = 'false'
+
+		if (req.body[0].show_answers_switch) var show_answers = 'true'
+		else var show_answers = 'false'
+
+		new_con.query("UPDATE gk SET show_answers = ? WHERE parent = ?",[show_answers, req.body[0].whole_quiz_name],function (err,result,fields){
+			if(err){
+				console.log(err)
+				res.json('failed')
+			}
+		})
+
 		new_con.query("UPDATE gk SET on_off = ? WHERE parent = ?", [on_off, req.body[0].whole_quiz_name], function (err,result,fields) {
 			if (err) {
 				console.log(err)
@@ -570,7 +582,11 @@ app.post('/gk_add_quiz', (req,res) =>{
 
 		if (req.body[0].on_off) var on_off = 'true'
 		else var on_off = 'false'
-		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`) VALUES (NULL, ?, ?, ?, ?, '', 'quiz');", [new_parent, new_child, on_off, req.body[0].duration*60], function (err, result, fields) {
+
+		if (req.body[0].show_answers) var show_answers = 'true'
+		else var show_answers = 'false'
+
+		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`, `show_answers`) VALUES (NULL, ?, ?, ?, ?, '', 'quiz', ?);", [new_parent, new_child, on_off, req.body[0].duration*60, show_answers], function (err, result, fields) {
 			if (err) {
 				console.log(err)
 				res.json('failed')
