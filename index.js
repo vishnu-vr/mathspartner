@@ -944,30 +944,30 @@ app.post('/github_update/the_secret_key', function(req, res) {
   
 });
 
-app.get('/backup/database', function(req, res) {
-	console.log('backing up now...')
-	// console.log(req.body)
-	const ls = spawn("python3", ["backup.py"]);
+// app.get('/backup/database', function(req, res) {
+// 	console.log('backing up now...')
+// 	// console.log(req.body)
+// 	const ls = spawn("python3", ["backup.py"]);
 
-	ls.stdout.on("data", data => {
-		console.log(`stdout: ${data}`);
-	});
+// 	ls.stdout.on("data", data => {
+// 		console.log(`stdout: ${data}`);
+// 	});
 
-	ls.stderr.on("data", data => {
-		console.log(`stderr: ${data}`);
-	});
+// 	ls.stderr.on("data", data => {
+// 		console.log(`stderr: ${data}`);
+// 	});
 
-	ls.on('error', (error) => {
-		console.log(`error: ${error.message}`);
-	});
+// 	ls.on('error', (error) => {
+// 		console.log(`error: ${error.message}`);
+// 	});
 
-	ls.on("close", code => {
-		console.log(`child process exited with code ${code}`);
-	});
+// 	ls.on("close", code => {
+// 		console.log(`child process exited with code ${code}`);
+// 	});
 
-	res.json({'status':'backed completed successfully'})
+// 	res.json({'status':'backed completed successfully'})
 
-});
+// });
 
 
 // APIS FOR THE MOBILE APP
