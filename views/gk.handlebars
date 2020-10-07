@@ -215,14 +215,14 @@
     // set the heading
     // setting this way because of &amp;
     const heading_ = document.getElementById('heading')
-    const heading_of_page = "{{ heading }}"
-    heading_.innerHTML = "{{ heading }}"
+    const heading_of_page = "{{{ heading }}}"
+    heading_.innerHTML = "{{{ heading }}}"
 
     // set the active link dynamically
     var nav_selected = document.getElementById('{{ nav_selected }}')
-    if ("{{ heading }}".split('-')[0] == 'YOUTUBE') {
+    if ("{{{ heading }}}".split('-')[0] == 'YOUTUBE') {
       nav_selected = document.getElementById('youtube')
-      var splitted_heading_ = "{{ heading }}".split('-')
+      var splitted_heading_ = "{{{ heading }}}".split('-')
       splitted_heading_.shift()
       heading_.innerHTML = splitted_heading_.join('-') || 'TOPICS'
     }
@@ -650,13 +650,13 @@
       var query = ""
       if (page && page == "answers") query = "?page=answers"
 
-      if ("{{ heading }}" == "TOPICS") {
+      if ("{{{ heading }}}" == "TOPICS") {
           window.location = '/gk/' + topic_id_ + query
       }
       else if ("{{ main_parent }}") {
-          window.location = '/gk/' + "{{ heading }}" + topic_id_ + query
+          window.location = '/gk/' + "{{{ heading }}}" + topic_id_ + query
       }
-      else window.location = '/gk/' + "{{ heading }}" + '-' + topic_id_ + query
+      else window.location = '/gk/' + "{{{ heading }}}" + '-' + topic_id_ + query
     }
 
     function register(class_name){
