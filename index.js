@@ -420,7 +420,13 @@ app.get('/gkquiz/:quiz/:mode', (req,res) =>{
 		}
 		if (result[0].on_off == 'false' && req.params.mode == 'normal' && editing_permission == false){
 			// res.send("<h1>THIS QUIZ IS TEMPORARLY TURNED OFF. TRY AGAIN AFTER SOMETIME.")
-			res.render('error')
+			// res.render('error')
+			// return
+			var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+			fullUrl = fullUrl.split('/')
+			fullUrl[fullUrl.length - 1] = "test"
+			fullUrl = fullUrl.join('/')
+			res.redirect(fullUrl)
 			return
 		}
 		// console.log('asd')
