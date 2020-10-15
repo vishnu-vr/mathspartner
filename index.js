@@ -589,8 +589,12 @@ app.post('/gk_add_quiz', (req,res) =>{
 		if (req.body[0].on_off) var on_off = 'true'
 		else var on_off = 'false'
 
-		if (req.body[0].show_answers) var show_answers = 'true'
+		if (req.body[0].show_answers_switch) var show_answers = 'true'
 		else var show_answers = 'false'
+
+		console.log("###############################")
+		console.log(req.body[0].show_answers_switch)
+		console.log("###############################")
 
 		new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `on_off`, `duration`, `pdf_path`, `type`, `show_answers`) VALUES (NULL, ?, ?, ?, ?, '', 'quiz', ?);", [new_parent, new_child, on_off, req.body[0].duration*60, show_answers], function (err, result, fields) {
 			if (err) {
