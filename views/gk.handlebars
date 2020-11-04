@@ -636,6 +636,10 @@
     }
 
     // topics.sort()
+    topics.sort(function(a, b) {
+      return a - b;
+    });
+
     for (var i=0; i<topics.length; i++){
       if (row_type[i] == 'forbidden') continue
       create_cards(topics[i],row_type[i])
