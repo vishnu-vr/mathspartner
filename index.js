@@ -27,7 +27,8 @@ const new_con = mysql.createPool({
 	user: creds.user,
 	password: creds.password,
 	database: creds.database,
-	charset: "utf8_general_ci"
+	charset: "utf8_general_ci",
+	port: creds.port
 });
 
 
