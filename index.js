@@ -605,7 +605,7 @@ app.post('/gk_add_quiz', (req,res) =>{
 			}
 			// console.log("ASdasdasdasdadasdasdasd")
 			// adding quiz table
-			var table_name = new_parent.toString()
+			var table_name = new_parent.toString().toUpperCase()
 			var sql = "CREATE TABLE ?? ( `id` INT NOT NULL AUTO_INCREMENT ,  `question` VARCHAR(2550) NOT NULL , `option_1` VARCHAR(2550) NOT NULL , `option_2` VARCHAR(2550) NOT NULL , `option_3` VARCHAR(2550) NOT NULL , `option_4` VARCHAR(2550) NOT NULL , `correct` VARCHAR(2550) NOT NULL , `section` VARCHAR(2550) NOT NULL , PRIMARY KEY  (`id`))"
 			var data = req.body
 			new_con.query(sql, [table_name], function (err, result) {
