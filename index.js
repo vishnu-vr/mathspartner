@@ -1,27 +1,24 @@
-const express = require('express')
-const exphbs = require('express-handlebars')
-const path = require('path')
-const help = require('./helper_functions')
-var creds = require('./creds')
-// const mysql = require('mysql2/promise');//require('mysql');
+const express = require('express');
+const exphbs = require('express-handlebars');
+const path = require('path');
+const help = require('./helper_functions');
+var creds = require('./creds');
 const mysql = require('mysql2');
-// const { table, Console } = require('console')
-// const { json } = require('express')
-const session = require('express-session')
-const fileupload = require('express-fileupload')
+const session = require('express-session');
+const fileupload = require('express-fileupload');
 const fs = require('fs');
 // const { spawn } = require("child_process");
 
 // Importing Controllers
-var Topic = require('./Controllers/Topic')
-var Quiz = require('./Controllers/Quiz')
-var Auth = require('./Controllers/Authorization')
-var Mobile = require('./Controllers/Mobile')
-var Answers = require('./Controllers/Answers')
-var Audio = require('./Controllers/Audio')
-var Youtube = require('./Controllers/Youtube')
-var UserResults = require('./Controllers/UserResults')
-var OTA = require('./Controllers/UpdateWebApp')
+var Topic = require('./Controllers/Topic');
+var Quiz = require('./Controllers/Quiz');
+var Auth = require('./Controllers/Authorization');
+var Mobile = require('./Controllers/Mobile');
+var Answers = require('./Controllers/Answers');
+var Audio = require('./Controllers/Audio');
+var Youtube = require('./Controllers/Youtube');
+var UserResults = require('./Controllers/UserResults');
+var OTA = require('./Controllers/UpdateWebApp');
 
 var util = require('util');
 var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
@@ -42,7 +39,7 @@ const new_con = mysql.createPool({
 	port: creds.port
 });
 
-const app = express()
+const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -95,90 +92,16 @@ app.get('/', (req,res) => {
 })
 
 app.use(Answers);
-
 app.use(Audio);
-
 app.use(Auth);
-
 app.use(Youtube);
-
 app.use(Mobile);
-
 app.use(Quiz);
-
 app.use(OTA);
-
 app.use(UserResults);
-
 app.use(Topic);
 
-// register_class payment
-app.post('/register_class', (req,res) =>{
-	console.log(req.body)
-	if (req.body.email.includes('@') == false || req.body.email.includes('.com') == false){
-		res.json('invalid email id')
-		return
-	}
-	res.json('success')
-})
-
-// register
-app.get('/register/:class_name', (req,res) =>{
-	var class_name = req.params.class_name.toUpperCase()
-	new_con.query('SELECT * FROM gk WHERE parent = ? AND child = ?', ['ONLINE CLASS',class_name], function(err, result, fields){
-		if (err){
-			res.render('error')
-			return
-		}
-		if (result.length == 0){
-			res.render('error')
-			return
-		}
-		else res.render('register_class',{title:'Register', class_name})
-		console.log(result)
-	})
-})
-
-// new_online_class_submit
-app.post('/new_online_class', (req,res) => {
-	console.log(req.body)
-	new_con.query("INSERT INTO `gk` (`id`, `parent`, `child`, `type`, `date`) VALUES (NULL, ?, ?, ?, ?);", [req.body.parent, req.body.child, 'online_class', req.body.date+'##'+req.body.time], function(err, result, fields){
-		if (err){
-			console.log(err)
-			return
-		}
-		res.json('success')
-	})
-})
-
-// // about
-// app.get('/about', (req,res) => res.render('about', {title:"about", nav_selected:"about"}))
-
 // ########################### HTML RENDERING ###########################################
-
-// ########################### TEST ###########################################
-// test
-app.post('/testbody' ,(req,res) => {
-	// res.send(req.body)
-	res.json("hey hey")
-})
-
-// app.get('/', (req,res) => {
-// 	res.send("<h1>hello world!!</h1>")
-// })
-
-var dic = {name:'vishnu',age:'21',year:'2020'}
-
-// api tests
-// get
-app.get('/api', (req,res) => {
-	res.json(dic)
-})
-// post with param in url
-app.post('/api/', (req,res) => {
-	console.log(req.body)
-	res.json("asd")
-})
 
 // get an error with status 400
 app.post('/apierror', (req,res) => {
@@ -191,8 +114,8 @@ app.get('/author', (req,res) => {
 })
 
 // amazon ec2 micro
-app.get('/phpmyadmin_login', (req,res) => {
-	res.redirect("http://18.221.233.238/phpmyadmin/")
+app.get('/phpmyadmin', (req,res) => {
+	res.redirect("http://157.175.91.172/phpmyadmin/")
 })
 
 // ######################################################################
