@@ -911,7 +911,7 @@
                 'quiz_name':quiz_name,
                 'time_taken':time_taken
             }
-            postData('/save_user_results', data_to_send)
+            postData('/save_user_results', data_to_send, 'PUT')
             .then(data => {
                 console.log("results saved"); // JSON data parsed by `data.json()` call
             });

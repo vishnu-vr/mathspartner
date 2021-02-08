@@ -416,7 +416,7 @@
         else var topic_name_to_be_delete = {parent: heading_of_page.trim(), 'child':topic_num}
         console.log(topic_name_to_be_delete)
 
-        postData('/gkdeletetopic', topic_name_to_be_delete)
+        postData('/gkdeletetopic', topic_name_to_be_delete, 'DELETE')
           .then(data => {
             console.log(data); // JSON data parsed by `data.json()` call
             location.reload();
@@ -513,7 +513,7 @@
 
       disable_btn_and_loading_spinner('new_youtube_submit')
       
-      postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()})
+      postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()}, 'PUT')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload();
@@ -690,7 +690,7 @@
 
       disable_btn_and_loading_spinner('new_audio_submit')
 
-      postData('/gkaddaudio', data_to_send)
+      postData('/gkaddaudio', data_to_send, 'PUT')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload()
@@ -793,7 +793,7 @@
       disable_btn_and_loading_spinner('new_topic_submit')
 
       console.log(dic_to_send)
-      postData('/gk_add_new_topic', dic_to_send)
+      postData('/gk_add_new_topic', dic_to_send, 'PUT')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload()
@@ -949,8 +949,14 @@
 
       // if everything went well
       // sending data to back-end
-      if (editing_mode) var url = '/gk_edit_quiz'
-      else var url = '/gk_add_quiz'
+      if (editing_mode) {
+        var url = '/gk_edit_quiz';
+        var method = 'POST';
+      }
+      else {
+        var url = '/gk_add_quiz';
+        var method = 'PUT';
+      }
 
       console.log(questions_and_options_dic)
       {{!-- return --}}
@@ -962,7 +968,7 @@
 
       disable_btn_and_loading_spinner('final_submit')
 
-      postData(url, questions_and_options_dic)
+      postData(url, questions_and_options_dic, method)
       .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           // after thats done we if there is a pdf uploaded we send
@@ -979,7 +985,7 @@
               formData.append('inpFile',inpFile.files[0],filename)
               
               fetch(endpoint,{
-                  method:"post",
+                  method:"put",
                   body:formData
               }).then((data) => {
                   console.log(data)
@@ -997,6 +1003,4 @@
           // location.reload();
       });
     }
-
-
 </script>
