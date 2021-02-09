@@ -1,5 +1,4 @@
 node_modules/
-creds.js
 debug.log
 public/pdf_uploads
 npm-debug.log

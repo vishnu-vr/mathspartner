@@ -1,0 +1,7 @@
+docker run --restart always --name mp_db -p 3306:3306 -d -e MYSQL_ROOT_PASSWORD=2020 mysql:latest --sql-mode=""
+
+docker run --name pma -d --link 99eba6c3e3e4:db -p 6969:80 phpmyadmin
+
+docker build -t mathspartner .
+
+docker run --name mathspartner -p 5000:5000 -d mathspartner

@@ -15,4 +15,6 @@ COPY . .
 
 EXPOSE 5000
 
+CMD ["mkdir","public/pdf_uploads"]
+
 CMD [ "node", "index.js" ]
