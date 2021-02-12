@@ -484,7 +484,7 @@
       if (heading_of_page.trim() == 'TOPICS') var parent = 'null'
       else var parent = heading_of_page.trim()
       // var data_to_send = {'parent':}
-      postData('/gkrenametopic', {"parent":parent, "old_child":old_topic_name, "new_child":new_topic_name})
+      postData('/gkrenametopic', {"parent":parent, "old_child":old_topic_name, "new_child":new_topic_name}, 'PUT')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           location.reload();
@@ -513,7 +513,7 @@
 
       disable_btn_and_loading_spinner('new_youtube_submit')
       
-      postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()}, 'PUT')
+      postData('/gkaddyoutube', {"parent":parent, "child":youtube_name_input.value.trim(), "link":youtube_link_input.value.trim()}, 'POST')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload();
@@ -690,7 +690,7 @@
 
       disable_btn_and_loading_spinner('new_audio_submit')
 
-      postData('/gkaddaudio', data_to_send, 'PUT')
+      postData('/gkaddaudio', data_to_send, 'POST')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload()
@@ -793,7 +793,7 @@
       disable_btn_and_loading_spinner('new_topic_submit')
 
       console.log(dic_to_send)
-      postData('/gk_add_new_topic', dic_to_send, 'PUT')
+      postData('/gk_add_new_topic', dic_to_send, 'POST')
         .then(data => {
           console.log(data); // JSON data parsed by `data.json()` call
           if (data == 'success') location.reload()
@@ -951,11 +951,11 @@
       // sending data to back-end
       if (editing_mode) {
         var url = '/gk_edit_quiz';
-        var method = 'POST';
+        var method = 'PUT';
       }
       else {
         var url = '/gk_add_quiz';
-        var method = 'PUT';
+        var method = 'POST';
       }
 
       console.log(questions_and_options_dic)
@@ -985,7 +985,7 @@
               formData.append('inpFile',inpFile.files[0],filename)
               
               fetch(endpoint,{
-                  method:"put",
+                  method:"POST",
                   body:formData
               }).then((data) => {
                   console.log(data)

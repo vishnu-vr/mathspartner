@@ -14,7 +14,7 @@ router.get('/audio/:parent/:id', (req,res) =>{
 
 // gkaddaudio
 // changed**
-router.put('/gkaddaudio', (req,res) =>{
+router.post('/gkaddaudio', (req,res) =>{
 	console.log(req.body)
 	if (req.session.logged_in != null && req.session.logged_in == true){
 		// editing_permission = true

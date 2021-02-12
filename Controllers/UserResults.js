@@ -13,7 +13,7 @@ router.get('/user_ranks', (req,res) =>{
 
 // save_user_results
 // changed**
-router.put('/save_user_results', (req,res) => {
+router.post('/save_user_results', (req,res) => {
 	console.log(req.body)
 	const data = req.body
 	var sql = "INSERT INTO `user_details` (`id`, `name`, `score`, `correct`, `wrong`, `na`, `date`, `quiz_name`, `time_taken`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?)"

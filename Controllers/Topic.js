@@ -112,7 +112,7 @@ router.get('/gk/:parent', (req,res) =>{
 
 // gk_add_new_topic
 // changed**
-router.put('/gk_add_new_topic', (req,res) =>{
+router.post('/gk_add_new_topic', (req,res) =>{
 	if (req.session.logged_in == null || req.session.logged_in == false){
 		console.log('unautherized request')
 		res.json('not autherized')
@@ -138,7 +138,7 @@ router.put('/gk_add_new_topic', (req,res) =>{
 // gkrenametopic
 // eg 1 { parent: 'null', old_child: 'A', new_child: 'B' }
 // eg 2 { parent: 'AA', old_child: 'INSIDE AA', new_child: 'INSIDE A' }
-router.post('/gkrenametopic', async (req,res) =>{
+router.put('/gkrenametopic', async (req,res) =>{
 	console.log(req.body)
 	
 	if (req.session.logged_in != null && req.session.logged_in == true){
@@ -295,7 +295,7 @@ router.delete('/gkdeletetopic', (req,res) =>{
 
 // gkfileupload
 // changed**
-router.put('/gkfileupload', (req,res) => {
+router.post('/gkfileupload', (req,res) => {
 	// console.log(req.files.inpFile)
 	console.log('pdf received')
 	var file = req.files.inpFile

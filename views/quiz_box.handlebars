@@ -911,7 +911,7 @@
                 'quiz_name':quiz_name,
                 'time_taken':time_taken
             }
-            postData('/save_user_results', data_to_send, 'PUT')
+            postData('/save_user_results', data_to_send, 'POST')
             .then(data => {
                 console.log("results saved"); // JSON data parsed by `data.json()` call
             });
@@ -1111,7 +1111,7 @@
       console.log(questions_and_options_dic)
       {{!-- return --}}
 
-      postData(url, questions_and_options_dic)
+      postData(url, questions_and_options_dic, 'PUT')
       .then(data => {
           // console.log(data); // JSON data parsed by `data.json()` call
           // after thats done we if there is a pdf uploaded we send

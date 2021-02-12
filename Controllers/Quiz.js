@@ -111,7 +111,7 @@ router.get('/gkquiz/:quiz/:mode', (req,res) =>{
 })
 
 // gk_edit_quiz
-router.post('/gk_edit_quiz', (req,res) =>{
+router.put('/gk_edit_quiz', (req,res) =>{
 	console.log(req.body)
 	if (req.session.logged_in == null || req.session.logged_in == false){
 		console.log('unautherized request')
@@ -176,7 +176,7 @@ router.post('/gk_edit_quiz', (req,res) =>{
 
 // gk_add_quiz
 // changed**
-router.put('/gk_add_quiz', (req,res) =>{
+router.post('/gk_add_quiz', (req,res) =>{
 	console.log(req.body)
 	if (req.session.logged_in == null || req.session.logged_in == false){
 		console.log('unautherized request')

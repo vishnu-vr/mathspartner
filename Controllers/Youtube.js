@@ -14,7 +14,7 @@ router.get('/youtube/:parent/:src', (req,res) =>{
 
 // gkaddyoutube
 // changed**
-router.put('/gkaddyoutube', (req,res) =>{
+router.post('/gkaddyoutube', (req,res) =>{
 	console.log(req.body)
 	if (req.session.logged_in != null && req.session.logged_in == true){
 		// editing_permission = true
