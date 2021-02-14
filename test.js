@@ -1,40 +1,157 @@
 // var mysql = require('mysql2/promise');
 var mysql = require('mysql2');
-// var fs = require('fs')
+var fs = require('fs')
 
 var new_con = mysql.createPool({
-	host: "192.168.64.2",
-	user: "vishnu",
-	password: "2020",
+	host: "localhost",
+	user: "root",
+	password: "Telus2020!",
 	database: "mathspartner"
   });
-  
 
-// will delete a particular row
-// new_con.query("DELETE FROM `user_details` WHERE `user_details`.`id` = ?", [10], function(err,result,fields){
-// 	if (err){
-// 	  console.log(err)
-// 	  return
-// 	}
-// 	console.log(result);
-// })
 
-// SELECT * FROM gk WHERE parent LIKE 'QUESTION PAPERS-ENGLISH-PHOBIAS%';
-
-list = ['INSERT INTO gk (parent, child, type) VALUES ("QUESTION PAPERS-ENGLISH-OFFSPRING OF ANIMALS *", "1", "quiz")',
-'UPDATE gk SET parent = "QUESTION PAPERS-ENGLISH-OFFSPRING OF ANIMALS *-1" WHERE parent = "QUESTION PAPERS-ENGLISH-OFFSPRING OF ANIMALS"',
-'ALTER TABLE `QUESTION PAPERS-ENGLISH-OFFSPRING OF ANIMALS` RENAME TO `QUESTION PAPERS-ENGLISH-OFFSPRING OF ANIMALS *-1`',
-'DELETE FROM gk WHERE parent = "QUESTION PAPERS-ENGLISH" AND child = "OFFSPRING OF ANIMALS"']
-
-for (var i=0; i<list.length; i++){
-	new_con.query(list[i], function(err,result,fields){
-		if (err){
-		  console.log(err)
-		  return
-		}
-		console.log(result);
+var loginCollection=[]
+function BuildLoginCollection(){
+	new_con.query("SELECT * FROM `login`", function(err,result_,fields){
+	  if (err){
+	    console.log(err)
+	    return
+	  }
+	  // console.log(result_.length)
+	  for (i = 0; i < result_.length; i++) {
+	  	console.log(i)
+	  	loginCollection.push({
+	  		"username":result_[i].username,
+	  		"password":result_[i].password,
+	  		"permission":result_[i].permission
+	  	})
+	  }
 	})
 }
+
+
+
+var user_detailsCollection=[]
+function BuildUserDetailsCollection(){
+	new_con.query("SELECT * FROM `user_details`", function(err,result_,fields){
+	  if (err){
+	    console.log(err)
+	    return
+	  }
+	  // console.log(result_.length)
+	  for (i = 0; i < result_.length; i++) {
+	  	console.log(i)
+	  	user_detailsCollection.push({
+	  		"name":result_[i].name,
+	  		"score":result_[i].score,
+	  		"correct":result_[i].correct,
+	  		"wrong":result_[i].wrong,
+	  		"na":result_[i].na,
+	  		"date":result_[i].date,
+	  		"quiz_name":result_[i].quiz_name,
+	  		"time_taken":result_[i].time_taken
+	  	})
+	  }
+	})
+}
+
+
+var GKCollection=[]
+function BuildGKCollection(){
+	// var singleGK={}
+	new_con.query("SELECT * FROM `gk`", function(err,result_,fields){
+	  if (err){
+	    console.log(err)
+	    return
+	  }
+	  // console.log(result_.length)
+	  for (i = 0; i < result_.length; i++) {
+	  	console.log(i)
+	  	GKCollection.push({
+	  		"parent":result_[i].parent,
+	  		"child":result_[i].child,
+	  		"on_off":result_[i].on_off,
+	  		"duration":result_[i].duration,
+	  		"pdf_path":result_[i].pdf_path,
+	  		"type":result_[i].type,
+	  		"date":result_[i].date,
+	  		"show_answers":result_[i].show_answers
+	  	})
+	  }
+	})
+}
+
+// will return list of unique quiz names
+function ConvertAllQuizToJSON(){
+	new_con.query("SELECT parent FROM `gk` where type = 'quiz' and child = 'null'", function(err,result_,fields){
+	  if (err){
+	    console.log(err)
+	    return
+	  }
+	  // console.log(result_.length)
+	  for (i = 0; i < result_.length; i++) {
+	  	quiz_name = result_[i].parent
+	  	BuildQuizObject(quiz_name,i,result_.length)
+	  }
+	})
+}
+// // console.log(convertedTable)
+// WriteJson("test.json",asd)
+
+var convertedTable=[]
+function BuildQuizObject(quiz_name,current_table_num,total_length){
+	new_con.query("SELECT * FROM ??", [quiz_name], function(err,result,fields){
+	  	if (err){
+		    console.log(err)
+			return
+	  	}
+		  // console.log(result)
+	  	questions_and_answers_JsonList=[]
+		for (var index = 0; index < result.length; index++) {
+		  	questions_and_answers_JsonList.push({
+				  	"question":result[index].question,
+				  	"options":[result[index].option_1,result[index].option_2,result[index].option_3,result[index].option_4],
+				  	"correct":result[index].correct,
+				  	"section":result[index].section
+			  	});
+		}
+
+	  	quiz_object={}
+	  	quiz_object["name"]=quiz_name;
+	  	quiz_object["questions_and_answers_list"] = questions_and_answers_JsonList
+	  	convertedTable.push(quiz_object)
+	  	// WriteJson("test.json",quiz_object)
+	  	console.log(current_table_num)
+	  	if (current_table_num+1 === total_length){
+	  		console.log("finished")
+	  		// console.log(convertedTable.slice(0,2))
+	  	}
+	})
+}
+
+function WriteJson(name,json){
+	json = JSON.stringify(json);
+	// console.log(json)
+	fs.writeFile(name, json, function(err) {
+	    if (err) {
+	        console.log(err);
+	    }
+	});
+}
+
+
+
+setTimeout(()=>{
+	console.log("finished");
+	WriteJson("loginCollection.json",loginCollection);
+},3000)
+
+
+
+
+
+
+
 
 
 // create a new folder name "ARTICLES *"
