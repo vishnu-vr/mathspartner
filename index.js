@@ -123,3 +123,12 @@ app.get('/phpmyadmin', (req,res) => {
 const PORT = process.env.PORT || 5000
 
 http.listen(PORT, () => console.log(`Server up on port ${PORT}`))
+
+// const creds = { 
+// 	host:'host.docker.internal', 
+// 	user: 'root',
+// 	password: 'password', 
+// 	database: 'db_name', 
+// 	secret: "secret",
+// 	port: 3306
+// }
