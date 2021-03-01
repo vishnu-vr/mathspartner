@@ -3,10 +3,10 @@ const exphbs = require('express-handlebars');
 const path = require('path');
 const help = require('./helper_functions');
 var creds = require('./creds');
-const mysql = require('mysql2');
 const session = require('express-session');
 const fileupload = require('express-fileupload');
 const fs = require('fs');
+var MongoClient = require('mongodb').MongoClient;
 // const { spawn } = require("child_process");
 
 // Importing Controllers
@@ -20,6 +20,16 @@ var Youtube = require('./Controllers/Youtube');
 var UserResults = require('./Controllers/UserResults');
 var OTA = require('./Controllers/UpdateWebApp');
 
+// Importing Serivces
+var AuthService = require('./Services/Authentication');
+global.AuthService = AuthService;
+var TopicService = require('./Services/TopicService');
+global.TopicService = TopicService;
+var QuizService = require('./Services/QuizService');
+global.QuizService = QuizService;
+var UserResultService = require('./Services/UserResultService');
+global.UserResultService = UserResultService;
+
 var util = require('util');
 var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
 var log_stdout = process.stdout;
@@ -29,22 +39,11 @@ console.log = function(d) { //
   log_stdout.write(util.format(d) + '\n');
 };
 
-
-const new_con = mysql.createPool({
-	host: creds.host,
-	user: creds.user,
-	password: creds.password,
-	database: creds.database,
-	charset: "utf8_general_ci",
-	port: creds.port
-});
-
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 // global declarations
-global.new_con = new_con;
 global.help = help;
 global.fs = fs;
 global.io = io;
@@ -122,7 +121,14 @@ app.get('/phpmyadmin', (req,res) => {
 
 const PORT = process.env.PORT || 5000
 
-http.listen(PORT, () => console.log(`Server up on port ${PORT}`))
+// initializing mongo client
+const conString = creds.connectionString;
+MongoClient.connect(conString, function(err, db) {
+  if (err) throw err;
+  console.log("MONGO CONNECTED")
+  global.db = db;
+  http.listen(PORT, () => console.log(`Server up on port ${PORT}`))
+});
 
 // const creds = { 
 // 	host:'host.docker.internal', 

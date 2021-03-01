@@ -23,7 +23,8 @@
     var nav_selected = document.getElementById('{{ nav_selected }}')
     nav_selected.className += ' active'
 
-    const answers = {{{json result }}}
+    const paper = {{{json result }}}
+    const answers = paper[0].questions_and_answers_list;
 
     function display_answers(answers){
         var question, answer;
