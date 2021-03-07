@@ -1,9 +1,9 @@
 module.exports = {
 	GetTopic: async function (parent){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 	  		var query = { parent: parent };
-	  		var result = await dbo.collection("topics").find(query).toArray();
+	  		var result = await dbo.collection(DB.topics).find(query).toArray();
 	  		return result;
 		}
 		catch(error){
@@ -12,8 +12,8 @@ module.exports = {
 	},
 	AddTopic: async function(doc){
 	  try{
-	  	var dbo = db.db("mathspartner");
-	  	var result = await dbo.collection("topics").insertOne(doc);
+	  	var dbo = db.db(DB.mathspartner);
+	  	var result = await dbo.collection(DB.topics).insertOne(doc);
 	  	console.log(result.insertedId)
 	  }
 	  catch(error){
@@ -22,8 +22,8 @@ module.exports = {
 	},
 	GetTopicsViaQuery: async function (query){
 		try{
-			var dbo = db.db("mathspartner");
-	  		var result = await dbo.collection("topics").find(query).toArray();
+			var dbo = db.db(DB.mathspartner);
+	  		var result = await dbo.collection(DB.topics).find(query).toArray();
 	  		return result;
 		}
 		catch(error){
@@ -32,7 +32,7 @@ module.exports = {
 	},
 	RenameTopicParent: async function(oldName, newName){
 		try{
-	  		var dbo = db.db("mathspartner");
+	  		var dbo = db.db(DB.mathspartner);
 	  		var options = { upsert: false };
 			const filter = { parent: oldName };
 
@@ -42,7 +42,7 @@ module.exports = {
 				},
 			};
 
-			await dbo.collection("topics").updateOne(filter, updateDoc, options);
+			await dbo.collection(DB.topics).updateOne(filter, updateDoc, options);
 		}
 		catch(error){
 			console.error(error)
@@ -50,7 +50,7 @@ module.exports = {
 	},
 	RenameTopicChild: async function(parent, oldChild, newChild){
 		try{
-	  		var dbo = db.db("mathspartner");
+	  		var dbo = db.db(DB.mathspartner);
 	  		var options = { upsert: false };
 			const filter = { parent: parent, child: oldChild };
 
@@ -60,7 +60,7 @@ module.exports = {
 				},
 			};
 
-			await dbo.collection("topics").updateOne(filter, updateDoc, options);
+			await dbo.collection(DB.topics).updateOne(filter, updateDoc, options);
 		}
 		catch(error){
 			console.error(error)
@@ -68,8 +68,8 @@ module.exports = {
 	},
 	DeleteTopic: async function(parent, child){
 		try{
-	  		var dbo = db.db("mathspartner");
-			await dbo.collection("topics").deleteOne({parent: parent, child: child});
+	  		var dbo = db.db(DB.mathspartner);
+			await dbo.collection(DB.topics).deleteOne({parent: parent, child: child});
 		}
 		catch(error){
 			console.error(error)
@@ -77,8 +77,8 @@ module.exports = {
 	},
 	DeleteTopicsViaQuery: async function (query){
 		try{
-			var dbo = db.db("mathspartner");
-	  		var result = await dbo.collection("topics").deleteMany(query);
+			var dbo = db.db(DB.mathspartner);
+	  		var result = await dbo.collection(DB.topics).deleteMany(query);
 	  		return result;
 		}
 		catch(error){
@@ -87,7 +87,7 @@ module.exports = {
 	},
 	UpdatePDFPath: async function (pdfPath, parent){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 			var options = { upsert: false };
 		  	const filter = { parent: parent};
 
@@ -97,7 +97,7 @@ module.exports = {
 			  },
 		  	};
 
-		  await dbo.collection("topics").updateOne(filter, updateDoc, options);
+		  await dbo.collection(DB.topics).updateOne(filter, updateDoc, options);
 	  }
 	  catch(error){
 		  console.error(error)

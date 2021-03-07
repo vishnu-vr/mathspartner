@@ -1,6 +1,4 @@
 var express = require('express')
-const QuizService = require('../Services/QuizService')
-const TopicService = require('../Services/TopicService')
 var router = express.Router()
 
 // gk quiz

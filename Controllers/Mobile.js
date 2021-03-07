@@ -1,5 +1,4 @@
 var express = require('express')
-const UserResultService = require('../Services/UserResultService')
 var router = express.Router()
 
 // APIS FOR THE MOBILE APP

@@ -1,5 +1,4 @@
 var express = require('express');
-const TopicService = require('../Services/TopicService');
 var router = express.Router()
 
 // gkanswers

@@ -24,8 +24,8 @@ module.exports = {
     },
 	AddUserResult: async function(doc){
         try{
-            var dbo = db.db("mathspartner");
-            var result = await dbo.collection("user_results").insertOne(doc);
+            var dbo = db.db(DB.mathspartner);
+            var result = await dbo.collection(DB.user_results).insertOne(doc);
             console.log(result.insertedId)
         }
         catch(error){
@@ -34,9 +34,9 @@ module.exports = {
     },
     GetResults: async function (date){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 	  		var query = {date:date};
-	  		var result = await dbo.collection("user_results").find(query).sort({score: -1, time_taken: 1}).toArray();
+	  		var result = await dbo.collection(DB.user_results).find(query).sort({score: -1, time_taken: 1}).toArray();
 	  		return result;
 		}
 		catch(error){
@@ -45,9 +45,9 @@ module.exports = {
 	},
     GetResultsByQuizName: async function (quizName){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 	  		var query = {quiz_name:quizName};
-	  		var result = await dbo.collection("user_results").find(query).sort({score: -1, time_taken: 1}).toArray();
+	  		var result = await dbo.collection(DB.user_results).find(query).sort({score: -1, time_taken: 1}).toArray();
 	  		return result;
 		}
 		catch(error){
@@ -56,9 +56,9 @@ module.exports = {
 	},
     DeleteUserResultById: async function (id){
 		try{
-            var dbo = db.db("mathspartner");
+            var dbo = db.db(DB.mathspartner);
             var o_id = new mongo.ObjectID(id);
-            await dbo.collection("user_results").deleteOne({_id: o_id});
+            await dbo.collection(DB.user_results).deleteOne({_id: o_id});
             return;
         }
         catch(error){
@@ -67,8 +67,8 @@ module.exports = {
     },
     GetQuizList: async function (){
 		try{
-			var dbo = db.db("mathspartner");
-	  		var result = await dbo.collection("user_results").distinct("quiz_name");
+			var dbo = db.db(DB.mathspartner);
+	  		var result = await dbo.collection(DB.user_results).distinct("quiz_name");
             result = result.slice(1,result.length);
             var ret = [];
             result.forEach(resultSingle => {

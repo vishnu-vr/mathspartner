@@ -22,9 +22,9 @@ module.exports = {
 	},
 	GetUserDetails: async function (username){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 	  		var query = { username: username };
-	  		var result = await dbo.collection("login").find(query).toArray();
+	  		var result = await dbo.collection(DB.login).find(query).toArray();
 	  		return result;
 		}
 		catch(error){

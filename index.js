@@ -7,7 +7,6 @@ const session = require('express-session');
 const fileupload = require('express-fileupload');
 const fs = require('fs');
 var MongoClient = require('mongodb').MongoClient;
-// const { spawn } = require("child_process");
 
 // Importing Controllers
 var Topic = require('./Controllers/Topic');
@@ -30,11 +29,15 @@ global.QuizService = QuizService;
 var UserResultService = require('./Services/UserResultService');
 global.UserResultService = UserResultService;
 
+// importing common
+var DB = require('./Common/DB');
+global.DB = DB;
+
 var util = require('util');
 var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
 var log_stdout = process.stdout;
 
-console.log = function(d) { //
+console.log = function(d) {
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
@@ -54,17 +57,15 @@ app.engine('handlebars', exphbs({defaultLayout: 'main',
 						));
 app.set('view engine', 'handlebars');
 
-// ############## MIDDLEWARES ###################
-// middleware - logger
+// MIDDLEWARES
+// logger
 const logger = (req,res,next) => {
 	console.log(`log : ${req.protocol}://${req.get('host')}${req.originalUrl}`)
 	// console.log(JSON.stringify(req.body))
 	next()
 }
-
 // fileupload
 app.use(fileupload())
-
 // public
 app.use(express.static(path.join(__dirname, '/public')));
 // initializing the logger middleware
@@ -75,9 +76,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended:false }))
 // for session
 app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
-// ############## MIDDLEWARES ###################
-
-// ########################### HTML RENDERING ###########################################
 
 // home
 app.get('/', (req,res) => {
@@ -90,6 +88,7 @@ app.get('/', (req,res) => {
 	// res.redirect('/gk/null')
 })
 
+// using controllers
 app.use(Answers);
 app.use(Audio);
 app.use(Auth);
@@ -99,25 +98,6 @@ app.use(Quiz);
 app.use(OTA);
 app.use(UserResults);
 app.use(Topic);
-
-// ########################### HTML RENDERING ###########################################
-
-// get an error with status 400
-app.post('/apierror', (req,res) => {
-	res.status(400).json({error:`boom an error. Hope you like it`})
-})
-
-// author info
-app.get('/author', (req,res) => {
-	res.json({'name':'vishnu',"github repo":'https://github.com/vishnu-vr/mathspartner'})
-})
-
-// amazon ec2 micro
-app.get('/phpmyadmin', (req,res) => {
-	res.redirect("http://157.175.91.172/phpmyadmin/")
-})
-
-// ######################################################################
 
 const PORT = process.env.PORT || 5000
 

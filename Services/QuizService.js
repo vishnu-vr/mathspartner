@@ -1,7 +1,7 @@
 module.exports = {
     UpdatePaper: async function(quizName, questionsAndAnswersList){
         try{
-            var dbo = db.db("mathspartner");
+            var dbo = db.db(DB.mathspartner);
             var options = { upsert: false };
             const filter = { name: quizName };
 
@@ -11,7 +11,7 @@ module.exports = {
                 },
             };
 
-            await dbo.collection("papers").updateOne(filter, updateDoc, options);
+            await dbo.collection(DB.papers).updateOne(filter, updateDoc, options);
         }
         catch(error){
             console.error(error)
@@ -33,8 +33,8 @@ module.exports = {
     },
 	AddPaper: async function(doc){
         try{
-            var dbo = db.db("mathspartner");
-            var result = await dbo.collection("papers").insertOne(doc);
+            var dbo = db.db(DB.mathspartner);
+            var result = await dbo.collection(DB.papers).insertOne(doc);
             console.log(result.insertedId)
         }
         catch(error){
@@ -43,9 +43,9 @@ module.exports = {
     },
     GetQuiz: async function (quizName){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 	  		var query = { name: quizName };
-	  		var result = await dbo.collection("papers").find(query).toArray();
+	  		var result = await dbo.collection(DB.papers).find(query).toArray();
 	  		return result;
 		}
 		catch(error){
@@ -54,7 +54,7 @@ module.exports = {
 	},
     RenameQuizName: async function (oldName, newName){
         try{
-            var dbo = db.db("mathspartner");
+            var dbo = db.db(DB.mathspartner);
             var options = { upsert: false };
             const filter = { name: oldName };
 
@@ -64,7 +64,7 @@ module.exports = {
                 },
             };
 
-            await dbo.collection("papers").updateOne(filter, updateDoc, options);
+            await dbo.collection(DB.papers).updateOne(filter, updateDoc, options);
         }
         catch(error){
             console.error(error)
@@ -72,8 +72,8 @@ module.exports = {
     },
     DeleteQuiz: async function (name){
         try{
-            var dbo = db.db("mathspartner");
-            await dbo.collection("papers").deleteOne({name: name});
+            var dbo = db.db(DB.mathspartner);
+            await dbo.collection(DB.papers).deleteOne({name: name});
         }
         catch(error){
             console.error(error)
@@ -81,7 +81,7 @@ module.exports = {
     },
     UpdateQuizTopicMetaData: async function (quizName, pdfPath, duration, showAnswers, onOff){
 		try{
-			var dbo = db.db("mathspartner");
+			var dbo = db.db(DB.mathspartner);
 			var options = { upsert: false };
 		  	const filter = { parent: quizName};
 
@@ -94,7 +94,7 @@ module.exports = {
 			  },
 		  	};
 
-		  await dbo.collection("topics").updateOne(filter, updateDoc, options);
+		  await dbo.collection(DB.topics).updateOne(filter, updateDoc, options);
 	  }
 	  catch(error){
 		  console.error(error)
