@@ -10,8 +10,6 @@ module.exports = {
 		if (req.session.logged_in != null){
 			req.session.logged_in = false
 			const redirect_url = req.originalUrl.split("=")
-			// res.redirect(redirect_url[1])
-			// return the redirect url
 			return redirect_url[1];
 		}
 		else return "/";

@@ -9,6 +9,7 @@ const fs = require('fs');
 var MongoClient = require('mongodb').MongoClient;
 
 // Importing Controllers
+var Home = require('./Controllers/Home');
 var Topic = require('./Controllers/Topic');
 var Quiz = require('./Controllers/Quiz');
 var Auth = require('./Controllers/Authorization');
@@ -77,18 +78,8 @@ app.use(express.urlencoded({ extended:false }))
 // for session
 app.use(session({secret:creds.secret,resave:false,saveUninitialized:true}))
 
-// home
-app.get('/', (req,res) => {
-	var editing_permission = false
-	if (req.session.logged_in != null && req.session.logged_in == true){
-		editing_permission = true
-		console.log('user logged in')
-	}
-	res.render('home', {title:"Maths Partner", editing_permission, page:'home'})
-	// res.redirect('/gk/null')
-})
-
 // using controllers
+app.use(Home);
 app.use(Answers);
 app.use(Audio);
 app.use(Auth);
