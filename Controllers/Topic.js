@@ -1,6 +1,21 @@
 var express = require('express')
 var router = express.Router()
 
+router.get('/:parent', async (req,res) => {
+	var parent = req.params.parent
+	if (parent == "TOPICS") parent = "null"
+
+	var result=[]
+	result = await TopicService.GetTopic(parent);
+
+	var ret=[]
+	result.forEach(element => {
+		if (element["type"] != "forbidden" || element["child"] == "YOUTUBE") ret.push(element)
+	});
+
+	res.json(ret);
+})
+
 // gk
 router.get('/gk/:parent', async (req,res) => {
 	var parent = req.params.parent
@@ -55,8 +70,8 @@ router.get('/gk/:parent', async (req,res) => {
 		return
 	}
 
-	// if its the end it might also be an audio clip
-	// pdf_path is also used for audio clips
+	// if its the end it might also be a youtube video
+	// pdf_path is also used for youtube videos
 	if (result[0].child == 'youtube'){
 		var id = result[0].pdf_path.split('/')[result[0].pdf_path.split('/').length-1]
 		res.redirect('/youtube/'+req.params.parent+'/'+id)
@@ -159,6 +174,53 @@ router.put('/gkrenametopic', async (req,res) =>{
 
 	// after all that rename the child
 	await TopicService.RenameTopicChild(req.body.parent, req.body.old_child, req.body.new_child);
+
+	res.json('success');
+})
+
+// move topics
+// request json
+// {old_parent:"",new_parent:"",child:""}
+router.put('/gkmovetopic', async (req,res) => {
+	console.log(req.body)
+
+	if (!AuthService.IsLoggedIn(req)){
+		console.log('user not autherized')
+		res.json('user not autherized')
+		return
+	}
+
+	if (req.body.old_parent == 'null') var parent_child_combo = req.body.child
+	else var parent_child_combo = req.body.old_parent + '-' + req.body.child
+	// parent_child_combo = AA-INSIDE AA
+	console.log(parent_child_combo)
+	var index_to_be_replaced = parent_child_combo.split('-').length - 1
+
+
+	// find all parent names starting with parent_child_combo+'-' and exactly equal to parent_child_combo
+	var result=[]
+	var query = {$or: [{parent: {'$regex': '^'+parent_child_combo+'-.*'}}, {parent: parent_child_combo}]};
+	result = await TopicService.GetTopicsViaQuery(query);
+
+	for (var i=0; i<result.length; i++){
+		// renaming row entries
+		var old_name = result[i].parent
+
+		var new_name = old_name.split('-')
+		new_name = new_name.slice(index_to_be_replaced)
+
+		if (req.body.new_parent == "null") new_name = new_name.join('-')
+		else new_name = req.body.new_parent + '-' + new_name.join('-')
+
+		console.log(old_name+' --> '+new_name)
+
+		await TopicService.RenameTopicParent(old_name, new_name);
+		// renaming quiz tables
+		if (result[i].child == 'null') await QuizService.RenameQuizName(old_name, new_name);
+	}
+
+	// rename parent of the child from old to new
+	await TopicService.ChangeParent(req.body.old_parent, req.body.new_parent, req.body.child);
 
 	res.json('success');
 })

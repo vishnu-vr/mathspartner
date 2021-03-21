@@ -48,6 +48,27 @@ module.exports = {
 			console.error(error)
 		}
 	},
+	ChangeParent: async function(oldParent, newParent, child){
+		try{
+	  		var dbo = db.db(DB.mathspartner);
+	  		var options = { upsert: false };
+			const filter = { 
+				parent: oldParent,
+				child: child
+			};
+
+	  	    const updateDoc = {
+				$set: {
+					parent: newParent
+				},
+			};
+
+			await dbo.collection(DB.topics).updateOne(filter, updateDoc, options);
+		}
+		catch(error){
+			console.error(error)
+		}
+	},
 	RenameTopicChild: async function(parent, oldChild, newChild){
 		try{
 	  		var dbo = db.db(DB.mathspartner);
