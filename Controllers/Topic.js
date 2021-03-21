@@ -190,6 +190,26 @@ router.put('/gkmovetopic', async (req,res) => {
 		return
 	}
 
+	if (req.body.old_parent == req.body.new_parent) {
+		res.json("success");
+		return;
+	}
+
+	var existing_topics=[]
+	var already_exits = false
+	existing_topics = await TopicService.GetTopic(req.body.new_parent);
+	existing_topics.forEach(element => {
+		if (element["child"] == req.body.child){
+			already_exits = true;
+			return;
+		}
+	});
+
+	if (already_exits){
+		res.json("child already exists")
+		return;
+	}
+
 	if (req.body.old_parent == 'null') var parent_child_combo = req.body.child
 	else var parent_child_combo = req.body.old_parent + '-' + req.body.child
 	// parent_child_combo = AA-INSIDE AA
