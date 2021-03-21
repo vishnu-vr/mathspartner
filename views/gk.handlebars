@@ -208,6 +208,37 @@
   </div>
 </div>
 
+
+<!-- Button trigger modal -->
+{{!-- <button id='move_topics_btn' type="button" class="btn btn-primary" data-toggle="modal" data-target="#move_topics" onclick="get_topics()">
+  Move Topic
+</button> --}}
+
+<!-- Modal -->
+<div class="modal fade" id="move_topics" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Move Topic</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="d-flex flex-column bd-highlight mb-3" id="topics_list">
+          {{!-- will be populated dynamically --}}
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="move_btn" onclick="move_to()">Move</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     // set the title
     document.getElementById('title').innerText = "{{title}}"
@@ -239,6 +270,175 @@
 
     // arrow icon
     var arrow_icon = '<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-right-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path fill-rule="evenodd" d="M7.646 11.354a.5.5 0 0 1 0-.708L10.293 8 7.646 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0z"/><path fill-rule="evenodd" d="M4.5 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5z"/></svg>'
+
+    var topics_list = document.getElementById("topics_list");
+    function show_topics(list_to_be_shown, types){
+      topics_list.innerHTML = "";
+      currently_highlighted = null;
+      document.getElementById("move_btn").disabled = true;
+
+      const class_name = "p-2 bd-highlight bg-light user-select-none"
+      const on_click_function = "highlight(this)"
+      const on_double_click_function = "go_inside_topic(this)"
+      const folder_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-fill" viewBox="0 0 16 16"><path d="M9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.819l-.637-7a1.99 1.99 0 0 1 .342-1.31L.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3zm-8.322.12C1.72 3.042 1.95 3 2.19 3h5.396l-.707-.707A1 1 0 0 0 6.172 2H2.5a1 1 0 0 0-1 .981l.006.139z"/></svg>'
+      const go_back_icon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/></svg>'
+
+      // adding <- icon
+      var div = document.createElement('div');
+      div.innerHTML = go_back_icon + "  " + "<span>Go Back</span><hr>"
+      div.className = class_name
+      // div.setAttribute('onclick',on_click_function)
+      div.setAttribute('onclick','go_back()')
+      topics_list.appendChild(div);
+
+      var move_home_btn = document.createElement('button')
+      move_home_btn.innerText = "Move To Home"
+      move_home_btn.className = "btn btn-dark"
+      move_home_btn.setAttribute('onclick','move_to_home()')
+      topics_list.appendChild(move_home_btn);
+
+      for(var i=0; i<list_to_be_shown.length; i++){
+        var div = document.createElement('div');
+        div.innerHTML = "<span>" + list_to_be_shown[i] + "</span>"
+        div.className = class_name
+
+        if (types[i] == '' || list_to_be_shown[i] == 'YOUTUBE'){
+          div.innerHTML = folder_icon + "  " + div.innerHTML;
+          div.setAttribute('onclick',on_click_function);
+          div.setAttribute('ondblclick',on_double_click_function);
+        }
+
+        topics_list.appendChild(div);
+      }
+    }
+
+    var current_topic_location = heading_of_page;
+    var previous_topic_location = null;
+    async function get_topics(parent=current_loc){
+      const data = await get_topics_fetch_call(parent);
+      var folders = [];
+      var folder_types = [];
+      // filtering info
+      for (var i=0; i<data.length; i++){
+        folders.push(data[i]["child"])
+        folder_types.push(data[i]["type"])
+      }
+      show_topics(folders, folder_types);
+    }
+
+    async function get_topics_fetch_call(parent){
+      if (parent == null) return;
+
+      const res = await fetch('/'+parent);
+      const data = await res.json()
+      return data;
+    }
+
+    var previously_highlighted = null;
+    var currently_highlighted = null;
+    const bg_color_classes = ["bg-dark", "text-white"]
+    function highlight(element){
+      currently_highlighted = element;
+      document.getElementById("move_btn").disabled = false;
+
+      // remove previously highlighted element
+      if (previously_highlighted != null) {
+        for(var i=0; i<bg_color_classes.length; i++){
+          previously_highlighted.classList.remove(bg_color_classes[i]);
+        }
+      }
+      
+      // highlight current selected one
+      for(var i=0; i<bg_color_classes.length; i++){
+        element.classList.add(bg_color_classes[i]);
+      }
+      
+      // store current on for later
+      previously_highlighted = element;
+    }
+
+    var current_loc = "TOPICS"
+    var previous_loc = [];
+    function go_inside_topic(element){
+      var sub_topic = element.children[1].innerText;
+
+      let next_loc = "";
+      if (current_loc == "TOPICS"){
+        next_loc = sub_topic
+      }
+      else {
+        next_loc = current_loc + '-' + sub_topic
+      }
+      previous_loc.push(current_loc)
+      current_loc = next_loc;
+
+      //alert(next_loc)
+      get_topics(next_loc)
+    }
+
+    function go_back(){
+      if (previous_loc.length == 0) return
+      const loc = previous_loc.pop()
+      current_loc = loc
+      get_topics(loc)
+    }
+
+    async function is_child_already_present_in_parent(parent,child){
+      const data = await get_topics_fetch_call(parent);
+      for(let i=0; i<data.length; i++){
+        if (data[i]["child"] == child) return true;
+      }
+      return false;
+    }
+
+    async function move_to(new_parent = null){
+      if (currently_highlighted == null && new_parent == null) return
+      // if new_parent not specified then generate
+      if (new_parent == null){
+        new_parent = ""
+        const currently_highlighted_topic_name = currently_highlighted.children[1].innerText;
+        if (current_loc == "TOPICS"){
+          new_parent = currently_highlighted_topic_name
+        }
+        else {
+          new_parent = current_loc + '-' + currently_highlighted_topic_name
+        }        
+      }
+
+      const child_exits = await is_child_already_present_in_parent(new_parent, child_to_be_moved);
+      if (child_exits){
+        alert("There is already an item with the same name present in the new parent")
+        return;
+      }
+
+      const req_body = {
+        old_parent:old_parent,
+        new_parent:new_parent,
+        child:child_to_be_moved
+      }
+
+      postData("/gkmovetopic", req_body, method='PUT')
+      .then(data => {
+        location.reload();
+      });
+    }
+
+    function move_to_home(){
+      move_to("null");
+    }
+
+    let old_parent = ""
+    let child_to_be_moved = ""
+    function get_current_item_and_move(element){
+      if (heading_of_page == "TOPICS"){
+        old_parent = "null"
+      }
+      else {
+        old_parent = heading_of_page
+      }
+      child_to_be_moved = element;
+      get_topics();
+    }
 
     // implemented in main globally, that is why its commented out
     {{!-- // logout button
@@ -606,10 +806,21 @@
       if (editing_permission == 'true' && topic != 'create_new'){
         // delete_btn
         var delete_btn = document.createElement('button')
-        delete_btn.className = 'btn btn-danger ml-5'
+        delete_btn.className = 'btn btn-danger ml-2'
         delete_btn.innerHTML = 'Delete'
         delete_btn.setAttribute('onclick', "delete_topic('"+ topic +"')")
         card_body.appendChild(delete_btn)
+
+        // move_btn
+        var move_btn = document.createElement('button')
+        move_btn.className = 'btn btn-warning ml-2'
+        move_btn.innerHTML = 'Move'
+        move_btn.setAttribute('onclick', "get_current_item_and_move('"+ topic +"')")
+        move_btn.setAttribute('data-toggle', "modal")
+        move_btn.setAttribute('data-target', "#move_topics")
+        move_btn.id = 'move_topics_btn'
+        card_body.appendChild(move_btn)
+        // id='move_topics_btn' type="button" class="btn btn-primary" data-toggle="modal" data-target="#move_topics" onclick="get_topics()"
       }
 
       if (yt){
@@ -915,10 +1126,6 @@
               }
 
               questions_and_options_dic.push(dic_to_send)
-
-              // console.log(questions_and_options_dic)
-              // return
-
           }
       }
 

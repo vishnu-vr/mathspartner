@@ -1,6 +1,21 @@
 var express = require('express')
 var router = express.Router()
 
+router.get('/:parent', async (req,res) => {
+	var parent = req.params.parent
+	if (parent == "TOPICS") parent = "null"
+
+	var result=[]
+	result = await TopicService.GetTopic(parent);
+
+	var ret=[]
+	result.forEach(element => {
+		if (element["type"] != "forbidden" || element["child"] == "YOUTUBE") ret.push(element)
+	});
+
+	res.json(ret);
+})
+
 // gk
 router.get('/gk/:parent', async (req,res) => {
 	var parent = req.params.parent
@@ -55,8 +70,8 @@ router.get('/gk/:parent', async (req,res) => {
 		return
 	}
 
-	// if its the end it might also be an audio clip
-	// pdf_path is also used for audio clips
+	// if its the end it might also be a youtube video
+	// pdf_path is also used for youtube videos
 	if (result[0].child == 'youtube'){
 		var id = result[0].pdf_path.split('/')[result[0].pdf_path.split('/').length-1]
 		res.redirect('/youtube/'+req.params.parent+'/'+id)
