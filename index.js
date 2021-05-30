@@ -94,7 +94,7 @@ const PORT = process.env.PORT || 5000
 
 // initializing mongo client
 const conString = creds.connectionString;
-MongoClient.connect(conString, function(err, db) {
+MongoClient.connect(conString, { useUnifiedTopology: true },function(err, db) {
   if (err) throw err;
   console.log("MONGO CONNECTED")
   global.db = db;
