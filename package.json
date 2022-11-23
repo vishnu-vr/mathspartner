@@ -18,7 +18,7 @@
     "mongodb": "^3.6.4",
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0",
-    "socket.io": "^2.4.0"
+    "socket.io": "^2.5.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
