@@ -56,6 +56,11 @@
                 <input id="duration_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                 </div>
             </div>
+            {{!-- Description --}}
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <textarea class="form-control" id="descriptionText" rows="3"></textarea>
+            </div>
             {{!-- upload pdf explaination --}}
             <div id='pdf_explaination' class="mt-4">
                 <h6>Upload Explaination</h6>
@@ -1151,6 +1156,10 @@
       // appending parent and child names
       if (heading_of_page.trim().toUpperCase() == 'TOPICS') var parent = 'null'
       else var parent = heading_of_page.trim().toUpperCase()
+
+      const description = document.getElementById("descriptionText")
+      questions_and_options_dic[0]['description'] = description.value.trim()
+
       questions_and_options_dic[0]['parent_child_details'] = {'parent':parent,'child':topic_name.value.trim()}
       // questions_and_options_dic[0]['parent_child_details'].push({'parent':heading_of_page.trim().toUpperCase(),'child':})
 

@@ -79,7 +79,7 @@ module.exports = {
             console.error(error)
         }
     },
-    UpdateQuizTopicMetaData: async function (quizName, pdfPath, duration, showAnswers, onOff){
+    UpdateQuizTopicMetaData: async function (quizName, pdfPath, duration, showAnswers, onOff, description){
 		try{
 			var dbo = db.db(DB.mathspartner);
 			var options = { upsert: false };
@@ -90,7 +90,8 @@ module.exports = {
 				on_off: onOff,
 				duration: duration,
 				pdf_path: pdfPath,
-				show_answers: showAnswers
+				show_answers: showAnswers,
+                description: description
 			  },
 		  	};
 

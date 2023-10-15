@@ -104,6 +104,11 @@
                     <input id="duration_input" type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
                     </div>
                 </div>
+                {{!-- Description --}}
+                <div class="form-group">
+                    <label for="Description">Description</label>
+                    <textarea class="form-control" id="descriptionText" rows="3"></textarea>
+                </div>
                 {{!-- upload pdf explaination --}}
                 <div id='pdf_explaination' class="mt-4">
                     <h6>Upload Explaination</h6>
@@ -433,6 +438,7 @@
     }
 
     var quiz_name_input = document.getElementById('quiz_name_input')
+    const descriptionText = document.getElementById("descriptionText");
     function display_fetched_questions(data) {
         // topic name
         var index = heading.split('-').length
@@ -448,6 +454,9 @@
         const on_off_switch = document.getElementById('on_off_switch')
         if ("{{ on_off }}"  == 'true') on_off_switch.checked = true
         else on_off_switch.checked = false
+
+        // show description
+        descriptionText.value = "{{ description }}"
 
         // display show_answers status
         const show_answers_switch = document.getElementById('show_answers_switch')
@@ -853,7 +862,36 @@
         var correct_answers = document.createElement('p')
         correct_answers.className = 'mt-2 mb-2 text-center'
         correct_answers.innerHTML = 'ANSWERS'
-        modal_body.appendChild(correct_answers)
+
+        //const descriptionHtml = `<div class="form-group m-2">
+        //        <label for="Description">Description</label>
+        //        <textarea readonly class="form-control" id="descriptionText" value="asdasd"></textarea>
+        //    </div>`
+        //correct_answers.insertAdjacentHTML('beforeend', descriptionHtml)
+
+        modal_body.appendChild(correct_answers)     
+
+        function urlify(text) {
+            var urlRegex = /(https?:\/\/[^\s]+)/g;
+            return text.replace(urlRegex, function(url) {
+            return '<a href="' + url + '">' + url + '</a>';
+            })
+            // or alternatively
+            // return text.replace(urlRegex, '<a href="$1">$1</a>')
+        }
+
+        if (descriptionText.value.trim() != ""){
+            var description = document.createElement('div')
+            //description.className = "border"
+            var label = document.createElement('b')
+            label.innerHTML = "Description"
+            var descriptionInnerContent = document.createElement('p')
+            descriptionInnerContent.innerHTML = urlify(descriptionText.value)
+            description.appendChild(label)
+            description.appendChild(descriptionInnerContent)
+            modal_body.appendChild(description)
+        }
+
         for (var i=0; i<questions.length; i++){
             var q = document.createElement('p')
             q.innerText = 'Q'+ (i+1) + ')  ' +questions[i].question
@@ -1082,6 +1120,9 @@
           alert("add some questions first")
           return
       }
+
+      // adding description
+      questions_and_options_dic[0]['description'] = descriptionText.value.trim();
 
       // adding a null value
       // the path will be updated later
