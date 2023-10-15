@@ -5,7 +5,7 @@ var router = express.Router()
 router.get('/gkquiz/:quiz/:mode', async (req,res) =>{
 	var quiz = req.params.quiz
 	quiz = quiz.toUpperCase()
-	console.log(quiz)
+	// console.log(quiz)
 
 	var editing_permission = false
 	if (AuthService.IsLoggedIn(req)) editing_permission = true;
@@ -36,11 +36,12 @@ router.get('/gkquiz/:quiz/:mode', async (req,res) =>{
 	var show_answers = result[0].show_answers
 	var duration = result[0].duration
 	var pdf_path = result[0].pdf_path
+	var description = result[0].description
 
 	// getting the entire quiz from papers collection
 	var paper = await QuizService.GetQuiz(quiz);
 	paper = paper[0];
-	console.log(paper)
+	// console.log(paper)
 	var questions_and_answers_list = paper.questions_and_answers_list;
 
 	var questions = []
@@ -89,6 +90,17 @@ router.get('/gkquiz/:quiz/:mode', async (req,res) =>{
 	if (req.params.mode == 'test') var mode = 'test'
 	else var mode = 'normal'
 
+	// function urlify(text) {
+	// 	var urlRegex = /(https?:\/\/[^\s]+)/g;
+	// 	return text.replace(urlRegex, function(url) {
+	// 	  return '<a href="' + url + '">' + url + '</a>';
+	// 	})
+	// 	// or alternatively
+	// 	// return text.replace(urlRegex, '<a href="$1">$1</a>')
+	// }
+	
+	// description = urlify(description)
+
 	res.render('quiz_box', 
 		{
 			grouped_questions:grouped_questions,
@@ -101,13 +113,14 @@ router.get('/gkquiz/:quiz/:mode', async (req,res) =>{
 			mode:mode,
 			on_off,
 			show_answers,
-			editing_permission
+			editing_permission,
+			description
 		})
 })
 
 // gk_edit_quiz
 router.put('/gk_edit_quiz', async (req,res) =>{
-	console.log(req.body)
+	// console.log(req.body)
 	if (!AuthService.IsLoggedIn(req)){
 		console.log('unautherized request')
 		res.json('not autherized')
@@ -118,6 +131,7 @@ router.put('/gk_edit_quiz', async (req,res) =>{
 	var quizName = data[0].whole_quiz_name;
 	var pdfPath = data[0].pdf_path;
 	var duration = data[0].duration*60;
+	var description = data[0].description;
 
 	if (req.body[0].show_answers_switch) var showAnswers = 'true'
 	else var showAnswers = 'false'
@@ -140,7 +154,7 @@ router.put('/gk_edit_quiz', async (req,res) =>{
 	await QuizService.UpdatePaper(quizName, questions_and_answers_list);
 
 	// updating meta data
-	await QuizService.UpdateQuizTopicMetaData(quizName, pdfPath, duration, showAnswers, onOff);
+	await QuizService.UpdateQuizTopicMetaData(quizName, pdfPath, duration, showAnswers, onOff, description);
 
 	res.json('success');
 })
@@ -184,6 +198,7 @@ router.post('/gk_add_quiz', async (req,res) =>{
 	else var show_answers = 'false'
 
 	var pdfPath = req.body[0].pdf_path;
+	const description = req.body[0].description;
 
 	// generating topic model
 	var topicModel = TopicService.GetTopicModel(
@@ -194,7 +209,8 @@ router.post('/gk_add_quiz', async (req,res) =>{
 		pdfPath,
 		"quiz",
 		"",
-		show_answers);
+		show_answers,
+		description);
 
 	// inserting topic
 	await TopicService.AddTopic(topicModel);

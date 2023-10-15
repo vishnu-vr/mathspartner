@@ -126,7 +126,7 @@ module.exports = {
 	},
 	GetTopicModel: function(parent="",child="",on_off="",
 		duration="",pdf_path="",type="",
-		date="",show_answers=""){
+		date="",show_answers="", description=""){
 	    return {
 	        "parent": parent,
 	        "child": child,
@@ -135,7 +135,8 @@ module.exports = {
 	        "pdf_path": pdf_path,
 	        "type": type,
 	        "date": date,
-	        "show_answers": show_answers
+	        "show_answers": show_answers,
+			"description": description
 	    };
 	},
 }
